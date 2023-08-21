@@ -7,7 +7,7 @@ export default function SupportLayout({
 }) {
   return (
     <html lang="en">
-      <body className="flex flex-col ">
+      <body className="flex flex-col min-h-[100vh] ">
         <Header />
         {children}
         <Footer />

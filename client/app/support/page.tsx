@@ -18,17 +18,11 @@ const Home = () => {
           Hi, how can we help you?
         </h1>
         <Searchbox />
-        <Link
-          href="./support/tickets/new"
-          className=" hidden md:block absolute top-10 left-[80%] bg-slate-50 p-3 rounded-lg"
-        >
-          Submit Ticket
-        </Link>
       </div>
-      <div className="px-[50px] mt-[-20px] md:flex md:flex-row flex flex-col  align-middle justify-center gap-10 relative">
+      <div className="md:px-[50px] px-4 md:mt-[-20px] mt-5 md:flex md:flex-row flex flex-col  align-middle justify-center gap-10 relative">
         <Link
           href="./support/tickets/new"
-          className="md:w-[300px] p-5 bg-white rounded-md border  gap-2 justify-center shadow-lg  w-[90%]  md:flex  "
+          className="md:w-[300px] p-5 bg-white rounded-md border  gap-2 justify-center shadow-lg  w-[95%]  md:flex  "
         >
           <div className="flex">
             <MdPersonOutline className="text-6xl text-gray-600" />
@@ -50,7 +44,7 @@ const Home = () => {
 
         <Link
           href="./support/solutions"
-          className="md:w-[300px] w-[90%] p-5 bg-white rounded-md border md:flex gap-5 justify-center shadow-lg "
+          className="md:w-[300px] w-[95%] p-5 bg-white rounded-md border md:flex gap-5 justify-center shadow-lg "
         >
           <div className="flex">
             <HiOutlineLightBulb className="text-5xl text-gray-500" />
@@ -68,7 +62,7 @@ const Home = () => {
         {user && (
           <Link
             href="./support/tickets"
-            className="md:w-[300px] w-[90%] p-5 bg-white rounded-md border md:flex gap-2 justify-center shadow-lg "
+            className="md:w-[300px] w-[95%] p-5 bg-white rounded-md border md:flex gap-2 justify-center shadow-lg "
           >
             <div className="flex align-middle">
               <FaTicketAlt className="text-5xl p-1 " color="gray" />
@@ -87,7 +81,9 @@ const Home = () => {
       </div>
       <div className="m-8 flex flex-col gap-10 ">
         <div className="self-center flex flex-col gap-3">
-          <h1 className="text-4xl font-bold text-gray-700">Knowledge base</h1>
+          <h1 className="md:text-4xl text-xl font-bold text-gray-700">
+            Knowledge base
+          </h1>
           <Link
             className="md:text-blue-900 text-md self-center hover:text-black"
             href="./support/solutions"
@@ -95,10 +91,10 @@ const Home = () => {
             view all articles
           </Link>
         </div>
-        <div className="self-center md:flex gap-10">
+        <div className="self-center md:flex md:flex-row flex flex-col gap-10 ">
           <Link
             href={"./support/solutions/2"}
-            className="p-4 flex flex-col justify-center align-middle w-[300px] bg-white shadow-lg gap-5 rounded-lg"
+            className="p-4 flex flex-col justify-center align-middle md:w-[300px]  bg-white shadow-lg gap-5 rounded-lg"
           >
             <PiStackBold className=" self-center text-5xl text-gray-700 " />
             <h1 className="self-center text-lg font-bold text-gray-700 ">
@@ -117,10 +113,10 @@ const Home = () => {
             <p className="self-center text-md  ">category descriptions</p>
           </Link>
         </div>
-        <div className="bg-white p-10 font-medium m-8">
+        <div className="bg-white md:p-10 p-4 font-medium md:m-8 w-full">
           <div className=" ">
-            <div className="flex justify-between ">
-              <h1 className="text-xl font-bold ">Most popular articles</h1>
+            <div className="md:flex justify-between w-full">
+              <h1 className="md:text-xl font-bold ">Most popular articles</h1>
               <Link
                 className="text-blue-600 hover:text-black"
                 href={"./support/solutions"}

@@ -16,7 +16,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-slate-50">{children}</body>
+      <body className="bg-slate-50 flex flex-col min-h-[100vh]">
+        {children}
+      </body>
     </html>
   );
 }

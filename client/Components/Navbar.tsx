@@ -2,8 +2,9 @@
 import Link from "next/link";
 
 import React from "react";
+import { CgMenuRight } from "react-icons/cg";
 import { usePathname } from "next/navigation";
-// import DensityMediumIcon from "@mui/icons-material/DensityMedium";
+import SubmitTicket from "./SubmitTicket";
 
 const Navigation = ({ NavLinks }: any) => {
   const pathname = usePathname();
@@ -30,7 +31,7 @@ const Navigation = ({ NavLinks }: any) => {
 const Navbar = () => {
   const user = false;
   return (
-    <div className="">
+    <div className="md:p-0 p-4">
       <nav className="hidden lg:block">
         <ul className="flex gap-10 pt-[10px]">
           <Navigation
@@ -48,23 +49,28 @@ const Navbar = () => {
               <button className="w-[50px] h-[50px] rounded-full bg-slate-500"></button>
             </>
           ) : (
-            <div className="flex divide-x divide-black gap-3">
-              <li className="mt-4">
-                <Link className="p-4 text-lg" href={"/support/login"}>
-                  Login
-                </Link>
+            <>
+              <li className="mt-4 ">
+                <SubmitTicket />
               </li>
-              <li className="mt-4">
-                <Link className="p-4 text-lg ml-2" href={"/support/signup"}>
-                  Sign up
-                </Link>
-              </li>
-            </div>
+              <div className="flex divide-x divide-black gap-3">
+                <li className="mt-4">
+                  <Link className="p-4 text-lg" href={"/support/login"}>
+                    Login
+                  </Link>
+                </li>
+                <li className="mt-4">
+                  <Link className="p-4 text-lg ml-2" href={"/support/signup"}>
+                    Sign up
+                  </Link>
+                </li>
+              </div>
+            </>
           )}
         </ul>
       </nav>
       <button className="lg:hidden   text-2xl mt-6   ">
-        {/* <DensityMediumIcon /> */}
+        <CgMenuRight />
       </button>
     </div>
   );

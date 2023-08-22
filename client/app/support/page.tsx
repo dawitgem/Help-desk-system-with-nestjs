@@ -10,7 +10,7 @@ import { BsFillFileEarmarkTextFill } from "react-icons/bs";
 import Link from "next/link";
 
 const Home = () => {
-  const user = false;
+  const user = true;
   return (
     <>
       <div className="bg-[#063750] h-[350px] flex flex-col align-middle justify-center gap-10  ">

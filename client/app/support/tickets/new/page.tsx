@@ -3,7 +3,7 @@ import LinkTrack from "@/Components/LinkTrack";
 import Searchbox from "@/Components/Searchbox";
 import TextEditor from "@/Components/TextEditor";
 import React from "react";
-import { PiStackBold, PiTicket } from "react-icons/pi";
+import { PiTicket } from "react-icons/pi";
 
 const TicketSubmissionPage = () => {
   return (
@@ -30,6 +30,7 @@ const TicketSubmissionPage = () => {
           </h1>
         </div>
       </div>
+      <TextEditor />
     </div>
   );
 };

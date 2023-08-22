@@ -4,27 +4,30 @@ import Link from "next/link";
 import React from "react";
 import { CgMenuRight } from "react-icons/cg";
 import { usePathname } from "next/navigation";
-import SubmitTicket from "./SubmitTicket";
 
 const Navigation = ({ NavLinks }: any) => {
   const pathname = usePathname();
 
   return (
     <>
-      {NavLinks.map((link: any, i: any) => (
-        <li className="mt-4" key={i}>
-          <Link
-            className={`${
-              pathname === link.href
-                ? "bg-[#186085] text-white"
-                : "hover:bg-white "
-            } p-4  text-lg`}
-            href={link.href}
-          >
-            {link.link}
-          </Link>
-        </li>
-      ))}
+      {NavLinks.map((link: any, i: any) => {
+        const isActive = pathname.replace("/support/", "/");
+
+        return (
+          <li className="mt-4" key={i}>
+            <Link
+              className={`${
+                isActive.includes(link.href.replace("/support/", "/"))
+                  ? "bg-[#186085] text-white"
+                  : "hover:bg-white "
+              } p-4  text-lg`}
+              href={link.href}
+            >
+              {link.link}
+            </Link>
+          </li>
+        );
+      })}
     </>
   );
 };
@@ -46,12 +49,25 @@ const Navbar = () => {
               <Navigation
                 NavLinks={[{ link: "Ticket", href: "/support/tickets" }]}
               />
+              <li className="mt-4 ">
+                <Link
+                  href="/support/tickets/new"
+                  className=" p-3 border  bg-white  rounded-lg"
+                >
+                  Submit Ticket
+                </Link>
+              </li>
               <button className="w-[50px] h-[50px] rounded-full bg-slate-500"></button>
             </>
           ) : (
             <>
               <li className="mt-4 ">
-                <SubmitTicket />
+                <Link
+                  href="/support/tickets/new"
+                  className=" p-3 border  bg-white  rounded-lg"
+                >
+                  Submit Ticket
+                </Link>
               </li>
               <div className="flex divide-x divide-black gap-3">
                 <li className="mt-4">

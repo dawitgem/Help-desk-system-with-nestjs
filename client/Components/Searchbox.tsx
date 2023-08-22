@@ -22,7 +22,7 @@ const Searchbox = ({
     <div
       className={`md:self-center bg-white ${width ? width : "md:w-[40%]"} ${
         height ? height : "md:h-[60px] h-[40px]"
-      }  rounded-lg flex  m-2 ${postionStyle}`}
+      }  rounded-lg flex    ${postionStyle}`}
     >
       <input
         type="text"
@@ -34,7 +34,7 @@ const Searchbox = ({
       <button>
         <FaSearch
           className={`text-xl text-gray-400 bg-slate-200 ${
-            iconstyle ? iconstyle : "w-[60px]"
+            iconstyle ? iconstyle : "md:w-[60px]"
           } h-full rounded-lg p-4`}
         />
       </button>

@@ -1,34 +1,29 @@
 import Searchbox from "@/Components/Searchbox";
 import { PiStackBold } from "react-icons/pi";
-import {
-  BsFolder2Open,
-  BsFillFileEarmarkTextFill,
-  BsFillPlayFill,
-} from "react-icons/bs";
+import { BsFolder2Open, BsFillFileEarmarkTextFill } from "react-icons/bs";
 
 import React from "react";
 import Link from "next/link";
-import SubmitTicket from "@/Components/SubmitTicket";
 import LinkTrack from "@/Components/LinkTrack";
 
 const SolutionsPage = () => {
   return (
     <div className="flex flex-col gap-5">
-      <div className="bg-[#063750] h-[250px] ">
-        <div className="bg-[#063750] fixed z-10 md:h-[40px] w-full md:px-20 py-4 md:flex gap-2 justify-between  md:py-10 ">
+      <div className=" bg-[#063750] h-[250px] flex gap-10 justify-between ">
+        <div className="bg-[#063750] fixed z-10 md:h-[40px] w-full md:px-20 md:flex gap-2 justify-between  md:py-10 ">
           <LinkTrack
             Links={[{ link: "Home", href: "../support/" }]}
             currentLink="knowledgebase"
           />
           <Searchbox
             iconstyle="w-[40px]"
-            width="md:w-[40%] w-[90%] "
+            width="sm:w-[40%] w-[90%] "
             height="h-[50px]"
             inputstyle="placeholder:text-md"
           />
         </div>
 
-        <h1 className="text-white md:text-5xl text-2xl font-bold absolute top-[60%] left-[10%] overflow-x-clip">
+        <h1 className="md:p-32 pt-32 text-white md:text-5xl text-2xl font-bold  self-center ">
           Knowledge base
         </h1>
       </div>

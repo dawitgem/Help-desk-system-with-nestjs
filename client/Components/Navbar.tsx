@@ -54,10 +54,10 @@ const Navbar = () => {
                   href="/support/tickets/new"
                   className=" p-3 border  bg-white  rounded-lg"
                 >
-                  Submit Ticket
+                  Submit ticket
                 </Link>
               </li>
-              <button className="w-[50px] h-[50px] rounded-full bg-slate-500"></button>
+              <button className="lg:w-[10%] md:h-[50px]  rounded-full bg-slate-500"></button>
             </>
           ) : (
             <>

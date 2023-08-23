@@ -6,12 +6,10 @@ export default function SupportLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="flex flex-col min-h-[100vh] ">
-        <Header />
-        {children}
-        <Footer />
-      </body>
-    </html>
+    <>
+      <Header />
+      {children}
+      <Footer />
+    </>
   );
 }

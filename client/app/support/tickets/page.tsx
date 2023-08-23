@@ -34,8 +34,8 @@ const ArticlePage = () => {
         <div className="h-[500px] bg-white rounded-l-lg flex-[2] shadow-md flex flex-col">
           <Link href="./tickets/1212">ticket i</Link>
         </div>
-        <div className="bg-slate-300 rounded-r-lg flex-[1] shadow-md">
-          alskdjflkasj
+        <div className="p-5 bg-slate-300 rounded-r-lg flex-[1] shadow-md">
+          <div className=""></div>
         </div>
       </div>
     </div>

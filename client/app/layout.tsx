@@ -16,7 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-slate-100 flex flex-col min-h-[100vh]">
+      <body className="bg-slate-100 flex flex-col min-h-[100vh] ">
         {children}
       </body>
     </html>

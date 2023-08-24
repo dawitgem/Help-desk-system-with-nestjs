@@ -57,7 +57,7 @@ const Navbar = () => {
                   Submit ticket
                 </Link>
               </li>
-              <button className="lg:w-[10%] md:h-[50px]  rounded-full bg-slate-500"></button>
+              <button className="w-[50px] h-[50px]  rounded-full bg-slate-500"></button>
             </>
           ) : (
             <>

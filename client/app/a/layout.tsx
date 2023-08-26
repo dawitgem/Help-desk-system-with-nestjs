@@ -8,7 +8,7 @@ export default function SupportLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex w-full">
+    <div className="flex w-full bg-slate-100">
       <SideBar />
       <div className="flex flex-col w-full ">
         <NavbarAgent />

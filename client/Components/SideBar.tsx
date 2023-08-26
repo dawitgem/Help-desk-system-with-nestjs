@@ -24,7 +24,6 @@ const NavLinks = [
 const Navigation = ({ NavLinks }: any) => {
   const pathname = usePathname();
   const [isMouseOver, setIsMouseOver] = useState(false);
-  console.log(isMouseOver);
 
   return (
     <>
@@ -33,7 +32,7 @@ const Navigation = ({ NavLinks }: any) => {
 
         return (
           <Link
-            className="relative flex p-2"
+            className="relative flex"
             href={link.href}
             onMouseEnter={() => setIsMouseOver(true)}
             onMouseLeave={() => setIsMouseOver(false)}
@@ -50,18 +49,18 @@ const Navigation = ({ NavLinks }: any) => {
               {isMouseOver}
             </div>
             {isMouseOver && link.href.includes(link.link) && (
-              <div className="absolute top-3 left-full text-[14px] capitalize h-8 p-2  bg-[#123d52] text-white w-auto ">
+              <div className="absolute top-1 z-20 left-full text-[14px] capitalize h-8 p-2  bg-[#123d52] text-white w-auto ">
                 {link.link}
               </div>
             )}
             {isMouseOver && link.link === "dashboard" && (
-              <div className="absolute top-3 left-full text-[14px] capitalize h-8 p-2 bg-[#123d52] text-white w-auto md:transition duration-200 ease-out ">
+              <div className="absolute top-1 z-20 left-full text-[14px] capitalize h-8 p-2 bg-[#123d52] text-white w-auto md:transition duration-200 ease-out ">
                 Dashboard
                 {isMouseOver}
               </div>
             )}{" "}
             {isMouseOver && link.link === "admin" && (
-              <div className="absolute top-3 left-full text-[14px] capitalize h-8 p-2 bg-[#123d52] text-white ">
+              <div className="absolute top-1 z-20 left-full text-[14px] capitalize h-8 p-2 bg-[#123d52] text-white ">
                 admin
               </div>
             )}
@@ -74,7 +73,7 @@ const Navigation = ({ NavLinks }: any) => {
 
 const SideBar = () => {
   return (
-    <div className="  bg-[#123d52] h-screen flex flex-col gap-5 w-[70px]">
+    <div className="sticky top-0  bg-[#123d52] h-screen flex flex-col gap-5 w-[60px]">
       <Link
         href={"/a"}
         className=" bg-[#082433] w-full justify-items-center p-2 "
@@ -87,7 +86,7 @@ const SideBar = () => {
           className="w-[40px] h-[40px] "
         />
       </Link>
-      <div className="flex flex-col  gap-5 pt-5">
+      <div className="flex flex-col  gap-8 pt-8 px-1">
         {NavLinks.map((Navlink) => (
           <Navigation NavLinks={[Navlink]} />
         ))}

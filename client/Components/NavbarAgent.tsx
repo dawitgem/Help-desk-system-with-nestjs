@@ -1,16 +1,16 @@
-import Image from "next/image";
-import React from "react";
-import logo from "@/public/logo.svg";
-import {
-  BsBell,
-  BsChevronDown,
-  BsFilterRight,
-  BsPlusSquare,
-} from "react-icons/bs";
+"use client";
+import React, { ReactComponentElement } from "react";
+import { BsBell, BsChevronDown, BsPlusSquare } from "react-icons/bs";
 import { BiFilterAlt, BiMessageAlt, BiSearch } from "react-icons/bi";
 import { CgMenuLeft } from "react-icons/cg";
+import { usePathname } from "next/navigation";
+import { JsxElement } from "typescript";
 
-const NavbarAgent = () => {
+interface NavbarAgentProps {
+  currentPage: string;
+  filterComponent?: JsxElement;
+}
+const NavbarAgent = ({ currentPage, filterComponent }: NavbarAgentProps) => {
   return (
     <div className="p-4  sticky  top-0 z-10 h-14 bg-white flex justify-between ">
       <div className="flex gap-5">
@@ -18,7 +18,7 @@ const NavbarAgent = () => {
           <BiFilterAlt className="self-center text-gray-500" />
           <CgMenuLeft className="text-gray-500 text-[10px]" />
         </button>
-        <h1 className="text-gray-800 font-medium">My Dashboard</h1>
+        <h1 className="text-gray-800 font-medium">{currentPage}</h1>
       </div>
       <div className="flex h-[30px] divide gap-5 ">
         <button className="px-2  bg-slate-50 border-gray-400 border rounded-md flex gap-2">

@@ -1,10 +1,13 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Home from "./support/page";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import Header from "@/Components/Header";
 import Footer from "@/Components/Footer";
 const Page = () => {
+  useEffect(() => {
+    redirect("/support");
+  }, []);
   return (
     <>
       <Header />

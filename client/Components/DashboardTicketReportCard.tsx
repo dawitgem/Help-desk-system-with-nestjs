@@ -30,8 +30,9 @@ const TicketStatus = [
 const DashboardTicketReportCard = () => {
   return (
     <div className="flex gap-5">
-      {TicketStatus.map((ticket) => (
+      {TicketStatus.map((ticket, i) => (
         <Link
+          key={i}
           href={"/a"}
           className="p-4 bg-white  shadow-sm w-[195px] h-[110px] rounded-md flex flex-col gap-5 hover:text-blue-600 text-gray-800"
         >

@@ -1,9 +1,8 @@
 "use client";
 import Image from "next/image";
-import React, { Children, useState } from "react";
+import React from "react";
 import logo from "@/public/logo.svg";
 import Link from "next/link";
-import { BiSolidDashboard } from "react-icons/bi";
 import {
   MdOutlineDashboard,
   MdOutlineSettings,
@@ -11,19 +10,40 @@ import {
 } from "react-icons/md";
 import { RiTicket2Line } from "react-icons/ri";
 import { IoBookOutline } from "react-icons/io5";
-
 import { usePathname } from "next/navigation";
+import Tooltip, { TooltipProps, tooltipClasses } from "@mui/material/Tooltip";
+import { styled } from "@mui/material";
+
 const NavLinks = [
-  { link: "dashboard", href: "/a", component: MdOutlineDashboard },
-  { link: "tickets", href: "/a/tickets", component: RiTicket2Line },
+  {
+    link: "dashboard",
+    href: "/a/dashboard/default",
+    component: MdOutlineDashboard,
+  },
+  {
+    link: "tickets",
+    href: "/a/tickets/filter/alltickets",
+    component: RiTicket2Line,
+  },
   { link: "contacts", href: "/a/contacts", component: MdPersonOutline },
   { link: "solutions", href: "/a/solutions", component: IoBookOutline },
   { link: "admin", href: "/a/settings", component: MdOutlineSettings },
 ];
 
+const SideBarTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: "#123d52",
+    color: "white",
+    boxShadow: theme.shadows[1],
+    fontSize: 12,
+    textTransform: "capitalize",
+  },
+}));
+
 const Navigation = ({ NavLinks }: any) => {
   const pathname = usePathname();
-  const [isMouseOver, setIsMouseOver] = useState(false);
 
   return (
     <>
@@ -31,40 +51,39 @@ const Navigation = ({ NavLinks }: any) => {
         const isActive = pathname.replace("/a/", "/");
 
         return (
-          <Link
-            className="relative flex"
-            href={link.href}
-            onMouseEnter={() => setIsMouseOver(true)}
-            onMouseLeave={() => setIsMouseOver(false)}
-          >
-            <div
-              className={`${
-                isActive.includes(link.href.replace("/a/", "/"))
-                  ? "bg-[#ffffff2c] text-slate-50"
-                  : "hover:bg-[#ffffff2c] "
-              }    p-2 
-              self-center text-slate-400 text-2xl hover:text-slate-100 rounded-lg `}
-            >
-              <link.component />
-              {isMouseOver}
-            </div>
-            {isMouseOver && link.href.includes(link.link) && (
-              <div className="absolute top-1 z-20 left-full text-[14px] capitalize h-8 p-2  bg-[#123d52] text-white w-auto ">
-                {link.link}
-              </div>
+          <div key={i}>
+            {link.link === "admin" ? (
+              <SideBarTooltip key={i} title="Admin" placement="right-start">
+                <Link className="relative flex" href={link.href}>
+                  <div
+                    className={`${
+                      isActive.includes(link.href.replace("/a/", "/"))
+                        ? "bg-[#ffffff2c] text-slate-50"
+                        : "hover:bg-[#ffffff2c] "
+                    }    p-2 
+             self-center text-slate-400 text-2xl hover:text-slate-100 rounded-lg `}
+                  >
+                    <link.component />
+                  </div>
+                </Link>
+              </SideBarTooltip>
+            ) : (
+              <SideBarTooltip key={i} title={link.link} placement="left-end">
+                <Link className="relative flex" href={link.href}>
+                  <div
+                    className={`${
+                      isActive.includes(link.href.replace("/a/", "/"))
+                        ? "bg-[#ffffff2c] text-slate-50"
+                        : "hover:bg-[#ffffff2c] "
+                    }    p-2 
+         self-center text-slate-400 text-2xl hover:text-slate-100 rounded-lg `}
+                  >
+                    <link.component />
+                  </div>
+                </Link>
+              </SideBarTooltip>
             )}
-            {isMouseOver && link.link === "dashboard" && (
-              <div className="absolute top-1 z-20 left-full text-[14px] capitalize h-8 p-2 bg-[#123d52] text-white w-auto md:transition duration-200 ease-out ">
-                Dashboard
-                {isMouseOver}
-              </div>
-            )}{" "}
-            {isMouseOver && link.link === "admin" && (
-              <div className="absolute top-1 z-20 left-full text-[14px] capitalize h-8 p-2 bg-[#123d52] text-white ">
-                admin
-              </div>
-            )}
-          </Link>
+          </div>
         );
       })}
     </>
@@ -73,9 +92,9 @@ const Navigation = ({ NavLinks }: any) => {
 
 const SideBar = () => {
   return (
-    <div className="sticky top-0  bg-[#123d52] h-screen flex flex-col gap-5 w-[60px]">
+    <div className="sticky top-0  bg-[#123d52] h-screen flex flex-col gap-5 w-[50px]">
       <Link
-        href={"/a"}
+        href={"/a/dashboard/default"}
         className=" bg-[#082433] w-full justify-items-center p-2 "
       >
         <Image
@@ -87,8 +106,8 @@ const SideBar = () => {
         />
       </Link>
       <div className="flex flex-col  gap-8 pt-8 px-1">
-        {NavLinks.map((Navlink) => (
-          <Navigation NavLinks={[Navlink]} />
+        {NavLinks.map((Navlink, i) => (
+          <Navigation NavLinks={[Navlink]} key={i} />
         ))}
       </div>
     </div>

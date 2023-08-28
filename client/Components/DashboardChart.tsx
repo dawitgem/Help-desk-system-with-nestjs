@@ -1,3 +1,4 @@
+"use client";
 import * as React from "react";
 import { LineChart } from "@mui/x-charts/LineChart";
 
@@ -14,22 +15,40 @@ const xLabels = [
   22, 23,
 ];
 
-export default function DashBoar() {
+export function Chart() {
   return (
     <div className="p-5 bg-white  rounded-md ">
       <p className="text-sm text-gray-900">Today's trend</p>
       <p className="text-[12px] text-gray-500">as of 25th Aug 2023,8:30 PM</p>
-      <div className="flex gap-5">
-        <LineChart
-          width={750}
-          height={300}
-          series={[
-            { data: pData, label: "today", color: "#0ea2c7" },
-            { data: uData, label: "yesterday", color: "#575f61" },
-          ]}
-          xAxis={[{ scaleType: "point", data: xLabels }]}
-        />
-      </div>
+
+      <LineChart
+        width={750}
+        height={300}
+        series={[
+          { data: pData, label: "today", color: "#0ea2c7" },
+          { data: uData, label: "yesterday", color: "#575f61" },
+        ]}
+        xAxis={[{ scaleType: "point", data: xLabels }]}
+      />
     </div>
   );
 }
+
+const DashboardChartReport = () => {
+  return (
+    <div className="flex  bg-white rounded-md shadow-sm">
+      <Chart />
+      <div className="pt-20 flex flex-col gap-5">
+        <div className="border-l-4 p-3 flex flex-col">
+          <h1 className="text-xl text-gray-600">Received</h1>
+          <h1 className="self-center text-2xl text-gray-400">0</h1>
+        </div>
+        <div className="border-l-4 p-3 flex flex-col">
+          <h1 className="text-xl text-gray-600">Resolved</h1>
+          <h1 className="self-center text-2xl text-gray-400">0</h1>
+        </div>
+      </div>
+    </div>
+  );
+};
+export default DashboardChartReport;

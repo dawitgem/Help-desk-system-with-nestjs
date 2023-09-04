@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "KNS Support Service",
-  description: "The reliable Support Software",
+  description: "Reliable Support Service Software",
 };
 
 export default function RootLayout({

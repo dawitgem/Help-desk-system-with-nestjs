@@ -25,7 +25,11 @@ const NavLinks = [
     href: "/a/tickets/filter/alltickets",
     component: RiTicket2Line,
   },
-  { link: "contacts", href: "/a/contacts", component: MdPersonOutline },
+  {
+    link: "contacts",
+    href: "/a/contacts/filter/allcontacts",
+    component: MdPersonOutline,
+  },
   { link: "solutions", href: "/a/solutions", component: IoBookOutline },
   { link: "admin", href: "/a/settings", component: MdOutlineSettings },
 ];

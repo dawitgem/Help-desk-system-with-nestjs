@@ -18,6 +18,7 @@ model Users {
   Password      String
   Image         String?
   UserType      String
+  About         String?                @db.LongText
   Sessions      UserSession[]
   Tickets       Tickets[]
   TicketHistory TicketHistory[]

@@ -12,6 +12,7 @@ import React, { Dispatch, SetStateAction, useState } from "react";
 import { BsChevronDown } from "react-icons/bs";
 import { MdOutlineMail, MdPersonAddAlt } from "react-icons/md";
 import { PiPulseDuotone } from "react-icons/pi";
+import AgentPageTicketsFilterForm from "./AgentPageTicketsFilterForm";
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
@@ -36,10 +37,9 @@ const AgentPageFetchedTickets = ({
   checked,
   tickets,
 }: AgentPageFetchedTicketProp) => {
-  console.log(checked);
   return (
-    <div className="flex gap-2 w-full">
-      <div className="flex flex-col gap-2 flex-[3] p-4 w-full">
+    <div className="flex gap-2 w-full ">
+      <div className="flex flex-col gap-2 flex-[3] p-4 w-full h-[calc(100vh-112px)] overflow-auto">
         {tickets.map((ticket, i) => (
           <div
             key={i}
@@ -117,7 +117,7 @@ const AgentPageFetchedTickets = ({
           </div>
         ))}
       </div>
-      <div className="flex flex-col flex-[1] bg-white border">come on </div>
+      <AgentPageTicketsFilterForm />
     </div>
   );
 };

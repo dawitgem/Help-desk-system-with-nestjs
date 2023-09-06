@@ -31,7 +31,7 @@ const NavLinks = [
     component: MdPersonOutline,
   },
   { link: "solutions", href: "/a/solutions", component: IoBookOutline },
-  { link: "admin", href: "/a/settings", component: MdOutlineSettings },
+  { link: "admin", href: "/a/admin", component: MdOutlineSettings },
 ];
 
 const SideBarTooltip = styled(({ className, ...props }: TooltipProps) => (

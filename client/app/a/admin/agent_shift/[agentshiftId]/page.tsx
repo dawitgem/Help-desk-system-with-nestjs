@@ -1,4 +1,5 @@
 "use client";
+import AgentList from "@/Components/AgentList";
 import AgentShiftForm from "@/Components/AgentShiftForm";
 import NavbarAgent from "@/Components/NavbarAgent";
 import Link from "next/link";
@@ -15,8 +16,8 @@ const AgentShiftPage = () => {
   return (
     <div>
       <NavbarAgent currentPage="Admin" />
-      <div className="p-5 ">
-        <div className="bg-white p-10 h-[calc(100vh-120px)] overflow-auto rounded-md shadow-sm flex flex-col gap-5">
+      <div className="p-2 ">
+        <div className="bg-white p-10 h-[calc(100vh-75px)] overflow-auto rounded-md shadow-sm flex flex-col gap-5">
           <h1 className="text-gray-700 text-xl font-semibold">Shift Name</h1>
           <div className="flex gap-5 border-b">
             <button
@@ -45,7 +46,7 @@ const AgentShiftPage = () => {
             </button>
           </div>
           <div className="mt-5 ">
-            {isGeneral ? <AgentShiftForm /> : <>come on man</>}
+            {isGeneral ? <AgentShiftForm /> : <AgentList />}
           </div>
         </div>
       </div>

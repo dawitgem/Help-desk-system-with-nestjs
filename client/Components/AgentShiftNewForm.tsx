@@ -1,5 +1,8 @@
-import React, { useState } from "react";
+import Image from "next/image";
+import React, { FormEvent, FormEventHandler, useState } from "react";
 import { MdContentCopy } from "react-icons/md";
+import NoAgentPic from "@/public/asset/NoAgentAdded.svg";
+import AddAgentModal from "./AddAgentModal";
 
 const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const weekday = [
@@ -12,28 +15,46 @@ const weekday = [
   "Sunday",
 ];
 
-const AgentShiftForm = () => {
+const AgentShiftNewForm = () => {
+  const [OpenModal, setOpenModal] = useState(false);
+  const [shiftName, setShiftName] = useState("");
+  const [alert, setAlert] = useState(false);
   const [startTime, setStartTime]: any = useState(
     weekday.map((day) => "8:30 AM")
   );
   const [EndTime, setEndTime] = useState(weekday.map((day) => "5:30 PM"));
+  const [Agent, setAgent]: any = useState([]);
   const [isSelected, setIsSelected] = useState(
     weekdays.map((day) => {
       if (day === "Sun" || day === "Sat") return false;
       else return true;
     })
   );
-  console.log(startTime);
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    if (shiftName === "") setAlert(true);
+    else {
+      setAlert(false);
+      setShiftName("");
+    }
+  };
+  console.log(startTime, EndTime);
+
   return (
     <div>
-      <form action="" className="flex flex-col gap-5">
+      <form action="" className="flex flex-col gap-5" onSubmit={handleSubmit}>
         <label htmlFor="" className="text-sm text-gray-700">
           Shift Name
         </label>
         <input
           type="text"
-          defaultValue={"shift name"}
-          className="py-1 px-2 w-1/2 text-sm font-medium text-gray-700 border rounded-md hover:border-black outline-blue-600 "
+          placeholder="shift name"
+          className={`py-1 px-2 w-1/2 text-sm font-medium text-gray-700 border rounded-md ${
+            alert
+              ? "border-red-600 outline-none"
+              : "hover:border-black outline-blue-600 "
+          } `}
+          onChange={(e) => setShiftName(e.target.value)}
         />
         <label htmlFor="" className="text-md text-gray-800 font-medium">
           Select Working Days
@@ -73,7 +94,7 @@ const AgentShiftForm = () => {
         <label htmlFor="" className="text-sm text-gray-600">
           Enter shit timings
         </label>
-        <div className="flex flex-col relative gap-5 border-b pb-5">
+        <div className="flex flex-col relative gap-5  pb-5">
           {weekday.map((day, i) => (
             <div className="flex gap-20 relative" key={i}>
               <label
@@ -136,6 +157,32 @@ const AgentShiftForm = () => {
             <p className="self-center "> Copy to all</p>
           </button>
         </div>
+        <label className="text-md text-gray-700 font-medium">
+          Associate agents
+        </label>
+        <div className="ml-4 w-[400px] h-[300px] border border-gray-300 rounded shadow-md">
+          {Agent ? (
+            <div className="flex flex-col gap-5">
+              <Image
+                src={NoAgentPic}
+                alt="No Agent Added"
+                className=" mt-16 self-center "
+              />
+              <p className="self-center text-sm text-gray-700 ">
+                No agent added yet!{" "}
+              </p>
+              <button
+                className="self-center p-2 border rounded-md bg-slate-50 text-sm text-gray-700 shadow-sm"
+                type="button"
+                onClick={() => setOpenModal(true)}
+              >
+                Add agents
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col"> </div>
+          )}
+        </div>
         <div className="p-10 flex gap-2 self-center">
           <button
             className="text-sm text-gray-700 p-1 px-2 border bg-slate-50 rounded-md shadow-sm"
@@ -144,16 +191,20 @@ const AgentShiftForm = () => {
           >
             Cancel
           </button>
-          <button
-            className="bg-[#123e54] text-sm text-white p-1 px-2 border rounded-md shadow-sm cursor-not-allowed opacity-70"
-            disabled={true}
-          >
-            Save Changes
+          <button className="bg-[#123e54] text-sm text-white p-1 px-2 border rounded-md shadow-sm ">
+            Create Shifts
           </button>
         </div>
       </form>
+      {OpenModal && (
+        <AddAgentModal
+          open={OpenModal}
+          setAgent={setAgent}
+          setOpen={setOpenModal}
+        />
+      )}
     </div>
   );
 };
 
-export default AgentShiftForm;
+export default AgentShiftNewForm;

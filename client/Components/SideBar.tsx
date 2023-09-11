@@ -43,6 +43,8 @@ const SideBarTooltip = styled(({ className, ...props }: TooltipProps) => (
     boxShadow: theme.shadows[1],
     fontSize: 12,
     textTransform: "capitalize",
+    alignSelf: "center",
+    justifySelf: "center",
   },
 }));
 

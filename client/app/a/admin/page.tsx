@@ -26,25 +26,25 @@ const SettingPage = () => {
           </div>
           <Link
             href={"/a/admin/agents"}
-            className="flex flex-col gap-1 hover:bg-slate-100 hover:rounded-md p-5"
+            className="flex flex-col gap-1 hover:bg-slate-100 hover:rounded-md p-5 "
           >
             <div className="flex gap-5">
               <GoPerson className="text-3xl text-gray-600" />
-              <p className="text-md text-gray-700 font-semibold self-center">
+              <p className="text-md text-gray-700 font-semibold self-center hover:text-blue-600">
                 Agents
               </p>
             </div>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 ">
               Define agents scope, department and other details
             </p>
           </Link>{" "}
           <Link
             href={"/a/admin/departments"}
-            className="flex flex-col gap-1 hover:bg-slate-100 hover:rounded-md p-5"
+            className="flex flex-col gap-1 hover:bg-slate-100 hover:rounded-md p-5 "
           >
             <div className="flex gap-5">
               <HiOutlineUserGroup className="text-3xl text-gray-600" />
-              <p className="text-md text-gray-700 font-semibold self-center">
+              <p className="text-md text-gray-700 font-semibold self-center  hover:text-blue-600">
                 Departments
               </p>
             </div>
@@ -54,14 +54,14 @@ const SettingPage = () => {
           </Link>
           <Link
             href={"/a/admin/roles"}
-            className="flex flex-col gap-1 hover:bg-slate-100 hover:rounded-md p-5"
+            className="flex flex-col gap-1 hover:bg-slate-100 hover:rounded-md p-5 "
           >
             <div className="flex gap-5">
               <div className="flex">
                 <GoPerson className="text-3xl text-gray-600" />
                 <IoSettingsOutline className="text-xl text-green-500  border-2 border-white mt-4 ml-[-6px] rounded-full" />
               </div>
-              <p className="text-md text-gray-700 font-semibold self-center">
+              <p className="text-md text-gray-700 font-semibold self-center hover:text-blue-600">
                 Roles and Permission
               </p>
             </div>
@@ -71,14 +71,14 @@ const SettingPage = () => {
           </Link>{" "}
           <Link
             href={"/a/admin/agent_shift"}
-            className="flex flex-col gap-1 hover:bg-slate-100 hover:rounded-md p-5"
+            className="flex flex-col gap-1 hover:bg-slate-100 hover:rounded-md p-5 "
           >
             <div className="flex gap-5">
               <div className="flex">
                 <GoPerson className="text-3xl text-gray-600" />
                 <BiTime className="text-xl text-green-500  border-2 border-white mt-4 ml-[-6px] rounded-full" />
               </div>
-              <p className="text-md text-gray-700 font-semibold self-center">
+              <p className="text-md text-gray-700 font-semibold self-center hover:text-blue-600">
                 Agents shift
               </p>
             </div>
@@ -87,15 +87,15 @@ const SettingPage = () => {
             </p>
           </Link>{" "}
           <Link
-            href={""}
-            className="flex flex-col gap-1 hover:bg-slate-100 hover:rounded-md p-5"
+            href={"/a/admin/account"}
+            className="flex flex-col gap-1 hover:bg-slate-100 hover:rounded-md p-5 "
           >
             <div className="flex gap-5">
               <div className="flex">
                 <RiAccountBoxLine className="text-3xl text-gray-600" />
                 <BsInfoCircle className="text-xl text-green-500  border-2 border-white mt-4 ml-[-6px] rounded-full" />
               </div>
-              <p className="text-md text-gray-700 font-semibold self-center">
+              <p className="text-md text-gray-700 font-semibold self-center hover:text-blue-600">
                 Account's Details
               </p>
             </div>

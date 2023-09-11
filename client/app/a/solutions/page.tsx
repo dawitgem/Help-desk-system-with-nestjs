@@ -41,11 +41,11 @@ const SolutionPage = () => {
           />
         </div>
         <div className="self-center flex shadow-sm   bg-[#184e6a] text-slate-50 h-8 rounded-[7px]">
-          <button className="self-center flex gap-1 bg-[#184e6a] hover:bg-[#194256]  p-1 rounded-l-[7px] ">
-            <BsPlus className="text-2xl" />
+          <button className="self-center flex gap-1 bg-[#184e6a] hover:bg-[#194256]  p-1 rounded-l-[7px] text-sm">
+            <BsPlus className="text-lg" />
             New Article
           </button>
-          <button className="border border-[#0e1c31]   p-1 bg-[#184e6a] hover:bg-[#194256] rounded-r-[7px] h-full">
+          <button className="border border-[#0e1c31]   p-1 bg-[#184e6a] hover:bg-[#194256] rounded-r-[7px] h-full text-sm">
             <BsFillCaretDownFill />
           </button>
         </div>

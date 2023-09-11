@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="96px" height="96px" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 56.3 (81716) - https://sketch.com -->
+    <title>No agent added (create shift)</title>
+    <desc>Created with Sketch.</desc>
+    <g id="No-agent-added-(create-shift)" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="associate_agent">
+            <path d="M49.293913,0 C7.86365217,0 -5.45947826,20.1516522 1.94504348,44.4271304 C10.2928696,71.8413913 -6.01878261,76.608 10.8187826,90.4737391 C24.8848696,102.052174 49.6612174,88.32 66.1064348,94.5307826 C77.3593043,98.7881739 93.9046957,87.4017391 95.1151304,70.9398261 C96.2170435,55.8469565 83.7704348,55.4963478 87.026087,38.7172174 C90.9078261,18.6573913 90.7241739,0 49.293913,0" id="Path" fill="#F5F7F9" fill-rule="nonzero"></path>
+            <path d="M23.5158261,43.6925217 L32.064,7.68 C32.259888,6.84998603 32.7792592,6.13262981 33.5066415,5.68742168 C34.2340238,5.24221354 35.1091279,5.10605468 35.9373913,5.30921739 L65.0295652,12.4466087 L73.8782609,25.536 L69.5624348,44.736" id="Path" stroke="#97A8AF" stroke-width="0.834782609" fill="#FFFFFF" fill-rule="nonzero" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2.237217521667481"></path>
+            <polygon id="Path" stroke="#97A8AF" stroke-width="0.834782609" fill="#EBEFF3" fill-rule="nonzero" stroke-linecap="round" stroke-linejoin="round" points="65.3885217 12.7721739 63.1012174 23.5826087 73.6612174 25.4942609"></polygon>
+            <path d="M13.5902609,35.8956522 L13.5902609,78.9954783 C13.5902609,80.8396291 15.0852405,82.3346087 16.9293913,82.3346087 L70.3554783,82.3346087 C72.1996291,82.3346087 73.6946087,80.8396291 73.6946087,78.9954783 L73.6946087,41.472 C73.6946087,39.6278492 72.1996291,38.1328696 70.3554783,38.1328696 L44.0848696,38.1328696 L36.4966957,32.5565217 C36.4966957,32.5565217 24.7095652,32.5565217 16.8876522,32.5565217 C15.0598221,32.5793714 13.5902609,34.0676793 13.5902609,35.8956522 Z" id="Path" stroke="#97A8AF" stroke-width="0.834782609" fill="#EBEFF3" fill-rule="nonzero" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M35.4114783,20.402087 L58.8605217,26.1871304" id="Path" stroke="#B8BFC1" stroke-width="0.834782609" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M34.0674783,25.9283478 L40.1613913,27.3725217" id="Path" stroke="#B8BFC1" stroke-width="0.834782609" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M42.4987826,27.9652174 L61.682087,32.6483478" id="Path" stroke="#B8BFC1" stroke-width="0.834782609" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M36.3547826,14.7756522 L54.6949565,19.0998261" id="Path" stroke="#B8BFC1" stroke-width="0.834782609" stroke-linecap="round" stroke-linejoin="round"></path>
+            <circle id="Oval" fill="#DCE1E5" fill-rule="nonzero" cx="43.7008696" cy="61.824" r="13.1895652"></circle>
+            <g id="Group" opacity="0.57" transform="translate(61.773913, 47.582609)" fill="#97A8AF" fill-rule="nonzero">
+                <ellipse id="Oval" cx="10.4598261" cy="9.80869565" rx="9.74191304" ry="9.54991304"></ellipse>
+            </g>
+            <circle id="Oval" stroke="#97A8AF" stroke-width="0.834782609" fill="#DAE2E5" fill-rule="nonzero" stroke-linecap="round" stroke-linejoin="round" cx="74.0452174" cy="57.4831304" r="9.2493913"></circle>
+            <path d="M76.608,54.9286957 L71.5074783,60.0292174" id="Path" stroke="#FFFFFF" stroke-width="1.08521739" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M71.5074783,54.9286957 L76.608,60.0292174" id="Path" stroke="#FFFFFF" stroke-width="1.08521739" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M33.4330435,69.2368696 C33.4330435,63.7189565 37.8657391,59.9958261 43.3836522,59.9958261 L43.7426087,59.9958261 C49.2605217,59.9958261 54.0688696,63.6104348 54.0688696,69.1283478 C54.0688696,69.1283478 50.3206957,74.2372174 43.8511304,74.2372174 C37.3815652,74.2372174 33.4330435,69.2368696 33.4330435,69.2368696 Z" id="Path" stroke="#91A2B2" stroke-width="0.834782609" fill="#FFFFFF" fill-rule="nonzero"></path>
+            <circle id="Oval" stroke="#91A2B2" stroke-width="0.834782609" fill="#FFFFFF" fill-rule="nonzero" cx="43.5088696" cy="52.2156522" r="5.70156522"></circle>
+        </g>
+    </g>
+</svg>

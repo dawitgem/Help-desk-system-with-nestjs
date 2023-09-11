@@ -15,7 +15,10 @@ const AgentPage = () => {
   };
   return (
     <div>
-      <NavbarAgent currentPage="Agents" />
+      <NavbarAgent
+        currentPage="Agents"
+        link={{ name: "Admin", href: "/a/admin" }}
+      />
       <div className="p-5  ">
         <div className="p-10 bg-white flex flex-col gap-5 ">
           <div className="flex justify-between">

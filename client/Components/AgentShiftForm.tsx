@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import React, { FormEvent, useState } from "react";
 import { MdContentCopy } from "react-icons/md";
 
 const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -13,6 +14,8 @@ const weekday = [
 ];
 
 const AgentShiftForm = () => {
+  const router = useRouter();
+  const [shiftName, setShiftName] = useState("shift name");
   const [startTime, setStartTime]: any = useState(
     weekday.map((day) => "8:30 AM")
   );
@@ -23,17 +26,35 @@ const AgentShiftForm = () => {
       else return true;
     })
   );
-  console.log(startTime);
+  const [Disabled, setDisabled] = useState(true);
+  const [alert, setAlert] = useState(false);
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    if (shiftName === "") setAlert(true);
+    else {
+      setAlert(false);
+      setShiftName("");
+    }
+  };
   return (
     <div>
-      <form action="" className="flex flex-col gap-5">
+      <form action="" className="flex flex-col gap-5" onSubmit={handleSubmit}>
         <label htmlFor="" className="text-sm text-gray-700">
           Shift Name
         </label>
         <input
           type="text"
-          defaultValue={"shift name"}
-          className="py-1 px-2 w-1/2 text-sm font-medium text-gray-700 border rounded-md hover:border-black outline-blue-600 "
+          value={shiftName}
+          className={`py-1 px-2 w-1/2 text-sm font-medium text-gray-700 border rounded-md ${
+            alert
+              ? "border-red-600 outline-none"
+              : "hover:border-black outline-blue-600 "
+          } `}
+          onChange={(e) => {
+            setShiftName(e.target.value);
+            setDisabled(false);
+          }}
         />
         <label htmlFor="" className="text-md text-gray-800 font-medium">
           Select Working Days
@@ -49,6 +70,7 @@ const AgentShiftForm = () => {
               }`}
               type="button"
               onClick={() => {
+                setDisabled(false);
                 setIsSelected(
                   isSelected.map((select, s) => {
                     if (s == i) select = !select;
@@ -93,6 +115,7 @@ const AgentShiftForm = () => {
                       const newStartTime = [...startTime];
                       newStartTime[i] = e.target.value;
                       setStartTime(newStartTime);
+                      setDisabled(false);
                     }}
                   />
                 </div>
@@ -108,6 +131,7 @@ const AgentShiftForm = () => {
                       const newEndTime = [...EndTime];
                       newEndTime[i] = e.target.value;
                       setEndTime(newEndTime);
+                      setDisabled(false);
                     }}
                   />
                 </div>
@@ -140,13 +164,15 @@ const AgentShiftForm = () => {
           <button
             className="text-sm text-gray-700 p-1 px-2 border bg-slate-50 rounded-md shadow-sm"
             type="button"
-            disabled={false}
+            onClick={() => router.push("/a/admin/agent_shift")}
           >
             Cancel
           </button>
           <button
-            className="bg-[#123e54] text-sm text-white p-1 px-2 border rounded-md shadow-sm cursor-not-allowed opacity-70"
-            disabled={true}
+            className={`bg-[#123e54] text-sm text-white p-1 px-2 border rounded-md shadow-sm ${
+              Disabled && "opacity-70 cursor-not-allowed"
+            }`}
+            disabled={Disabled}
           >
             Save Changes
           </button>

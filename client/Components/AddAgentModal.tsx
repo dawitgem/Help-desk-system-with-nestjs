@@ -7,21 +7,22 @@ import {
   Select,
   SelectChangeEvent,
 } from "@mui/material";
-import { Agent } from "http";
-import React, { Dispatch, FormEvent, SetStateAction, useState } from "react";
-import avatar from "@/public/asset/download.png";
-import Link from "next/link";
+import React, { Dispatch, SetStateAction, useState } from "react";
+import AgentInfo from "./AgentInfo";
 
 interface AddAgentModalProps {
   open: boolean;
-  setAgent: Dispatch<SetStateAction<string[]>>;
+  checked: boolean[];
+  setChecked: Dispatch<SetStateAction<boolean[]>>;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
-
-const Agents = [1, 2, 3, 4, 5];
-const AddAgentModal = ({ open, setAgent, setOpen }: AddAgentModalProps) => {
+const AddAgentModal = ({
+  open,
+  setChecked,
+  checked,
+  setOpen,
+}: AddAgentModalProps) => {
   const [dept, setDept] = useState("5");
-  const [checked, setChecked] = useState(Agents.map((agent) => false));
   return (
     <div>
       <Backdrop
@@ -68,7 +69,7 @@ const AddAgentModal = ({ open, setAgent, setOpen }: AddAgentModalProps) => {
                     All agents
                   </p>
                 </div>
-                {Agents.map((agent, i) => (
+                {checked.map((agent, i) => (
                   <div className="flex gap-2 hover:bg-slate-50 py-2">
                     <Checkbox
                       checked={checked[i]}
@@ -81,27 +82,9 @@ const AddAgentModal = ({ open, setAgent, setOpen }: AddAgentModalProps) => {
                         )
                       }
                       inputProps={{ "aria-label": "controlled" }}
-                      className="text-gray-200"
+                      className="text-gray-200 text-sm"
                     />
-                    <Avatar
-                      variant="square"
-                      src={avatar}
-                      alt="image"
-                      className="w-[30px] h-[30px] bg-slate-400 rounded-md shadow-md"
-                    >
-                      N
-                    </Avatar>
-                    <div className="flex flex-col ">
-                      <Link
-                        href={"/a/admin/agents/dawit"}
-                        className="text-sm text-gray-700 font-medium hover:text-blue-500 "
-                      >
-                        AgentName
-                      </Link>
-                      <p className="text-sm text-gray-500 ">
-                        agentemail@gmail.com
-                      </p>
-                    </div>
+                    <AgentInfo />
                   </div>
                 ))}
               </div>
@@ -115,30 +98,8 @@ const AddAgentModal = ({ open, setAgent, setOpen }: AddAgentModalProps) => {
                 }, 0)}
                 )
               </p>
-              {Agents.map((agent, i) => {
-                console.log(checked[i]);
-                if (checked[i])
-                  return (
-                    <div className="flex gap-2 hover:bg-slate-50 py-2">
-                      <Avatar
-                        variant="square"
-                        src={avatar}
-                        alt="image"
-                        className="w-[30px] h-[30px] bg-slate-400 rounded-md shadow-md"
-                      >
-                        N
-                      </Avatar>
-                      <div className="flex flex-col ">
-                        <Link
-                          href={"/a/admin/agents/dawit"}
-                          className="text-sm text-gray-700 font-medium hover:text-blue-500 "
-                        >
-                          AgentName
-                        </Link>
-                      </div>
-                    </div>
-                  );
-                <div>come on man</div>;
+              {checked.map((agent, i) => {
+                if (checked[i]) return <AgentInfo />;
               })}
             </div>
           </div>
@@ -150,7 +111,12 @@ const AddAgentModal = ({ open, setAgent, setOpen }: AddAgentModalProps) => {
             >
               Cancel
             </button>
-            <button className=" bg-[#123e54] text-sm text-white p-2 px-2 border rounded-md shadow-sm ">
+            <button
+              className=" bg-[#123e54] text-sm text-white p-2 px-2 border rounded-md shadow-sm "
+              onClick={() => {
+                setOpen(false);
+              }}
+            >
               Add to shift
             </button>
           </div>

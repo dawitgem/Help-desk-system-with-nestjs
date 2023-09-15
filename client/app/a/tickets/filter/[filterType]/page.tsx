@@ -18,7 +18,7 @@ const FilterTicketPage = () => {
   return (
     <div>
       <NavbarAgent currentPage="All tickets" />
-      <div className="sticky z-10 top-14 p-4 h-14 bg-slate-50 border flex justify-between">
+      <div className="sticky z-[1] top-14 p-4 h-14 bg-slate-50 border flex justify-between">
         <div className="flex justify-between">
           <div className="flex gap-3">
             <FormControlLabel

@@ -85,6 +85,7 @@ import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import AgentInfo from "@/Components/AgentInfo";
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
 const BootstrapTooltip = styled(({ className, ...props }: TooltipProps) => (
@@ -136,20 +137,7 @@ const FetchedAgents = () => {
               className="bg-white hover:bg-slate-50 "
             >
               <StyledTableCell component="th" scope="row">
-                <div className="flex gap-2 align-middle">
-                  <div className="self-center w-[30px] h-[30px] rounded-lg bg-slate-400">
-                    {/* <Image src="" alt="profilepic" /> */}
-                  </div>
-                  <Link
-                    href={"/a/admin/agents/dawit"}
-                    className="self-center text-gray-700 md:font-semibold text-sm hover:text-blue-700 flex flex-col"
-                  >
-                    <h1>Agent name</h1>
-                    <p className="text-[12px] text-gray-600 font-normal">
-                      agent email
-                    </p>
-                  </Link>
-                </div>
+                <AgentInfo />
               </StyledTableCell>
               <StyledTableCell align="left">
                 Account adminstrator
@@ -164,23 +152,3 @@ const FetchedAgents = () => {
     </TableContainer>
   );
 };
-
-const rows = [
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-  createData("Eclair", 262, 16.0, 24, 6.0),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-];

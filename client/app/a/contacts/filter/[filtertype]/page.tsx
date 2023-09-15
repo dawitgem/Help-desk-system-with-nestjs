@@ -19,8 +19,14 @@ const ContactsFilterPage = () => {
   );
   return (
     <div>
-      <NavbarAgent currentPage="All contacts" />
-      <div className="sticky z-10 top-14 p-4 h-14 bg-slate-50 border flex justify-between">
+      <NavbarAgent
+        currentPage="All contacts"
+        link={[
+          { name: "admin", href: "" },
+          { name: "admin", href: "" },
+        ]}
+      />
+      <div className="sticky z-[1] top-14 p-4 h-14 bg-slate-50 border flex justify-between">
         <div className="flex justify-between">
           <div className="flex gap-3 justify-center align-middle">
             <FormControlLabel
@@ -35,9 +41,9 @@ const ContactsFilterPage = () => {
                     "& .MuiSvgIcon-root": {
                       border: "none",
                       fontSize: 18,
-                      color: "green",
                     },
                   }}
+                  className=" text-gray-300 text-sm"
                 />
               }
             />

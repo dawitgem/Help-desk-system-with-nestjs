@@ -31,7 +31,7 @@ const SolutionPage = () => {
   return (
     <div>
       <NavbarAgent currentPage="Knowledge base" />
-      <div className="sticky z-10 top-14 p-4 h-14 bg-slate-50  border flex justify-between shadow-sm">
+      <div className="sticky z-[1] top-14 p-4 h-14 bg-slate-50  border flex justify-between shadow-sm">
         <div className="flex border h-8 bg-white  gap-1 :outline-blue-500 rounded-md hover:border-gray-900 relative">
           <BsSearch className="text-[13px] absolute left-1 top-2 text-gray-500" />
           <input

@@ -1,5 +1,6 @@
 "use client";
 import {
+  Avatar,
   Checkbox,
   FormControlLabel,
   Tooltip,
@@ -39,15 +40,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({}));
 
-function createData(
-  name: string,
-  calories: number,
-  fat: number,
-  carbs: number,
-  protein: number
-) {
-  return { name, calories, fat, carbs, protein };
-}
+const rows = [1, 2, 3, 4, 5, 6];
 interface FetchedContactsProps {
   setChecked: Dispatch<SetStateAction<boolean[]>>;
   checked: boolean[];
@@ -71,10 +64,7 @@ const FetchedContacts = ({
         </TableHead>
         <TableBody>
           {rows.map((row, i) => (
-            <StyledTableRow
-              key={row.name}
-              className="bg-white hover:bg-slate-50 "
-            >
+            <StyledTableRow key={i} className="bg-white hover:bg-slate-50 ">
               <StyledTableCell component="th" scope="row">
                 <div className="flex gap-2 align-middle">
                   <FormControlLabel
@@ -82,11 +72,11 @@ const FetchedContacts = ({
                     control={
                       <Checkbox
                         checked={checked[i]}
+                        className="text-gray-300 text-sm"
                         sx={{
                           "& .MuiSvgIcon-root": {
                             border: "none",
                             fontSize: 18,
-                            color: "green",
                           },
                         }}
                         onChange={(event) =>
@@ -100,9 +90,13 @@ const FetchedContacts = ({
                       />
                     }
                   />
-                  <div className="self-center w-[40px] h-[40px] rounded-lg bg-slate-400">
-                    {/* <Image src="" alt="profilepic" /> */}
-                  </div>
+                  <Avatar
+                    variant="square"
+                    alt="image"
+                    className="w-[40px] h-[40px] bg-slate-400 rounded-md shadow-md"
+                  >
+                    N
+                  </Avatar>
                   <Link
                     href={""}
                     className="self-center text-gray-900 font-bold text-sm hover:text-blue-700"
@@ -128,25 +122,5 @@ const FetchedContacts = ({
     </TableContainer>
   );
 };
-
-const rows = [
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-  createData("Eclair", 262, 16.0, 24, 6.0),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-];
 
 export default FetchedContacts;

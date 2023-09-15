@@ -10,9 +10,9 @@ import { IoCube } from "react-icons/io5";
 
 const AgentPage = () => {
   return (
-    <div>
+    <div className="">
       <NavbarAgent currentPage="My dashboard" />
-      <div className="sticky z-10 top-14 p-4 h-14 bg-slate-50 border flex justify-between">
+      <div className="sticky z-[1] top-14 p-4 h-14 bg-slate-50 border flex justify-between">
         <div className="flex gap-3">
           <IoCube className="self-center text-gray-500" />
           <button className="self-center flex gap-2">

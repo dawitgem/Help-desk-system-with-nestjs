@@ -98,7 +98,7 @@ const Navigation = ({ NavLinks }: any) => {
 
 const SideBar = () => {
   return (
-    <div className="sticky top-0  bg-[#123d52] h-screen flex flex-col gap-5 w-[50px]">
+    <div className="sticky top-0  bg-[#123d52] h-screen flex flex-col gap-5 w-[50px] z-30">
       <Link
         href={"/a/dashboard/default"}
         className=" bg-[#082433] w-full justify-items-center p-2 "

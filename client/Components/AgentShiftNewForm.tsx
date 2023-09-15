@@ -3,6 +3,8 @@ import React, { FormEvent, FormEventHandler, useState } from "react";
 import { MdContentCopy } from "react-icons/md";
 import NoAgentPic from "@/public/asset/NoAgentAdded.svg";
 import AddAgentModal from "./AddAgentModal";
+import { useRouter } from "next/navigation";
+import AgentInfo from "./AgentInfo";
 
 const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const weekday = [
@@ -14,8 +16,10 @@ const weekday = [
   "Saturday",
   "Sunday",
 ];
-
+const Agents = [1, 2, 3, 4, 5];
 const AgentShiftNewForm = () => {
+  const [checked, setChecked] = useState(Agents.map((agent) => false));
+  const router = useRouter();
   const [OpenModal, setOpenModal] = useState(false);
   const [shiftName, setShiftName] = useState("");
   const [alert, setAlert] = useState(false);
@@ -23,7 +27,6 @@ const AgentShiftNewForm = () => {
     weekday.map((day) => "8:30 AM")
   );
   const [EndTime, setEndTime] = useState(weekday.map((day) => "5:30 PM"));
-  const [Agent, setAgent]: any = useState([]);
   const [isSelected, setIsSelected] = useState(
     weekdays.map((day) => {
       if (day === "Sun" || day === "Sat") return false;
@@ -38,8 +41,6 @@ const AgentShiftNewForm = () => {
       setShiftName("");
     }
   };
-  console.log(startTime, EndTime);
-
   return (
     <div>
       <form action="" className="flex flex-col gap-5" onSubmit={handleSubmit}>
@@ -82,7 +83,6 @@ const AgentShiftNewForm = () => {
             </button>
           ))}
           <p className="self-center text-gray-500">
-            {" "}
             (
             {isSelected.reduce((count, currentValue, c) => {
               if (currentValue === true) count++;
@@ -160,8 +160,30 @@ const AgentShiftNewForm = () => {
         <label className="text-md text-gray-700 font-medium">
           Associate agents
         </label>
-        <div className="ml-4 w-[400px] h-[300px] border border-gray-300 rounded shadow-md">
-          {Agent ? (
+        <div className="ml-4 w-[400px] h-[300px] border border-gray-300 rounded shadow-md overflow-auto">
+          {checked.includes(true) ? (
+            <div className="flex flex-col p-5">
+              <div className="flex justify-between p-2 border-b">
+                <p className="text-sm text-gray-500 ">
+                  {checked.reduce((count: number, currentValue: boolean) => {
+                    if (currentValue) count++;
+                    return count;
+                  }, 0)}{" "}
+                  Agent
+                </p>
+                <button
+                  className="textx-blue-700 text-sm hover:underline"
+                  type="button"
+                  onClick={() => setOpenModal(true)}
+                >
+                  Manage agents
+                </button>
+              </div>
+              {checked.map((agent, i) => {
+                if (checked[i]) return <AgentInfo />;
+              })}
+            </div>
+          ) : (
             <div className="flex flex-col gap-5">
               <Image
                 src={NoAgentPic}
@@ -179,15 +201,13 @@ const AgentShiftNewForm = () => {
                 Add agents
               </button>
             </div>
-          ) : (
-            <div className="flex flex-col"> </div>
           )}
         </div>
         <div className="p-10 flex gap-2 self-center">
           <button
             className="text-sm text-gray-700 p-1 px-2 border bg-slate-50 rounded-md shadow-sm"
             type="button"
-            disabled={false}
+            onClick={() => router.push("/a/admin/agent_shift")}
           >
             Cancel
           </button>
@@ -199,7 +219,8 @@ const AgentShiftNewForm = () => {
       {OpenModal && (
         <AddAgentModal
           open={OpenModal}
-          setAgent={setAgent}
+          checked={checked}
+          setChecked={setChecked}
           setOpen={setOpenModal}
         />
       )}

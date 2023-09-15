@@ -6,13 +6,15 @@ import { BsTrash } from "react-icons/bs";
 
 const shifts = [1, 2, 3, 4, 5, 6];
 
-const AgentShiftPage = () => {
+const AgentShiftsPage = () => {
   const [isMouseOver, setIsMouseOver] = useState(shifts.map((shift) => false));
-  console.log(isMouseOver);
 
   return (
     <div>
-      <NavbarAgent currentPage="Admin" />
+      <NavbarAgent
+        currentPage="Agent shifts"
+        link={{ name: "Admin", href: "/a/admin" }}
+      />
       <div className="p-5 ">
         <div className="bg-white p-10 h-[calc(100vh-120px)] overflow-auto rounded-md shadow-sm flex flex-col gap-5">
           <div className="flex flex-col gap-10 p-5">
@@ -88,4 +90,4 @@ const AgentShiftPage = () => {
   );
 };
 
-export default AgentShiftPage;
+export default AgentShiftsPage;

@@ -30,7 +30,7 @@ const ArticlePage = () => {
   return (
     <div>
       <NavbarAgent currentPage="Knowledge base" />
-      <div className="sticky z-10 top-14 px-10 py-[8px] h-14 bg-slate-50  border  shadow-sm">
+      <div className="sticky z-[1] top-14 px-10 py-[8px] h-14 bg-slate-50  border  shadow-sm">
         <div className="float-right flex gap-4">
           <button className=" px-8 h-8 text-sm text-gray-600 border border-slate-300 bg-[#ffffffd6] hover:bg-slate-50 rounded-md shadow-sm">
             Edit

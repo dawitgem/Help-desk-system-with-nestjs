@@ -2,15 +2,9 @@
 import AgentList from "@/Components/AgentList";
 import AgentShiftForm from "@/Components/AgentShiftForm";
 import NavbarAgent from "@/Components/NavbarAgent";
-import Link from "next/link";
 import React, { useState } from "react";
-import { BsTrash } from "react-icons/bs";
-
-const shifts = [1, 2, 3, 4, 5, 6];
 
 const AgentShiftPage = () => {
-  const [isMouseOver, setIsMouseOver] = useState(shifts.map((shift) => false));
-  console.log(isMouseOver);
   const [isGeneral, setIsGeneral] = useState(true);
 
   return (

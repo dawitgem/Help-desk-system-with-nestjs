@@ -53,7 +53,7 @@ const AccountPage = () => {
           </div>
         </div>
       </div>
-      {open && <EditAccountDetail Open={open} setOpen={setOpen} />}
+      {open && <EditAccountDetail open={open} setOpen={setOpen} />}
     </div>
   );
 };

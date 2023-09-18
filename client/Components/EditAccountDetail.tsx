@@ -6,11 +6,11 @@ import { IoPersonOutline, IoSettingsOutline } from "react-icons/io5";
 import { Dispatch, FormEvent, SetStateAction, useState } from "react";
 
 interface EditAccountProps {
-  Open: boolean;
+  open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function EditAccountDetail({ Open, setOpen }: EditAccountProps) {
+export default function EditAccountDetail({ open, setOpen }: EditAccountProps) {
   const [disabled, setDisabled] = useState(true);
   const [alertError, setAlertError] = useState([false, false, false]);
   const [firstName, setFirstName] = useState("Abebe");

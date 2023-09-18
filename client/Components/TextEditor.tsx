@@ -18,7 +18,6 @@ const TextEditor = () => {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          console.log(e);
         }}
         className="bg-white rounded-lg shadow-lg md:p-10 p-2 flex flex-col gap-5"
       >

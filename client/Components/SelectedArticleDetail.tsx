@@ -9,7 +9,7 @@ const SelectedArticleDetail = () => {
         className="border bg-slate-50 p-2 flex gap-3 rounded-lg"
         onClick={() => {
           const printwindow = window.open("", "_blank");
-          const printContent =
+          const printContent: any =
             document.getElementById("printContent")?.textContent;
           printwindow?.document.write(printContent);
           printwindow?.document.close();

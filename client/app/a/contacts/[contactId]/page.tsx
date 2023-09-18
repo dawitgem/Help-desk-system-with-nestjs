@@ -25,17 +25,6 @@ const ContactDetailPage = ({ params }: { params: { contactId: string } }) => {
           <BiTrash className="self-center" />
           <p className="self-center">Delete</p>
         </button>
-        <button className="border border-gray-300 bg-white px-5 text-sm hover:bg-slate-50 text-gray-700 rounded-md shadow-sm font-medium h-8 flex gap-2 align-middle justify-self-center">
-          <BiTrash className="self-center" />
-          <p className="self-center">Delete</p>
-        </button>
-        <button className="border border-gray-300 bg-white px-5 text-sm hover:bg-slate-50 text-gray-700 rounded-md shadow-sm font-medium h-8 flex gap-3 align-middle justify-self-center">
-          <BiTrash className="self-center" />
-          <p className="self-center">Delete</p>
-        </button>
-        <button className="border border-gray-300 bg-slate-50 px-5 text-sm text-gray-700 rounded-md shadow-sm font-medium h-8 flex gap-3 align-middle justify-self-center">
-          edit
-        </button>
       </div>
       <div className="p-3 flex gap-5">
         <div className="flex-1">

@@ -1,68 +1,21 @@
 "use client";
 import NavbarAgent from "@/Components/NavbarAgent";
-import React, { useMemo, useState } from "react";
-import { Tooltip, TooltipProps, styled, tooltipClasses } from "@mui/material";
+import React, { useMemo } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { CgShortcut } from "react-icons/cg";
 import Editor from "@/Components/Editor";
 import { BsEye, BsInfoCircle } from "react-icons/bs";
 import { BiDislike, BiLike } from "react-icons/bi";
-import {
-  TbLayoutSidebarLeftCollapse,
-  TbLayoutSidebarRightCollapse,
-} from "react-icons/tb";
-
-const label = { inputProps: { "aria-label": "Checkbox demo" } };
-
-const BootstrapTooltip = styled(({ className, ...props }: TooltipProps) => (
-  <Tooltip {...props} arrow classes={{ popper: className }} />
-))(({ theme }) => ({
-  [`& .${tooltipClasses.arrow}`]: {
-    color: "#123d52",
-  },
-  [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: "#123d52",
-  },
-}));
 
 const TicketPage = ({ params }: { params: { ticketId: string } }) => {
-  console.log(params.ticketId);
   return (
     <div>
       <NavbarAgent
         currentPage={params.ticketId}
         link={[{ name: "All tickets", href: "/a/tickets/filter/alltickets" }]}
       />
-      <div className="sticky z-[1] top-14 px-10 py-[8px] h-14 bg-slate-50  border  shadow-sm">
-        <div className="flex gap-4">
-          <button className=" px-8 h-8 text-sm text-gray-600 border border-slate-300 bg-[#ffffffd6] hover:bg-slate-50 rounded-md shadow-sm">
-            Edit
-          </button>
-          <BootstrapTooltip title="View in portal" placement="bottom">
-            <Link
-              href={"/support/solutions/articles/153000004168-title"}
-              className="p-2 h-8  border border-slate-300 bg-[#ffffffd6] hover:bg-slate-50 rounded-md shadow-sm"
-            >
-              <CgShortcut className="text-gray-600" />
-            </Link>
-          </BootstrapTooltip>
-          <BootstrapTooltip
-            title={`${"Analytics Collapse"}`}
-            placement="bottom"
-          >
-            <button className="p-2 h-8  border border-slate-300 bg-[#ffffffd6] hover:bg-slate-50 rounded-md shadow-sm">
-              {/* <TbLayoutSidebarLeftCollapse className="text-gray-600" /> */}
-              <TbLayoutSidebarRightCollapse className="text-gray-600" />
-            </button>
-          </BootstrapTooltip>
-        </div>
-      </div>
-      <div className="flex gap-4">
-        <Article />
-        <ArticleDetail />
-        <ArticleAnalytics />
-      </div>
+      <div className="sticky z-[1] top-14 px-10 py-[8px] h-14 bg-slate-50  border  shadow-sm"></div>
+      <div className="flex gap-4"></div>
     </div>
   );
 };

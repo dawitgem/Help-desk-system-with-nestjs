@@ -11,6 +11,10 @@ import { BiSearch } from "react-icons/bi";
 import { AiOutlineRight } from "react-icons/ai";
 import Link from "next/link";
 import { Avatar } from "@mui/material";
+import NewDropDownMenu from "./NewDropDownMenu";
+import SearchModal from "./SearchModal";
+import NotificationModal from "./NotificationModal";
+import AgentProfileModal from "./AgentProfileModal";
 
 interface NavbarAgentProps {
   currentPage: string;
@@ -150,7 +154,7 @@ const NavbarAgent = ({ currentPage, link, setAction }: NavbarAgentProps) => {
                 N
               </Avatar>
             </button>
-            {IsProfileModalOpen && <ProfileModal />}
+            {IsProfileModalOpen && <AgentProfileModal />}
           </div>
         </div>
       </div>
@@ -160,157 +164,3 @@ const NavbarAgent = ({ currentPage, link, setAction }: NavbarAgentProps) => {
 
 export default NavbarAgent;
 const emails = ["username@gmail.com", "user02@gmail.com"];
-
-function NewDropDownMenu() {
-  return (
-    <ul className="p-4 bg-white w-[180px] h-[150px] border border-gray-400 rounded-[5px] opacity-100 z-[40] shadow-md  absolute top-8 right-0">
-      <li className="p-1 hover:bg-slate-100">
-        <Link
-          href={"/a/tickets/new"}
-          className="w-52 text-gray-700 text-sm font-medium  p-2"
-        >
-          New Ticket
-        </Link>
-      </li>{" "}
-      <li className="p-1 hover:bg-slate-100">
-        <Link
-          href={"/a/tickets/new"}
-          className="w-52 text-gray-700 text-sm font-medium hover:bg-slate-100 p-2"
-        >
-          New Contact
-        </Link>
-      </li>{" "}
-      <li className="p-1 hover:bg-slate-100">
-        <Link
-          href={"/a/tickets/new"}
-          className="w-52 text-gray-700 text-sm font-medium hover:bg-slate-100 p-2"
-        >
-          New Email
-        </Link>
-      </li>
-    </ul>
-  );
-}
-
-const RecentlySearched: string[] = [];
-function SearchModal() {
-  const options = [
-    { label: "All", value: "all" },
-    { label: "Tickets", value: "tickets" },
-    { label: "Contacts", value: "contacts" },
-    { label: "Solutions", value: "solutions" },
-  ];
-  const [SelectedSearchValue, setSelectedSearchValue] = useState("all");
-  console.log(RecentlySearched);
-
-  return (
-    <div className="w-[500px] max-h-[400px]  bg-slate-50  rounded-[5px] opacity-100 z-[40] shadow-md  absolute top-0 right-0 flex flex-col gap-2">
-      <form className="relative w-full h-10 bg-white ">
-        <BsSearch className="absolute top-3 left-2 rounded-md" />
-        <input
-          type="text"
-          className="p-2 border hover:border-black outline-blue-600 w-full px-10 rounded-md placeholder:text-sm placeholder:space-x-1 text-gray-700"
-          placeholder="Search Tickets , Contacts and Solutions"
-          autoFocus
-          onChange={(e) => {
-            RecentlySearched.push(e.target.value);
-            if (RecentlySearched.length > 5) RecentlySearched.pop();
-          }}
-        />
-      </form>
-      <div className="w-full max-h-full   bg-white border rounded-md p-2 flex flex-col gap-5">
-        <div className="flex gap-2 px-5 py-2 border-b">
-          {options.map((option) => (
-            <button
-              key={option.label}
-              className={`text-sm rounded-full border px-[9px] py-[7px] ${
-                SelectedSearchValue.includes(option.value)
-                  ? "bg-[#0000fffd] text-white transition-colors duration-75 ease-in"
-                  : "bg-inherit text-gray-700"
-              }`}
-              onClick={() => setSelectedSearchValue(option.value)}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
-        {RecentlySearched.length != 0 && (
-          <>
-            <div className="flex justify-between px-5">
-              <p className="text-sm text-gray-500">Recently searched</p>
-              <button
-                className="text-blue-600 hover:underline text-sm"
-                onClick={() => (RecentlySearched.length = 0)}
-              >
-                Clear
-              </button>
-            </div>
-
-            <div className="flex flex-col gap-1">
-              {RecentlySearched.map((search: string, i: number) => (
-                <div key={i} className="flex gap-1 hover:bg-slate-100 p-3">
-                  <BsSearch className="self-center" />
-                  <Link href={""} className="text-sm text-gray-700">
-                    {search}
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
-
-const notification = false;
-
-function NotificationModal() {
-  return (
-    <div className=" bg-white w-[350px]  border rounded-[5px] opacity-100 z-[40] shadow-md  absolute top-8 right-0 flex flex-col gap-2">
-      <div className="p-4 text-gray-700 text-sm w-full bg-slate-100">
-        <p>Notifications</p>
-      </div>
-      <div className="bg-white min-h-[200px] flex flex-col align-middle justify-center">
-        {notification ? (
-          <div></div>
-        ) : (
-          <p className="self-center justify-self-center text-sm text-gray-600">
-            No notification yet
-          </p>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function ProfileModal() {
-  return (
-    <div className=" bg-white w-[250px] h-[250px] border rounded-[5px] opacity-100 z-[40] shadow-md  absolute top-[38px] right-0 flex flex-col gap-2">
-      <div className="bg-slate-100 p-4 border-b flex flex-col gap-1">
-        <h3 className="text-md text-gray-700 font-medium">Agent Name</h3>
-        <p className="text-sm text-gray-500">agentEmail@gmail.com</p>
-      </div>
-      <div className="p-4 flex flex-col gap-1">
-        <Link
-          href={"/a/profile/dawit"}
-          className="text-sm p-2 text-gray-700 font-medium hover:bg-slate-100 "
-        >
-          Profile setting
-        </Link>
-        <Link
-          href={"/support"}
-          className="text-sm p-2 text-gray-700 font-medium hover:bg-slate-100 "
-        >
-          Go to customer Portal
-        </Link>
-        <Link
-          href={"/"}
-          className="text-sm p-2 text-gray-700 font-medium hover:bg-slate-100 "
-        >
-          Sign out
-        </Link>
-      </div>
-    </div>
-  );
-}

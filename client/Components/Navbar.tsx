@@ -32,7 +32,7 @@ const Navigation = ({ NavLinks }: any) => {
   );
 };
 const Navbar = () => {
-  const user = true;
+  const user = false;
   return (
     <div className="md:p-0 p-4">
       <nav className="hidden lg:block">

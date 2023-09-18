@@ -90,9 +90,8 @@ function BasicSelect() {
   return (
     <div className="h-[calc(100vh-112px-54px-30px)] overflow-auto">
       {Categories.map((category, i) => (
-        <>
+        <div key={i}>
           <div
-            key={i}
             className="relative hover:bg-slate-50 "
             onMouseEnter={() =>
               setIsHover(
@@ -201,7 +200,7 @@ function BasicSelect() {
               ))}
             </div>
           )}
-        </>
+        </div>
       ))}
     </div>
   );

@@ -147,7 +147,7 @@ const NavbarAgent = ({ currentPage, link, setAction }: NavbarAgentProps) => {
               }}
             >
               <Avatar
-                variant="square"
+                variant="circular"
                 alt="image"
                 className="w-[35px] h-[35px] bg-slate-400 rounded-full shadow-md"
               >

@@ -10,7 +10,7 @@ import { BsFillFileEarmarkTextFill } from "react-icons/bs";
 import Link from "next/link";
 
 const Home = () => {
-  const user = false;
+  const user = true;
 
   return (
     <>

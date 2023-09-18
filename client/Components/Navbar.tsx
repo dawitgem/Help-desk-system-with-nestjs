@@ -4,6 +4,7 @@ import Link from "next/link";
 import React from "react";
 import { CgMenuRight } from "react-icons/cg";
 import { usePathname } from "next/navigation";
+import { Avatar } from "@mui/material";
 
 const Navigation = ({ NavLinks }: any) => {
   const pathname = usePathname();
@@ -32,7 +33,7 @@ const Navigation = ({ NavLinks }: any) => {
   );
 };
 const Navbar = () => {
-  const user = false;
+  const user = true;
   return (
     <div className="md:p-0 p-4">
       <nav className="hidden lg:block">
@@ -57,7 +58,14 @@ const Navbar = () => {
                   Submit ticket
                 </Link>
               </li>
-              <button className="w-[50px] h-[50px]  rounded-full bg-slate-500"></button>
+              <button className="w-[50px] h-[50px]  rounded-full bg-slate-500">
+                <Avatar
+                  variant="circular"
+                  className="w-full h-full bg-slate-400 rounded-full shadow-md"
+                >
+                  N
+                </Avatar>
+              </button>
             </>
           ) : (
             <>

@@ -12,7 +12,7 @@ const DepartmentsPage = () => {
     <div>
       <NavbarAgent
         currentPage="Departments"
-        link={{ name: "Admin", href: "/a/admin" }}
+        link={[{ name: "Admin", href: "/a/admin" }]}
       />
       <div className="p-5  ">
         <div className="p-10 bg-white flex flex-col gap-5 ">

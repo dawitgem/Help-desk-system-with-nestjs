@@ -79,7 +79,7 @@ const NavbarAgent = ({ currentPage, link, setAction }: NavbarAgentProps) => {
             {link && (
               <>
                 {link.map(({ href, name }: any) => (
-                  <div className="flex gap-2">
+                  <div className="flex gap-2" key={href}>
                     <Link
                       href={href}
                       className="text-blue-600 font-medium self-center hover:underline"

@@ -21,7 +21,7 @@ const TicketPage = ({ params }: { params: { ticketId: string } }) => {
 };
 
 export default TicketPage;
-export const modules = {
+const modules = {
   toolbar: [],
 };
 

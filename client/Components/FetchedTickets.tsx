@@ -36,6 +36,7 @@ const FetchedTickets = () => {
         <div className="hidden md:flex bg-white p-10  justify-end  gap-5">
           {options.map((option, i) => (
             <Autocomplete
+              key={i}
               className="w-[20%] "
               disablePortal
               id="combo-box-demo"

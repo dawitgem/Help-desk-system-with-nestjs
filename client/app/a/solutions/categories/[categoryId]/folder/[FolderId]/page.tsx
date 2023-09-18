@@ -250,6 +250,7 @@ function DataTable() {
       <div className="bg-white flex flex-col h-[calc(100vh-112px-54px-30px)] overflow-auto">
         {folder1.map((folder, i) => (
           <div
+            key={i}
             className="p-3 px-12  relative flex justify-between gap-5  hover:bg-slate-50"
             onMouseEnter={() =>
               setIsArticleHover(

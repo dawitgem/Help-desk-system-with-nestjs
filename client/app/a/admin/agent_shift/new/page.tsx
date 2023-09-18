@@ -12,7 +12,7 @@ const NewAgentShiftPage = () => {
   return (
     <div>
       <NavbarAgent
-        link={{ name: "Admin", href: "/a/admin" }}
+        link={[{ name: "Admin", href: "/a/admin" }]}
         currentPage="Agent shifts"
       />
       <div className="p-2 ">

@@ -70,7 +70,7 @@ const AddAgentModal = ({
                   </p>
                 </div>
                 {checked.map((agent, i) => (
-                  <div className="flex gap-2 hover:bg-slate-50 py-2">
+                  <div key={i} className="flex gap-2 hover:bg-slate-50 py-2">
                     <Checkbox
                       checked={checked[i]}
                       onChange={(e: any) =>

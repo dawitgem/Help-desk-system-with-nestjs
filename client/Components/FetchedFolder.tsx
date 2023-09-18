@@ -8,8 +8,11 @@ interface FetchedFolderProps {
 const FetchedFolder = ({ Folders }: FetchedFolderProps) => {
   return (
     <div className="md:p-20 p-8 flex flex-col gap-5">
-      {Folders.map((folder: any) => (
-        <div className="md:p-10 bg-white shadow-lg rounded-lg flex flex-col gap-2 overflow-x-clip w-[90%]">
+      {Folders.map((folder: any, i: number) => (
+        <div
+          key={i}
+          className="md:p-10 bg-white shadow-lg rounded-lg flex flex-col gap-2 overflow-x-clip w-[90%]"
+        >
           <div className="flex gap-5 md:pl-10 pl-2 py-5">
             <BsFolder2Open className="text-3xl text-gray-500" />
 
@@ -22,8 +25,9 @@ const FetchedFolder = ({ Folders }: FetchedFolderProps) => {
           </div>
           <div className="flex gap-5 sm:pl-20 py-4">
             <div className="flex flex-col gap-3 divide-y w-full">
-              {folder.article.map((article: any) => (
+              {folder.article.map((article: any, c: number) => (
                 <Link
+                  key={c}
                   href={"./articles/230840293"}
                   className="text-blue-600 hover:text-black flex gap-4 p-3"
                 >

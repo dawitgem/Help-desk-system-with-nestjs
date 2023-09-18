@@ -64,7 +64,8 @@ const ArticlePage = () => {
 };
 
 export default ArticlePage;
-export const modules = {
+
+const modules = {
   toolbar: [],
 };
 

@@ -98,10 +98,10 @@ const FetchedContacts = ({
                     N
                   </Avatar>
                   <Link
-                    href={""}
-                    className="self-center text-gray-900 font-bold text-sm hover:text-blue-700"
+                    href={"/a/contacts/123"}
+                    className="self-center text-gray-900 font-semibold text-sm hover:text-blue-700"
                   >
-                    Ticket Subject
+                    contact name
                   </Link>
                 </div>
               </StyledTableCell>

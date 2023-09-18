@@ -17,7 +17,7 @@ const AgentPage = () => {
     <div>
       <NavbarAgent
         currentPage="Agents"
-        link={{ name: "Admin", href: "/a/admin" }}
+        link={[{ name: "Admin", href: "/a/admin" }]}
       />
       <div className="p-5  ">
         <div className="p-10 bg-white flex flex-col gap-5 ">
@@ -118,6 +118,7 @@ function createData(
   return { name, calories, fat, carbs, protein };
 }
 
+const rows = [1, 2, 3, 4];
 const FetchedAgents = () => {
   return (
     <TableContainer className="p-3">
@@ -132,10 +133,7 @@ const FetchedAgents = () => {
         </TableHead>
         <TableBody>
           {rows.map((row, i) => (
-            <StyledTableRow
-              key={row.name}
-              className="bg-white hover:bg-slate-50 "
-            >
+            <StyledTableRow key={i} className="bg-white hover:bg-slate-50 ">
               <StyledTableCell component="th" scope="row">
                 <AgentInfo />
               </StyledTableCell>

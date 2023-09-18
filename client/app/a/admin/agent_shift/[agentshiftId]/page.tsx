@@ -11,7 +11,7 @@ const AgentShiftPage = () => {
     <div>
       <NavbarAgent
         currentPage="Agent shifts"
-        link={{ name: "Admin", href: "/a/admin" }}
+        link={[{ name: "Admin", href: "/a/admin" }]}
       />
       <div className="p-2 ">
         <div className="bg-white p-10 h-[calc(100vh-75px)] overflow-auto rounded-md shadow-sm flex flex-col gap-5">

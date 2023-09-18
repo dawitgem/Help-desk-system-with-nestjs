@@ -43,8 +43,6 @@ const SideBarTooltip = styled(({ className, ...props }: TooltipProps) => (
     boxShadow: theme.shadows[1],
     fontSize: 12,
     textTransform: "capitalize",
-    alignSelf: "center",
-    justifySelf: "center",
   },
 }));
 
@@ -59,7 +57,7 @@ const Navigation = ({ NavLinks }: any) => {
         return (
           <div key={i}>
             {link.link === "admin" ? (
-              <SideBarTooltip key={i} title="Admin" placement="right-start">
+              <SideBarTooltip key={i} title="Admin" placement="left-end">
                 <Link className="relative flex" href={link.href}>
                   <div
                     className={`${
@@ -75,7 +73,7 @@ const Navigation = ({ NavLinks }: any) => {
               </SideBarTooltip>
             ) : (
               <SideBarTooltip key={i} title={link.link} placement="left-end">
-                <Link className="relative flex" href={link.href}>
+                <Link className=" flex" href={link.href}>
                   <div
                     className={`${
                       isActive.includes(link.href.replace("/a/", "/"))
@@ -98,10 +96,10 @@ const Navigation = ({ NavLinks }: any) => {
 
 const SideBar = () => {
   return (
-    <div className="sticky top-0  bg-[#123d52] h-screen flex flex-col gap-5 w-[50px] z-30">
+    <div className=" bg-[#123d52] h-screen flex flex-col gap-5 w-[65px] z-30">
       <Link
         href={"/a/dashboard/default"}
-        className=" bg-[#082433] w-full justify-items-center p-2 "
+        className=" bg-[#082433] w-full justify-items-center p-3 "
       >
         <Image
           src={logo}
@@ -111,7 +109,7 @@ const SideBar = () => {
           className="w-[40px] h-[40px] "
         />
       </Link>
-      <div className="flex flex-col  gap-8 pt-8 px-1">
+      <div className="flex flex-col  gap-8 pt-8 px-3">
         {NavLinks.map((Navlink, i) => (
           <Navigation NavLinks={[Navlink]} key={i} />
         ))}

@@ -1,59 +1,66 @@
 "use client";
 import React, {
-  ReactComponentElement,
+  Dispatch,
+  SetStateAction,
   useEffect,
   useRef,
   useState,
 } from "react";
 import { BsBell, BsChevronDown, BsPlusSquare, BsSearch } from "react-icons/bs";
-import { BiFilterAlt, BiMessageAlt, BiSearch } from "react-icons/bi";
-import { CgMenuLeft } from "react-icons/cg";
-import { usePathname } from "next/navigation";
-import { JsxElement } from "typescript";
+import { BiSearch } from "react-icons/bi";
 import { AiOutlineRight } from "react-icons/ai";
 import Link from "next/link";
 import { Avatar } from "@mui/material";
 
 interface NavbarAgentProps {
   currentPage: string;
-  filterComponent?: JsxElement;
+  FilterComponent?: JSX.Element;
   link?: [{ name: string; href: string }] | any;
+  tooltipTitle?: string;
+  setAction?: Dispatch<SetStateAction<boolean>> | any;
 }
+
 const notifcation1 = false;
-const NavbarAgent = ({
-  currentPage,
-  filterComponent,
-  link,
-}: NavbarAgentProps) => {
+const NavbarAgent = ({ currentPage, link, setAction }: NavbarAgentProps) => {
   const [IsNewModalOpen, setIsNewModalOpen] = useState(false);
   const [IsSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [IsProfileModalOpen, setIsProfileModalOpen] = useState(false);
-  const [IsNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
+  const [IsNotificationModalOpen, setIsNotificationModalOpen] =
+    useState<boolean>(false);
 
-  const NewDropDownRef = useRef(null);
-  const SearchModalRef = useRef(null);
-  const ProfileModalRef = useRef(null);
-  const NotificationModalRef = useRef(null);
+  const NewDropDownRef = useRef<HTMLDivElement>(null);
+  const SearchModalRef = useRef<HTMLDivElement>(null);
+  const ProfileModalRef = useRef<HTMLDivElement>(null);
+  const NotificationModalRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (NewDropDownRef.current && !NewDropDownRef.current.contains(e.target))
+      if (
+        NewDropDownRef.current &&
+        !NewDropDownRef.current.contains(e.target as Node)
+      )
         setIsNewModalOpen(false);
 
-      if (SearchModalRef.current && !SearchModalRef.current.contains(e.target))
+      if (
+        SearchModalRef.current &&
+        !SearchModalRef.current.contains(e.target as Node)
+      )
         setIsSearchModalOpen(false);
       if (
         ProfileModalRef.current &&
-        !ProfileModalRef.current.contains(e.target)
+        !ProfileModalRef.current.contains(e.target as Node)
       )
         setIsProfileModalOpen(false);
       if (
         NotificationModalRef.current &&
-        !NotificationModalRef.current.contains(e.target)
+        !NotificationModalRef.current.contains(e.target as Node)
       )
         setIsNotificationModalOpen(false);
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+      handleClickOutside(e);
+    });
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -64,12 +71,6 @@ const NavbarAgent = ({
     <>
       <div className="p-4  sticky  top-0 z-10 h-14 bg-white flex justify-between  ">
         <div className="flex gap-5">
-          {filterComponent && (
-            <button className="bg-slate-100 px-1 py-2 border border-gray-400 rounded-md flex">
-              <BiFilterAlt className="self-center text-gray-500" />
-              <CgMenuLeft className="text-gray-500 text-[10px]" />
-            </button>
-          )}
           <div className="flex gap-2">
             {link && (
               <>
@@ -93,7 +94,10 @@ const NavbarAgent = ({
           <div className="h-full relative" ref={NewDropDownRef}>
             <button
               className="px-2 h-full bg-slate-50 border-gray-400 border rounded-md flex gap-2"
-              onClick={() => setIsNewModalOpen((prevState) => !prevState)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsNewModalOpen((prevState) => !prevState);
+              }}
             >
               <BsPlusSquare className="text-md text-gray-600 self-center" />
               <p className="text-gray-800 text-sm self-center">New</p>
@@ -104,7 +108,10 @@ const NavbarAgent = ({
           <div className="h-full relative" ref={SearchModalRef}>
             <button
               className="px-2 h-full flex border gap-1 rounded-md "
-              onClick={() => setIsSearchModalOpen((prevState) => !prevState)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsSearchModalOpen((prevState) => !prevState);
+              }}
             >
               <BiSearch className="self-center text-gray-600 text-xl" />
               <p className="self-center text-gray-400">Search</p>
@@ -114,9 +121,10 @@ const NavbarAgent = ({
           <div className="h-full relative" ref={NotificationModalRef}>
             <button
               className="relative"
-              onClick={() =>
-                setIsNotificationModalOpen((prevState) => !prevState)
-              }
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsNotificationModalOpen((prevState) => !prevState);
+              }}
             >
               {notifcation1 && (
                 <p className="w-3 h-3 rounded-full bg-red-800 absolute top-0 left-[60%] border-2 border-white"></p>
@@ -129,7 +137,10 @@ const NavbarAgent = ({
           <div className="h-full relative" ref={ProfileModalRef}>
             <button
               className="w-[35px] h-[35px] rounded-full bg-slate-500"
-              onClick={() => setIsProfileModalOpen((prevState) => !prevState)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsProfileModalOpen((prevState) => !prevState);
+              }}
             >
               <Avatar
                 variant="square"
@@ -282,19 +293,19 @@ function ProfileModal() {
       </div>
       <div className="p-4 flex flex-col gap-1">
         <Link
-          href={""}
+          href={"/a/profile/dawit"}
           className="text-sm p-2 text-gray-700 font-medium hover:bg-slate-100 "
         >
           Profile setting
         </Link>
         <Link
-          href={""}
+          href={"/support"}
           className="text-sm p-2 text-gray-700 font-medium hover:bg-slate-100 "
         >
           Go to customer Portal
         </Link>
         <Link
-          href={""}
+          href={"/"}
           className="text-sm p-2 text-gray-700 font-medium hover:bg-slate-100 "
         >
           Sign out

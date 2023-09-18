@@ -29,13 +29,7 @@ const FilterTicketPage = () => {
                   onChange={(event) => {
                     setChecked(tickets.map((ticket) => event.target.checked));
                   }}
-                  sx={{
-                    "& .MuiSvgIcon-root": {
-                      border: "none",
-                      fontSize: 18,
-                      color: "green",
-                    },
-                  }}
+                  className=" text-gray-200"
                 />
               }
             />

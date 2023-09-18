@@ -8,7 +8,9 @@ export default function SupportLayout({
   return (
     <div className="flex w-full bg-slate-100">
       <SideBar />
-      <div className="flex flex-col w-full ">{children}</div>
+      <div className="flex flex-col w-full h-screen overflow-auto ">
+        {children}
+      </div>
     </div>
   );
 }

@@ -52,6 +52,12 @@ const AgentPageFetchedTickets = ({
                   control={
                     <Checkbox
                       checked={checked[i]}
+                      sx={{
+                        "& .MuiSvgIcon-root": {
+                          fontSize: 18,
+                        },
+                      }}
+                      className="text-gray-200"
                       onChange={(event) =>
                         setChecked(
                           checked.map((check: any, c: number) => {
@@ -68,14 +74,17 @@ const AgentPageFetchedTickets = ({
                 </div>
                 <div className="flex flex-col gap-2">
                   <Link
-                    href={""}
+                    href={"/a/tickets/122"}
                     className=" text-gray-900 font-bold text-sm hover:text-blue-700"
                   >
                     Ticket Subject
                   </Link>
                   <div className="flex gap-2">
                     <MdOutlineMail className="self-center text-gray-500 text-sm" />
-                    <Link href={""} className="text-gray-800 text-[13px]">
+                    <Link
+                      href={"/a/contacts/als"}
+                      className="text-gray-800 text-[13px]"
+                    >
                       ContactName
                     </Link>
                     <p className="text-gray-500 text-[13px]">

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { CgMenuRight } from "react-icons/cg";
 import { usePathname } from "next/navigation";
 import { Avatar } from "@mui/material";
@@ -19,9 +19,9 @@ const Navigation = ({ NavLinks }: any) => {
             <Link
               className={`${
                 isActive.includes(link.href.replace("/support/", "/"))
-                  ? "bg-[#186085] text-white"
-                  : "hover:bg-white "
-              } p-4  text-lg`}
+                  ? "bg-[#186085] text-white font-medium text-[17px]"
+                  : "hover:bg-white text-[17px] text-gray-700 font-medium "
+              } p-4  `}
               href={link.href}
             >
               {link.link}
@@ -34,6 +34,23 @@ const Navigation = ({ NavLinks }: any) => {
 };
 const Navbar = () => {
   const user = true;
+  const [openProfileModal, setOpenProfileModal] = useState(false);
+  const ProfilemodalRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        ProfilemodalRef.current &&
+        !ProfilemodalRef.current.contains(e.target as Node)
+      )
+        setOpenProfileModal(false);
+    };
+    document.addEventListener("mousedown", (e: MouseEvent) => {
+      e.stopPropagation();
+      handleClickOutside(e);
+    });
+
+    return document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
   return (
     <div className="md:p-0 p-4">
       <nav className="hidden lg:block">
@@ -53,38 +70,50 @@ const Navbar = () => {
               <li className="mt-4 ">
                 <Link
                   href="/support/tickets/new"
-                  className=" p-3 border  bg-white  rounded-lg"
+                  className=" p-3 border  bg-white  rounded-lg text-gray-700 text-[17px] font-medium"
                 >
                   Submit ticket
                 </Link>
               </li>
-              <button className="w-[50px] h-[50px]  rounded-full bg-slate-500">
-                <Avatar
-                  variant="circular"
-                  className="w-full h-full bg-slate-400 rounded-full shadow-md"
+              <div className="relative " ref={ProfilemodalRef}>
+                <button
+                  className=""
+                  onClick={() => setOpenProfileModal(!openProfileModal)}
                 >
-                  N
-                </Avatar>
-              </button>
+                  <Avatar
+                    variant="square"
+                    className="w-[50px] h-[50px] bg-slate-400 rounded-full shadow-md"
+                  >
+                    N
+                  </Avatar>
+                </button>
+                {openProfileModal && <UserProfileModal />}
+              </div>
             </>
           ) : (
             <>
               <li className="mt-4 ">
                 <Link
                   href="/support/tickets/new"
-                  className=" p-3 border  bg-white  rounded-lg"
+                  className=" p-3 border  bg-white  rounded-lg text-gray-700 text-sm font-medium"
                 >
                   Submit Ticket
                 </Link>
               </li>
               <div className="flex divide-x divide-black gap-3">
                 <li className="mt-4">
-                  <Link className="p-4 text-lg" href={"/support/login"}>
+                  <Link
+                    className="p-4 text-md text-gray-700 font-semibold"
+                    href={"/support/login"}
+                  >
                     Login
                   </Link>
                 </li>
                 <li className="mt-4">
-                  <Link className="p-4 text-lg ml-2" href={"/support/signup"}>
+                  <Link
+                    className="p-4 ml-2 text-md text-gray-700 font-semibold"
+                    href={"/support/signup"}
+                  >
                     Sign up
                   </Link>
                 </li>
@@ -101,3 +130,57 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+function UserProfileModal() {
+  const agent = false;
+  return (
+    <div className="bg-white w-[150px]  absolute top-[72px] right-0 border rounded-md flex flex-col gap-3 z-20">
+      <div className="flex gap-4 p-2 border-b">
+        <Avatar
+          variant="circular"
+          className="w-[30px] h-[30px] bg-slate-400 rounded-full shadow-md"
+        >
+          N
+        </Avatar>
+        <h1 className="text-gray-700 text-sm font-semibold self-center ">
+          User Name
+        </h1>
+      </div>
+      <div className="flex flex-col gap-2">
+        {agent ? (
+          <>
+            {" "}
+            <Link
+              href={"/a/dashboard/default"}
+              className="p-2 text-gray-700 hover:bg-slate-100 text-sm font-semibold"
+            >
+              Dashboard
+            </Link>
+            <Link
+              href={"/a/dashboard/default"}
+              className="p-2 text-gray-700 hover:bg-slate-100 text-sm font-semibold"
+            >
+              MyProfile
+            </Link>
+          </>
+        ) : (
+          <>
+            <Link
+              href={"/support/profile/edit"}
+              className="p-2 text-gray-700 hover:bg-slate-100 text-sm font-semibold"
+            >
+              My profile
+            </Link>
+          </>
+        )}
+
+        <Link
+          href={"/a/dashboard/default"}
+          className="p-2 text-gray-700 hover:bg-slate-100 text-sm font-semibold"
+        >
+          Sign out
+        </Link>
+      </div>
+    </div>
+  );
+}

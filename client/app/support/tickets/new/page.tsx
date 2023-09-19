@@ -9,7 +9,7 @@ const TicketSubmissionPage = () => {
   return (
     <div>
       <div className="bg-[#063750] h-[250px] flex flex-col  gap-40">
-        <div className="bg-[#063750] fixed z-10 md:h-[40px] w-full md:px-20 py-4 md:flex gap-2 justify-between  md:py-10 ">
+        <div className="bg-[#063750] fixed z-[5] md:h-[40px] w-full md:px-20 py-4 md:flex gap-2 justify-between  md:py-10 ">
           <LinkTrack
             Links={[{ link: "Home", href: "./support/" }]}
             currentLink="New ticket..."

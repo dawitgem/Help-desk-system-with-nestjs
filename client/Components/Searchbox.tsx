@@ -1,13 +1,17 @@
 "use client";
-import { Input } from "@mui/material";
+import { CircularProgress, Input } from "@mui/material";
 import { FaSearch } from "react-icons/fa";
 import React, {
   Dispatch,
   FormEvent,
   SetStateAction,
+  Suspense,
   useEffect,
   useRef,
 } from "react";
+const SuspenseComponent = dynamic(() => import("@/Components/LinerProgress"), {
+  suspense: true,
+});
 
 interface SearchboxProps {
   width?: string;
@@ -19,8 +23,8 @@ interface SearchboxProps {
 
 const options = [
   { label: "All", value: "all" },
-  { label: "Articles", value: "articles" },
-  { label: "Tickets", value: "Tickets" },
+  { label: "Articles", value: "solutions" },
+  { label: "Tickets", value: "tickets" },
 ];
 
 const Searchbox = ({
@@ -52,7 +56,7 @@ const Searchbox = ({
 
   const handleSearch = (e: FormEvent) => {
     e.preventDefault();
-    router.push(`/support/search?term=${SearchQuery}`);
+    router.push(`/support/search/${SelecetedSearchType}?term=${SearchQuery}`);
   };
   return (
     <div
@@ -86,6 +90,7 @@ const Searchbox = ({
           <SearchModal
             searchType={SelecetedSearchType}
             setAction={setSelecetedSearchType}
+            searchQuery={SearchQuery}
           />
         )}
       </form>
@@ -100,16 +105,44 @@ import { useState } from "react";
 import { BsSearch } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 import { set } from "firebase/database";
+import axios from "axios";
+import LinearDeterminate from "./LinerProgress";
+import dynamic from "next/dynamic";
 
-const RecentlySearched: string[] = [];
+const RecentlySearched: string[] = ["my self", "her ", "come on"];
 
 interface SearchModalProps {
   searchType: string;
   setAction: Dispatch<SetStateAction<string>>;
+  searchQuery: string;
 }
-function SearchModal({ searchType, setAction }: SearchModalProps) {
+function SearchModal({ searchType, setAction, searchQuery }: SearchModalProps) {
+  const [RecentlySearched, setRecentlySearched]: any = useState([]);
+  const router = useRouter();
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:4000/${searchType}`);
+        const data = await response.data;
+        setData(data);
+        // setRecentlySearched([searchQuery, ...RecentlySearched]);
+        localStorage.setItem(
+          "searchHistory",
+          JSON.stringify([searchQuery, ...RecentlySearched])
+        );
+        const searchHistory = localStorage.getItem("searchHistory");
+        console.log(searchHistory);
+        if (searchHistory) setRecentlySearched(JSON.parse(searchHistory));
+      } catch (e) {
+        console.log("error" + e);
+      }
+    };
+    fetchData();
+  }, [searchQuery]);
+
   return (
-    <div className="w-full max-h-[300px]  overflow-auto bg-slate-50  rounded-[5px] opacity-100 z-[40]   absolute top-[105%] left-0 flex flex-col gap-2">
+    <div className="w-full max-h-[300px]  overflow-auto bg-slate-50  rounded-[5px] opacity-100 z-[5]   absolute top-[105%] left-0 flex flex-col gap-2">
       <div className="w-full  h-full   bg-white border rounded-md p-2 flex flex-col gap-5">
         <div className="flex gap-2 px-5 py-2 border-b">
           {options.map((option) => (
@@ -133,7 +166,10 @@ function SearchModal({ searchType, setAction }: SearchModalProps) {
               <p className="text-sm text-gray-500">Recently searched</p>
               <button
                 className="text-blue-600 hover:underline text-sm"
-                onClick={() => (RecentlySearched.length = 0)}
+                onClick={() => {
+                  localStorage.removeItem("searchHistory");
+                  setRecentlySearched([]);
+                }}
               >
                 Clear
               </button>
@@ -151,6 +187,7 @@ function SearchModal({ searchType, setAction }: SearchModalProps) {
             </div>
           </>
         )}
+        {/* <Suspense fallback={<CircularProgress />}>come on man</Suspense> */}
       </div>
     </div>
   );

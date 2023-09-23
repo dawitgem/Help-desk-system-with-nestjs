@@ -1,32 +1,18 @@
-import Searchbox from "@/Components/Searchbox";
 import { PiStackBold } from "react-icons/pi";
 import { BsFolder2Open, BsFillFileEarmarkTextFill } from "react-icons/bs";
 
 import React from "react";
 import Link from "next/link";
-import LinkTrack from "@/Components/LinkTrack";
+import PageHero from "@/Components/PageHero";
 
 const SolutionsPage = () => {
   return (
     <div className="flex flex-col gap-5">
-      <div className=" bg-[#063750] h-[250px] flex gap-10 justify-between ">
-        <div className="bg-[#063750] fixed z-10 md:h-[40px] w-full md:px-20 md:flex gap-2 justify-between  md:py-10 ">
-          <LinkTrack
-            Links={[{ link: "Home", href: "../support/" }]}
-            currentLink="knowledgebase"
-          />
-          <Searchbox
-            iconstyle="w-[40px]"
-            width="sm:w-[40%] w-[90%] "
-            height="h-[50px]"
-            inputstyle="placeholder:text-md"
-          />
-        </div>
-
-        <h1 className="md:p-32 pt-32 text-white md:text-5xl text-2xl font-bold  self-center ">
-          Knowledge base
-        </h1>
-      </div>
+      <PageHero
+        pageTitle=" Knowledge base"
+        currentLink="knowledgebase"
+        Links={[{ link: "Home", href: "/support/" }]}
+      />
       <div className="md:p-20 p-10 ">
         <div className="md:p-20 bg-white shadow-lg rounded-lg flex flex-col md:gap-2 gap-1 overflow-x-clip">
           <div className="flex md:gap-5 gap-2 border-b p-2 ">

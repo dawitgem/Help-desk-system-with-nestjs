@@ -1,24 +1,37 @@
 import dynamic from "next/dynamic";
-import { useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import "react-quill/dist/quill.snow.css";
 
 interface EditorProps {
   modules: object;
-  readonly?: any;
+  readonly?: boolean;
   style?: string;
+  value?: string;
+  setValue?: Dispatch<SetStateAction<string>>;
 }
 
-const Editor = ({ modules, readonly, style }: EditorProps) => {
-  const [value, setValue] = useState("");
+const Editor = ({ modules, readonly, style, value, setValue }: EditorProps) => {
+  const [input, setInput] = useState("");
   const ReactQuill = useMemo(
     () => dynamic(() => import("react-quill"), { ssr: false }),
     []
   );
 
-  const onChange = (content: any, delta: any, source: any, editor: any) => {
-    setValue(content);
-  };
+  const onChange = (html: any) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+    const imgElements = doc.querySelectorAll("img");
+    const imageInputs: any = [];
 
+    imgElements.forEach((img) => {
+      const src = img.getAttribute("src");
+      const alt = img.getAttribute("alt");
+      imageInputs.push({ src, alt });
+    });
+
+    console.log("Extracted image inputs:", imageInputs);
+  };
+  console.log(readonly);
   return (
     <div className={`${style ? style : "w-[70%]"} w-full`}>
       {readonly ? (
@@ -26,7 +39,7 @@ const Editor = ({ modules, readonly, style }: EditorProps) => {
           modules={modules}
           theme="snow"
           readOnly
-          value={"ticket value"}
+          value={"alskdfjla;skjdf;laksjdfl;kjasdlfkjasldkfj"}
           className="ql-container"
         />
       ) : (

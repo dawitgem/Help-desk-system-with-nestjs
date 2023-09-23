@@ -19,6 +19,9 @@ model Users {
   Image         String?
   UserType      String
   About         String?                @db.LongText
+  CreatedDate   DateTime
+  WorkingPhone  String?
+  MobilePhone   String?
   Sessions      UserSession[]
   Tickets       Tickets[]
   TicketHistory TicketHistory[]

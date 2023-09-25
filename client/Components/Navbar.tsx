@@ -1,10 +1,12 @@
 "use client";
 import Link from "next/link";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { CgMenuRight } from "react-icons/cg";
 import { usePathname } from "next/navigation";
 import { Avatar } from "@mui/material";
+import dawit from "@/public/asset/download.png";
+import Menu from "./Menu";
 
 const Navigation = ({ NavLinks }: any) => {
   const pathname = usePathname();
@@ -34,6 +36,7 @@ const Navigation = ({ NavLinks }: any) => {
 };
 const Navbar = () => {
   const user = true;
+  const [openMenu, setOpenMenu] = useState(false);
   const [openProfileModal, setOpenProfileModal] = useState(false);
   const ProfilemodalRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -51,10 +54,11 @@ const Navbar = () => {
 
     return document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+  useLayoutEffect(() => {}, []);
   return (
     <div className="md:p-0 p-4">
-      <nav className="hidden lg:block">
-        <ul className="flex gap-10 pt-[10px]">
+      <nav className="hidden md:block">
+        <ul className="flex md:gap-10 gap-8 pt-[10px]">
           <Navigation
             NavLinks={[
               { link: "Home", href: "/support" },
@@ -70,7 +74,7 @@ const Navbar = () => {
               <li className="mt-4 ">
                 <Link
                   href="/support/tickets/new"
-                  className=" p-3 border  bg-white  rounded-lg text-gray-700 text-[17px] font-medium"
+                  className=" p-3 border  bg-white  rounded-lg text-gray-700  md:text-md-[17px] text-sm font-medium"
                 >
                   Submit ticket
                 </Link>
@@ -81,8 +85,9 @@ const Navbar = () => {
                   onClick={() => setOpenProfileModal(!openProfileModal)}
                 >
                   <Avatar
-                    variant="square"
-                    className="w-[50px] h-[50px] bg-slate-400 rounded-full shadow-md"
+                    src={dawit.src}
+                    alt="image"
+                    className="w-[50px] h-[50px] bg-slate-400 rounded-full shadow-md object-contain "
                   >
                     N
                   </Avatar>
@@ -122,9 +127,13 @@ const Navbar = () => {
           )}
         </ul>
       </nav>
-      <button className="lg:hidden   text-2xl mt-6   ">
+      <button
+        className="md:hidden   text-2xl mt-6   "
+        onClick={() => setOpenMenu(true)}
+      >
         <CgMenuRight />
       </button>
+      {openMenu && <Menu open={openMenu} setOpen={setOpenMenu} />}
     </div>
   );
 };
@@ -137,7 +146,8 @@ function UserProfileModal() {
     <div className="bg-white w-[150px]  absolute top-[72px] right-0 border rounded-md flex flex-col gap-3 z-20">
       <div className="flex gap-4 p-2 border-b">
         <Avatar
-          variant="circular"
+          src={dawit.src}
+          alt="profile pic"
           className="w-[30px] h-[30px] bg-slate-400 rounded-full shadow-md"
         >
           N

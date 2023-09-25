@@ -20,7 +20,7 @@ const ProfileEditPage = () => {
         Icon={<BsPersonCircle className="md:text-5xl text-2xl text-slate-50" />}
         pageTitle="My profile"
       />
-      <div className=" flex flex-col gap-10 py-10 px-40 ">
+      <div className=" flex flex-col gap-10 md:py-10 md:px-40 p-5 ">
         <div className="flex gap-1 text-sm  font-semibold ">
           <Link
             href={"/support/profile/edit#"}

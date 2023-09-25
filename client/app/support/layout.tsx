@@ -9,10 +9,10 @@ export default function SupportLayout({
   children: React.ReactNode;
 }) {
   return (
-    <Suspense fallback={<CircularProgress />}>
+    <>
       <Header />
       {children}
       <Footer />
-    </Suspense>
+    </>
   );
 }

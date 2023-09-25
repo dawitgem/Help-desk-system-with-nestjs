@@ -2,54 +2,49 @@ import dynamic from "next/dynamic";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import "react-quill/dist/quill.snow.css";
 
+interface ErrorType {
+  issueType: boolean;
+  Email: boolean;
+  Subject: boolean;
+  Discription: boolean;
+}
 interface EditorProps {
   modules: object;
-  readonly?: boolean;
   style?: string;
-  value?: string;
-  setValue?: Dispatch<SetStateAction<string>>;
+  setValue: Dispatch<SetStateAction<string>>;
+  setError: Dispatch<SetStateAction<ErrorType>>;
 }
-
-const Editor = ({ modules, readonly, style, value, setValue }: EditorProps) => {
+const Editor = ({ modules, style, setValue, setError }: EditorProps) => {
   const [input, setInput] = useState("");
   const ReactQuill = useMemo(
     () => dynamic(() => import("react-quill"), { ssr: false }),
     []
   );
 
-  const onChange = (html: any) => {
+  const onChange = (html: string) => {
+    setError((prevState) => {
+      return { ...prevState, Discription: false };
+    });
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, "text/html");
     const imgElements = doc.querySelectorAll("img");
     const imageInputs: any = [];
-
     imgElements.forEach((img) => {
       const src = img.getAttribute("src");
       const alt = img.getAttribute("alt");
       imageInputs.push({ src, alt });
     });
-
-    console.log("Extracted image inputs:", imageInputs);
+    setValue(html);
   };
-  console.log(readonly);
   return (
     <div className={`${style ? style : "w-[70%]"} w-full`}>
-      {readonly ? (
-        <ReactQuill
-          modules={modules}
-          theme="snow"
-          readOnly
-          value={"alskdfjla;skjdf;laksjdfl;kjasdlfkjasldkfj"}
-          className="ql-container"
-        />
-      ) : (
-        <ReactQuill
-          modules={modules}
-          theme="snow"
-          onChange={onChange}
-          placeholder="Type here"
-        />
-      )}
+      <ReactQuill
+        modules={modules}
+        theme="snow"
+        onChange={onChange}
+        placeholder="Type here"
+        id="Discription"
+      />
     </div>
   );
 };

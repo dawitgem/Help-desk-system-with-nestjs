@@ -36,11 +36,11 @@ const TicketIdPage = () => {
             </button>
           </div>
           <div className="pt-12 self-center w-full">
-            <Editor
+            {/* <Editor
               modules={readonlymodules}
               readonly={true}
               style={"w-full"}
-            />
+            /> */}
           </div>
         </div>
       </div>

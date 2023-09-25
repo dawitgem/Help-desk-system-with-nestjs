@@ -78,7 +78,7 @@ const Article = () => {
     <div className="p-4 flex-1 flex flex-col gap-5">
       <div className="bg-white p-10  border-t-4 border-green-800 flex-1 flex flex-col gap-5">
         <h1 className="text-3xl text-gray-800 border-b">Title</h1>
-        <Editor modules={modules} />
+        {/* <Editor modules={modules} /> */}
       </div>
     </div>
   );

@@ -15,7 +15,7 @@ const Page = () => {
         <Image
           src={logo}
           alt="Logo"
-          className="w-[30px] h-[30px] self-center absolute top-[44%] left-[49%]"
+          className="w-[30px] h-[30px] self-center absolute top-[44%] md:left-[49%] left-[45%]"
         />
         <CircularProgress className="self-center w-[80px] h-[80px]" />
 

@@ -7,6 +7,8 @@ import { usePathname } from "next/navigation";
 import { Avatar } from "@mui/material";
 import dawit from "@/public/asset/download.png";
 import Menu from "./Menu";
+import { useSelector } from "react-redux";
+import { selectUser } from "@/app/Redux/features/userSlice";
 
 const Navigation = ({ NavLinks }: any) => {
   const pathname = usePathname();
@@ -35,7 +37,7 @@ const Navigation = ({ NavLinks }: any) => {
   );
 };
 const Navbar = () => {
-  const user = true;
+  const { user, isAuth, error } = useSelector(selectUser);
   const [openMenu, setOpenMenu] = useState(false);
   const [openProfileModal, setOpenProfileModal] = useState(false);
   const ProfilemodalRef = useRef<HTMLDivElement>(null);
@@ -58,7 +60,7 @@ const Navbar = () => {
   return (
     <div className="md:p-0 p-4">
       <nav className="hidden md:block">
-        <ul className="flex md:gap-10 gap-8 pt-[10px]">
+        <ul className="flex lg:gap-8 md:gap-1 pt-[10px]">
           <Navigation
             NavLinks={[
               { link: "Home", href: "/support" },
@@ -74,7 +76,7 @@ const Navbar = () => {
               <li className="mt-4 ">
                 <Link
                   href="/support/tickets/new"
-                  className=" p-3 border  bg-white  rounded-lg text-gray-700  md:text-md-[17px] text-sm font-medium"
+                  className=" lg:w-[80px] w-[20px] px-2 py-3 border  bg-white  rounded-lg text-gray-700  md:text-[15px] text-sm font-medium"
                 >
                   Submit ticket
                 </Link>

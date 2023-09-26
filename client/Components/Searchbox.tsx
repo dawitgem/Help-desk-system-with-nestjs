@@ -61,7 +61,7 @@ const Searchbox = ({
   return (
     <div
       ref={SearchResultRef}
-      className={`md:self-center bg-white relative ${
+      className={`md:self-center bg-white relative md:mt-0 mt-3  ${
         width ? width : "md:w-[40%]"
       } ${
         height ? height : "md:h-[60px] h-[40px]"
@@ -81,9 +81,9 @@ const Searchbox = ({
         />
         <button>
           <BsSearch
-            className={`text-xl text-gray-400 bg-slate-200 ${
-              iconstyle ? iconstyle : "md:w-[50px]"
-            } h-full rounded-lg p-4`}
+            className={`text-3xl text-gray-700 bg-slate-200 ${
+              iconstyle ? iconstyle : "md:w-[50px] w-[70px]"
+            } h-full rounded-r-lg p-4`}
           />
         </button>
         {openSearchResult && (

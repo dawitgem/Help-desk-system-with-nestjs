@@ -12,10 +12,16 @@ interface PageHeroProps {
   p?: string;
 }
 
-const PageHero = ({ pageTitle, currentLink, Links, Icon,p }: PageHeroProps) => {
+const PageHero = ({
+  pageTitle,
+  currentLink,
+  Links,
+  Icon,
+  p,
+}: PageHeroProps) => {
   return (
     <div className="bg-[#063750] h-[250px] flex flex-col  gap-40">
-      <div className="bg-[#063750] fixed z-[5] md:h-[40px] w-full md:px-20 py-4 md:flex gap-2 justify-between  md:py-10 ">
+      <div className="bg-[#063750] fixed z-[5] md:h-[40px] w-full md:px-20 px-5 py-4 md:flex gap-2 justify-between  md:py-10 ">
         <LinkTrack Links={Links} currentLink={currentLink} />
 
         <Searchbox
@@ -25,7 +31,7 @@ const PageHero = ({ pageTitle, currentLink, Links, Icon,p }: PageHeroProps) => {
           inputstyle="placeholder:text-md"
         />
       </div>
-      <div className="md:p-32 pt-32 flex gap-5 ">
+      <div className="md:p-32 pt-32 px-5 flex gap-5 ">
         {Icon}
         <div>
           <h1 className="text-white md:text-5xl text-2xl font-bold  overflow-x-clip">

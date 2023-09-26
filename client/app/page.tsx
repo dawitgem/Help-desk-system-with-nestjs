@@ -11,13 +11,13 @@ const Page = () => {
   }, []);
   return (
     <>
-      <Box className="w-full h-screen flex flex-col gap-3 justify-center align-middle relative shadow-lg bg-slate-100">
+      <Box className="w-full h-screen flex flex-col gap-5 justify-center align-middle relative shadow-lg bg-slate-50">
         <Image
           src={logo}
           alt="Logo"
-          className="w-[30px] h-[30px] self-center absolute top-[44%] md:left-[49%] left-[45%]"
+          className="w-[30px] h-[30px] self-center "
         />
-        <CircularProgress className="self-center w-[80px] h-[80px]" />
+        <CircularProgress className="self-center text-3xl  " />
 
         <h1 className="text-3xl text-blue-400 font-black self-center">
           Kns Support Service

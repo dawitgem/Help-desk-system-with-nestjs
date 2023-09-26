@@ -7,7 +7,7 @@ import Link from "next/link";
 const LoginPage = () => {
   return (
     <div className="pt-10 w-full border-t flex justify-center align-middle  ">
-      <div className="bg-white w-1/3 p-6 flex flex-col gap-5 shadow-md rounded-md border">
+      <div className="bg-white md:w-1/3 w-[90%] p-6 flex flex-col gap-5 shadow-md rounded-md border">
         <div className="flex flex-col gap-2">
           <h1 className="text-gray-700 text-2xl font-black">
             {" "}
@@ -70,7 +70,7 @@ const LoginPage = () => {
           Forget your password ?
         </Link>
         <div className="self-center flex gap-1 mt-10">
-          <p className="text-lg font-semibold text-gray-600">
+          <p className="md:text-lg font-semibold text-gray-600">
             Are you an agent ?
           </p>
           <Link

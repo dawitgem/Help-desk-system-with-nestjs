@@ -38,7 +38,7 @@ const Menu = ({ open, setOpen }: MenuProps) => {
             <FaTimes className="text-gray-700 text-2xl self-center" />
           </button>
           <div className="w-full h-full flex flex-col gap-4 bg-white ">
-            {user && (
+            {user ? (
               <div className="bg-slate-100 p-4 h-14">
                 <Avatar
                   src={user?.Profile}
@@ -47,6 +47,23 @@ const Menu = ({ open, setOpen }: MenuProps) => {
                 >
                   N
                 </Avatar>
+              </div>
+            ) : (
+              <div className="flex text-gray-700 text-sm font-medium gap-2 bg-slate-50 p-4 h-14">
+                <Link
+                  href={"/support/login"}
+                  className=""
+                  onClick={() => setOpen(false)}
+                >
+                  Login
+                </Link>
+                <Link
+                  href={"/support/signup"}
+                  className="border-l border-gray-300 px-2"
+                  onClick={() => setOpen(false)}
+                >
+                  signup
+                </Link>
               </div>
             )}
             <div className="bg-white w-full h-full flex flex-col gap-4 px-4 pt-4">

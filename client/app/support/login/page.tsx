@@ -1,13 +1,48 @@
+"use client";
 import Image from "next/image";
-import React from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import FcGoogle from "react-icons/fc";
 import google from "@/public/asset/google.svg";
 import Link from "next/link";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUser, signinSucess } from "@/app/Redux/features/userSlice";
+import { FaTimes } from "react-icons/fa";
 
 const LoginPage = () => {
+  const dispatch = useDispatch();
+  const { isAuth, error } = useSelector(selectUser);
+  const [showError, setShowError] = useState(false);
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [Error, setError] = useState({ email: false, password: false });
+
+  const validateForm = () => {
+    let valid = true;
+    if (!formData.email) {
+      setError((prevState) => ({ ...prevState, ["email"]: false }));
+      valid = false;
+    }
+    if (!formData.password) {
+      setError((prevState) => ({ ...prevState, ["password"]: true }));
+      valid = false;
+    } else setError({ email: false, password: false });
+    return valid;
+  };
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (validateForm()) dispatch(signinSucess(formData));
+    if (error) setShowError(true);
+  };
   return (
-    <div className="pt-10 w-full border-t flex justify-center align-middle  ">
-      <div className="bg-white md:w-1/3 w-[90%] p-6 flex flex-col gap-5 shadow-md rounded-md border">
+    <div className="pt-10 w-full border-t flex flex-col gap-3 justify-center align-middle  ">
+      {error && showError && (
+        <div className="px-2 py-3 flex justify-between bg-red-100 border border-red-400 self-center rounded-md md:w-1/3">
+          <p className="text-red-600 text-sm font-medium">{error}</p>
+          <button onClick={() => setShowError(false)}>
+            <FaTimes className="text-xl self-center text-gray-500" />
+          </button>
+        </div>
+      )}
+      <div className="bg-white md:w-1/3 w-[90%] p-6 flex flex-col gap-5 shadow-md rounded-md border self-center">
         <div className="flex flex-col gap-2">
           <h1 className="text-gray-700 text-2xl font-black">
             {" "}
@@ -23,7 +58,7 @@ const LoginPage = () => {
             </Link>
           </div>
         </div>
-        <form action="" className="flex flex-col gap-3">
+        <form action="" className="flex flex-col gap-3" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-2">
             <label htmlFor="" className="text-gray-600 text-sm font-semibold">
               Email Address
@@ -33,9 +68,26 @@ const LoginPage = () => {
             </label>
             <input
               type="text"
-              className="p-3 text-gray-600 border w-full rounded-md outline-gray-200  placeholder:text-sm "
+              className={`p-3 text-gray-600 border w-full rounded-md ${
+                Error.email
+                  ? "border-red-500 outline-none"
+                  : "outline-gray-200 "
+              }  placeholder:text-sm `}
               placeholder="Your Email Address"
+              onChange={(e) => {
+                setFormData((prevState) => {
+                  return { ...prevState, ["email"]: e.target.value };
+                });
+              }}
+              onFocus={() => {
+                if (!formData.password)
+                  setError({ email: false, password: true });
+                else setError({ ...Error, email: false });
+              }}
             />
+            {Error.email && (
+              <p className="text-red-600 text-[12px]">This field is required</p>
+            )}
           </div>
           <div className="flex flex-col gap-2">
             <label htmlFor="" className="text-gray-600 text-sm font-semibold">
@@ -46,9 +98,25 @@ const LoginPage = () => {
             </label>
             <input
               type="text"
-              className="p-3 text-gray-600 border w-full rounded-md outline-gray-200  placeholder:text-sm "
+              className={`p-3 text-gray-600 border w-full rounded-md ${
+                Error.password
+                  ? "border-red-500 outline-none"
+                  : "outline-gray-200 "
+              }  placeholder:text-sm `}
               placeholder="password"
+              onChange={(e) => {
+                setFormData((prevState) => {
+                  return { ...prevState, ["password"]: e.target.value };
+                });
+              }}
+              onFocus={() => {
+                if (!formData.email) setError({ email: true, password: false });
+                else setError({ ...Error, password: false });
+              }}
             />
+            {Error.password && (
+              <p className="text-red-600 text-[12px]">This field is required</p>
+            )}
           </div>
           <button className="bg-[#063750] text-white p-3 text-sm rounded-md">
             Log in
@@ -57,7 +125,10 @@ const LoginPage = () => {
         <p className="self-center text-[12px] text-gray-500">
           ... or login with
         </p>
-        <button className=" w-[75%] self-center bg-[#2260b7fa] p-3 px-5 flex gap-3 rounded-md ">
+        <button
+          className=" w-[75%] self-center bg-[#2260b7fa] p-3 px-5 flex gap-3 rounded-md "
+          type="button"
+        >
           <Image src={google} alt="google logo" className="w-[20px] h-[20px]" />
           <p className="self-center text-white text-sm font-semibold">
             Sign in with Google
@@ -74,7 +145,7 @@ const LoginPage = () => {
             Are you an agent ?
           </p>
           <Link
-            href={""}
+            href={"/agentSignin"}
             className="text-blue-600 text-lg font-semibold hover:underline"
           >
             Log in here

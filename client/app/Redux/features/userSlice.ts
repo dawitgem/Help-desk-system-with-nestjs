@@ -41,7 +41,7 @@ const userSlice = createSlice({
 
     signupSucess: (
       state,
-      action: PayloadAction<{ email: string; password: string }>
+      action: PayloadAction<{ fullname: string; email: string }>
     ) => {
       state.isAuth = true;
       state.error = null;
@@ -52,6 +52,7 @@ const userSlice = createSlice({
     },
 
     signInWithGoogleSucess: (state, action: PayloadAction<user>) => {
+      state.user = action.payload;
       state.isAuth = true;
       state.error = null;
     },

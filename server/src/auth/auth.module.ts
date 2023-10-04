@@ -5,6 +5,8 @@ import { AuthService } from './auth.service';
 import { LocalStrategy } from './local.strategy';
 import { AuthController } from './auth.controller';
 import { UserController } from 'src/user/user.controller';
+import { UserService } from 'src/user/user.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Module({
   imports: [
@@ -15,7 +17,7 @@ import { UserController } from 'src/user/user.controller';
       signOptions: { expiresIn: '1h' },
     }),
   ],
-  providers: [AuthService, LocalStrategy],
+  providers: [AuthService, LocalStrategy, UserService, PrismaService],
   controllers: [AuthController, UserController],
 })
 export class AuthModule {}

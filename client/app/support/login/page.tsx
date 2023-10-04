@@ -14,22 +14,62 @@ const LoginPage = () => {
   const [showError, setShowError] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [Error, setError] = useState({ email: false, password: false });
+  const [ErrorMessage, setErrorMessage] = useState({ email: "", password: "" });
 
   const validateForm = () => {
     let valid = true;
-    if (!formData.email) {
+    if (!formData.email && !formData.password) {
       setError((prevState) => ({ ...prevState, ["email"]: false }));
+      setErrorMessage({
+        email: "This field is required",
+        password: "This field is required",
+      });
+      valid = false;
+    }
+    if (!formData.email && formData.password) {
+      setError((prevState) => ({ ...prevState, ["email"]: false }));
+      setErrorMessage({
+        email: "This field is required",
+        password: "This field is required",
+      });
       valid = false;
     }
     if (!formData.password) {
       setError((prevState) => ({ ...prevState, ["password"]: true }));
+      setErrorMessage({
+        email: "This field is required",
+        password: "This field is required",
+      });
       valid = false;
-    } else setError({ email: false, password: false });
+    } else {
+      setError({ email: false, password: false });
+      setErrorMessage({
+        email: " ",
+        password: " ",
+      });
+    }
     return valid;
+  };
+  const validateEmail = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email) && !formData.password) {
+      setError({ email: true, password: true });
+      setErrorMessage((prevState) => {
+        return { ...prevState, ["email"]: "Please enter valid email address" };
+      });
+      return false;
+    }
+    if (!emailRegex.test(formData.email) && formData.password) {
+      setError({ email: true, password: false });
+      setErrorMessage((prevState) => {
+        return { ...prevState, ["email"]: "Please enter valid email address" };
+      });
+      return false;
+    } else return true;
   };
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (validateForm()) dispatch(signinSucess(formData));
+    if (validateForm() && validateEmail()) dispatch(signinSucess(formData));
     if (error) setShowError(true);
   };
   return (
@@ -80,13 +120,13 @@ const LoginPage = () => {
                 });
               }}
               onFocus={() => {
-                if (!formData.password)
+                if (!formData.password && Error.email)
                   setError({ email: false, password: true });
                 else setError({ ...Error, email: false });
               }}
             />
             {Error.email && (
-              <p className="text-red-600 text-[12px]">This field is required</p>
+              <p className="text-red-600 text-[12px]">{ErrorMessage.email}</p>
             )}
           </div>
           <div className="flex flex-col gap-2">
@@ -110,7 +150,8 @@ const LoginPage = () => {
                 });
               }}
               onFocus={() => {
-                if (!formData.email) setError({ email: true, password: false });
+                if (!formData.email && Error.password)
+                  setError({ email: true, password: false });
                 else setError({ ...Error, password: false });
               }}
             />

@@ -5,13 +5,14 @@ import LinkTrack from "@/Components/LinkTrack";
 import PageHero from "@/Components/PageHero";
 import Searchbox from "@/Components/Searchbox";
 import SelectedArticle from "@/Components/SelectedArticle";
+import { selectUser } from "@/app/Redux/features/userSlice";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useRef, useState } from "react";
 import { BsFillFileEarmarkTextFill, BsPersonCircle } from "react-icons/bs";
+import { useSelector } from "react-redux";
 const ProfileEditPage = () => {
   const [changePassword, setChangePassword] = useState(false);
-  const router = useRouter();
   return (
     <div>
       <PageHero

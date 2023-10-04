@@ -68,7 +68,7 @@ const Navbar = () => {
             ]}
           />
 
-          {user ? (
+          {user && isAuth ? (
             <>
               <Navigation
                 NavLinks={[{ link: "Ticket", href: "/support/tickets" }]}
@@ -87,11 +87,11 @@ const Navbar = () => {
                   onClick={() => setOpenProfileModal(!openProfileModal)}
                 >
                   <Avatar
-                    src={dawit.src}
+                    src={user.Profile}
                     alt="image"
-                    className="w-[50px] h-[50px] bg-slate-400 rounded-full shadow-md object-contain "
+                    className="w-[50px] h-[50px] bg-slate-400 rounded-full shadow-md object-contain uppercase text-xl  "
                   >
-                    N
+                    {user.FullName?.slice(0, 1)}
                   </Avatar>
                 </button>
                 {openProfileModal && <UserProfileModal />}
@@ -144,55 +144,60 @@ export default Navbar;
 
 function UserProfileModal() {
   const agent = false;
+  const { user } = useSelector(selectUser);
   return (
     <div className="bg-white w-[150px]  absolute top-[72px] right-0 border rounded-md flex flex-col gap-3 z-20">
-      <div className="flex gap-4 p-2 border-b">
-        <Avatar
-          src={dawit.src}
-          alt="profile pic"
-          className="w-[30px] h-[30px] bg-slate-400 rounded-full shadow-md"
-        >
-          N
-        </Avatar>
-        <h1 className="text-gray-700 text-sm font-semibold self-center ">
-          User Name
-        </h1>
-      </div>
-      <div className="flex flex-col gap-2">
-        {agent ? (
-          <>
-            {" "}
-            <Link
-              href={"/a/dashboard/default"}
-              className="p-2 text-gray-700 hover:bg-slate-100 text-sm font-semibold"
+      {user && (
+        <>
+          <div className="flex gap-4 p-2 border-b">
+            <Avatar
+              src={user?.Profile}
+              alt="profile pic"
+              className="w-[30px] h-[30px] bg-slate-400 rounded-full shadow-md"
             >
-              Dashboard
-            </Link>
-            <Link
-              href={"/a/dashboard/default"}
-              className="p-2 text-gray-700 hover:bg-slate-100 text-sm font-semibold"
-            >
-              MyProfile
-            </Link>
-          </>
-        ) : (
-          <>
-            <Link
-              href={"/support/profile/edit"}
-              className="p-2 text-gray-700 hover:bg-slate-100 text-sm font-semibold"
-            >
-              My profile
-            </Link>
-          </>
-        )}
+              {user.FullName?.slice(0, 1)}
+            </Avatar>
+            <h1 className="text-gray-700 text-sm font-semibold self-center ">
+              {user.userName}
+            </h1>
+          </div>
+          <div className="flex flex-col gap-2">
+            {agent ? (
+              <>
+                {" "}
+                <Link
+                  href={"/a/dashboard/default"}
+                  className="p-2 text-gray-700 hover:bg-slate-100 text-sm font-semibold"
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  href={"/a/dashboard/default"}
+                  className="p-2 text-gray-700 hover:bg-slate-100 text-sm font-semibold"
+                >
+                  MyProfile
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  href={"/support/profile/edit"}
+                  className="p-2 text-gray-700 hover:bg-slate-100 text-sm font-semibold"
+                >
+                  My profile
+                </Link>
+              </>
+            )}
 
-        <Link
-          href={"/a/dashboard/default"}
-          className="p-2 text-gray-700 hover:bg-slate-100 text-sm font-semibold"
-        >
-          Sign out
-        </Link>
-      </div>
+            <Link
+              href={"/a/dashboard/default"}
+              className="p-2 text-gray-700 hover:bg-slate-100 text-sm font-semibold"
+            >
+              Sign out
+            </Link>
+          </div>
+        </>
+      )}
     </div>
   );
 }

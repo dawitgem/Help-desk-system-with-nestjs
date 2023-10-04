@@ -38,14 +38,14 @@ const Menu = ({ open, setOpen }: MenuProps) => {
             <FaTimes className="text-gray-700 text-2xl self-center" />
           </button>
           <div className="w-full h-full flex flex-col gap-4 bg-white ">
-            {user ? (
+            {user && isAuth ? (
               <div className="bg-slate-100 p-4 h-14">
                 <Avatar
                   src={user?.Profile}
                   alt="profile pic"
                   className="w-[20px] h-[20px] bg-slate-400 rounded-full shadow-md"
                 >
-                  N
+                  {user.FullName?.slice(0, 1)}
                 </Avatar>
               </div>
             ) : (

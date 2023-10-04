@@ -11,14 +11,16 @@ export class AuthService {
     readonly UserService: UserService,
   ) {}
   async SignIn({ Email, Password }: SignInDto) {
-    const user = await this.UserService.Login(Email);
-    if (!user) throw new UnauthorizedException('Email not found');
+    const user = await this.UserService.Login({ Email });
+    if (!user) {
+      throw new UnauthorizedException('Email not found');
+    }
 
     if (this.validatePassword(Password, user.Password))
       throw new UnauthorizedException('Invalid Password');
     const payload = { sub: user.Id, userName: user.UserName };
 
-    return { AccessToken: await this.JWTService.signAsync(payload) };
+    return { user, AccessToken: await this.JWTService.signAsync(payload) };
   }
   private async validatePassword(
     Password: string,

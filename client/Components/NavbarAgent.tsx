@@ -36,6 +36,7 @@ const NavbarAgent = ({ currentPage, link, setAction }: NavbarAgentProps) => {
   const SearchModalRef = useRef<HTMLDivElement>(null);
   const ProfileModalRef = useRef<HTMLDivElement>(null);
   const NotificationModalRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (

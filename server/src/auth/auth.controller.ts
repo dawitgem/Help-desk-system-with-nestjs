@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Options, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto, SignUpDto } from 'src/user/user.dto';
 
@@ -14,6 +14,18 @@ export class AuthController {
   }
   @Post('login')
   async signin(@Body() signin: SignInDto) {
-    return this.authService.SignIn;
+    return this.authService.SignIn(signin);
+  }
+  @Options()
+  handleOptions() {
+    // Provide custom response for OPTIONS requests
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*', // Allow requests from any origin (not recommended for production)
+        'Access-Control-Allow-Methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+    };
   }
 }

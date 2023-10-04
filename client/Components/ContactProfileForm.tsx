@@ -1,15 +1,18 @@
+import { selectUser } from "@/app/Redux/features/userSlice";
 import { Avatar } from "@mui/material";
 import Link from "next/link";
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 const ContactProfileForm = () => {
+  const { user, isAuth } = useSelector(selectUser);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [disabled, setDisabled] = useState<boolean>(true);
   const [formData, setFormData] = useState({
-    fullname: "",
-    workphone: "",
-    mobilephone: "",
-    profilepic: "",
+    fullname: user?.FullName,
+    workphone: user?.workPhone,
+    mobilephone: user?.mobilePhone,
+    profilepic: user?.Profile,
   });
   const [error, setError] = useState(false);
   const [isDataChanged, setDataChanged] = useState(false);
@@ -86,7 +89,7 @@ const ContactProfileForm = () => {
               <input
                 type="text"
                 name="fullname"
-                value={formData.fullname}
+                value={formData.fullname || ""}
                 className={`md:w-3/4 w-full p-3 placeholder:text-sm  border rounded-lg ${
                   error
                     ? "border-red-500 outline-none"
@@ -104,14 +107,14 @@ const ContactProfileForm = () => {
             </li>{" "}
             <li className="flex flex-col gap-1 text-gray-700 text-sm font-semibold ">
               <p>Email </p>
-              <p>contactemail@gmail.com</p>
+              <p>{user?.Email}</p>
             </li>{" "}
             <li className="flex flex-col gap-1 text-gray-700 text-sm font-semibold ">
               <p>Work Phone</p>
               <input
                 type="text"
                 name="workphone"
-                value={formData.workphone}
+                value={formData.workphone || ""}
                 className="md:w-3/4 w-full p-3 placeholder:text-sm  border border-gray-300 hover:border-black outline-blue-500 rounded-md"
                 placeholder="Enter your work Phone"
                 onChange={handleChange}
@@ -122,7 +125,7 @@ const ContactProfileForm = () => {
               <input
                 type="text"
                 name="mobilephone"
-                value={formData.mobilephone}
+                value={formData.mobilephone || ""}
                 className="md:w-3/4 w-full p-3 placeholder:text-sm  border border-gray-300 hover:border-black outline-blue-500 rounded-md"
                 placeholder="Enter your Mobile Phone"
                 onChange={handleChange}
@@ -138,7 +141,7 @@ const ContactProfileForm = () => {
               src={formData.profilepic}
               className="md:w-[150px] md:h-[150px] w-[80px] h-[80px] self-center bg-slate-400 rounded-full shadow-md object-contain "
             >
-              N
+              {user?.userName.slice(0, 1)}
             </Avatar>
             {selectedImage ? (
               <div className="flex gap-3">

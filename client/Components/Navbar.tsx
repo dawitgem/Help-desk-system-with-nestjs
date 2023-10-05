@@ -87,7 +87,7 @@ const Navbar = () => {
                   onClick={() => setOpenProfileModal(!openProfileModal)}
                 >
                   <Avatar
-                    src={user.Profile}
+                    src={user.Image || " "}
                     alt="image"
                     className="w-[50px] h-[50px] bg-slate-400 rounded-full shadow-md object-contain uppercase text-xl  "
                   >
@@ -145,13 +145,15 @@ export default Navbar;
 function UserProfileModal() {
   const agent = false;
   const { user } = useSelector(selectUser);
+  console.log(user?.Image);
+  console.log(user);
   return (
     <div className="bg-white w-[150px]  absolute top-[72px] right-0 border rounded-md flex flex-col gap-3 z-20">
       {user && (
         <>
           <div className="flex gap-4 p-2 border-b">
             <Avatar
-              src={user?.Profile}
+              src={user?.Image || " "}
               alt="profile pic"
               className="w-[30px] h-[30px] bg-slate-400 rounded-full shadow-md"
             >

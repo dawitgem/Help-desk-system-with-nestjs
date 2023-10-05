@@ -7,7 +7,7 @@ interface user {
   FullName: string | null;
   Email: string;
   userName: string;
-  Profile?: string;
+  Image: string | null;
   userType: string;
   workPhone: string | null;
   mobilePhone: string | null;
@@ -50,8 +50,13 @@ const userSlice = createSlice({
       state.isAuth = false;
       state.error = action.payload;
     },
+    signinWithGoogleStart: (state) => {
+      console.log("this is stupid");
+      state.error = null;
+    },
 
     signInWithGoogleSucess: (state, action: PayloadAction<user>) => {
+      console.log(action.payload);
       state.user = action.payload;
       state.isAuth = true;
       state.error = null;
@@ -96,6 +101,7 @@ export const {
   signInWithGoogleFaliuer,
   signInWithGoogleSucess,
   signUpFaliure,
+  signinWithGoogleStart,
 } = userSlice.actions;
 export const selectUser = (state: User) => {
   return state.User;

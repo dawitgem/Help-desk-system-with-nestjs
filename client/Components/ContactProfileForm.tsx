@@ -12,7 +12,7 @@ const ContactProfileForm = () => {
     fullname: user?.FullName,
     workphone: user?.workPhone,
     mobilephone: user?.mobilePhone,
-    profilepic: user?.Profile,
+    profilepic: user?.Image,
   });
   const [error, setError] = useState(false);
   const [isDataChanged, setDataChanged] = useState(false);
@@ -138,10 +138,10 @@ const ContactProfileForm = () => {
             </h3>
             <Avatar
               alt="image"
-              src={formData.profilepic}
+              src={formData.profilepic || " "}
               className="md:w-[150px] md:h-[150px] w-[80px] h-[80px] self-center bg-slate-400 rounded-full shadow-md object-contain "
             >
-              {user?.userName.slice(0, 1)}
+              {user?.FullName ? user.FullName.slice(0, 1) : " "}
             </Avatar>
             {selectedImage ? (
               <div className="flex gap-3">

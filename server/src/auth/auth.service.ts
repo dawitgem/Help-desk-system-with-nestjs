@@ -34,5 +34,10 @@ export class AuthService {
     return user;
   }
 
-  async signInWithGoogle() {}
+  async signInWithGoogle(signupDto: SignUpDto) {
+    const { Email } = signupDto;
+    let user = await this.UserService.Login({ Email });
+    if (!user) user = await this.UserService.SignUP(signupDto);
+    return user;
+  }
 }

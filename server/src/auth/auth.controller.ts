@@ -1,4 +1,4 @@
-import { Body, Controller, Options, Post } from '@nestjs/common';
+import { Body, Controller, Get, Options, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto, SignUpDto } from 'src/user/user.dto';
 
@@ -15,6 +15,21 @@ export class AuthController {
   @Post('login')
   async signin(@Body() signin: SignInDto) {
     return this.authService.SignIn(signin);
+  }
+  @Post('googleAuth')
+  async signinwithGoogle(@Body() signupDto: SignUpDto) {
+    const { Id, FullName, Email, UserName, Image, WorkingPhone, MobilePhone } =
+      await this.authService.signInWithGoogle(signupDto);
+    console.log(
+      Id,
+      FullName,
+      Email,
+      UserName,
+      Image,
+      WorkingPhone,
+      MobilePhone,
+    );
+    return { Id, FullName, UserName, Email, Image, WorkingPhone, MobilePhone };
   }
   @Options()
   handleOptions() {

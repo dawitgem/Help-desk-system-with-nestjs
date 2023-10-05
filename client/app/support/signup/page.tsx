@@ -78,7 +78,6 @@ const SignUpPage = () => {
   useEffect(() => {
     const CheckUser = () => {
       if (error) {
-        console.log("come on man this is from signup page");
         setShowError(true);
       }
       if (isAuth && user) router.push("/support");
@@ -86,7 +85,7 @@ const SignUpPage = () => {
     CheckUser();
   }, [user, error]);
   return (
-    <div className="pt-10 w-full border-t flex justify-center align-middle  ">
+    <div className="py-10 w-full border-t flex flex-col gap-2 justify-center align-middle  ">
       {error && showError && (
         <div className="px-2 py-3 flex justify-between bg-red-100 border border-red-400 self-center rounded-md md:w-1/3">
           <p className="text-red-600 text-sm font-medium">{error}</p>
@@ -95,7 +94,7 @@ const SignUpPage = () => {
           </button>
         </div>
       )}
-      <div className="bg-white md:w-1/3 w-[90%] p-6 flex flex-col gap-5 shadow-md rounded-md border">
+      <div className="self-center bg-white md:w-1/3 w-[90%] p-6 flex flex-col gap-5 shadow-md rounded-md border">
         <div className="flex flex-col gap-2">
           <h1 className="text-gray-700 text-2xl font-black">
             {" "}
@@ -183,7 +182,7 @@ const SignUpPage = () => {
             Are you an agent ?
           </p>
           <Link
-            href={""}
+            href={"/agentSignin"}
             className="text-blue-600 text-lg font-semibold hover:underline"
           >
             Log in here

@@ -5,12 +5,18 @@ import FcGoogle from "react-icons/fc";
 import google from "@/public/asset/google.svg";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
-import { selectUser, signinSucess } from "@/app/Redux/features/userSlice";
+import {
+  selectUser,
+  signInWithGoogleSucess,
+  signinSucess,
+  signinWithGoogleStart,
+} from "@/app/Redux/features/userSlice";
 import { FaTimes } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
-  const { isAuth, error } = useSelector(selectUser);
+  const { user, isAuth, error } = useSelector(selectUser);
   const [showError, setShowError] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [Error, setError] = useState({ email: false, password: false });
@@ -70,13 +76,22 @@ const LoginPage = () => {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (validateForm() && validateEmail()) dispatch(signinSucess(formData));
-    if (error) setShowError(true);
   };
+  const router = useRouter();
+  useEffect(() => {
+    const CheckUser = () => {
+      if (error) {
+        setShowError(true);
+      }
+      if (isAuth && user) router.push("/support");
+    };
+    CheckUser();
+  }, [user, error]);
   return (
-    <div className="pt-10 w-full border-t flex flex-col gap-3 justify-center align-middle  ">
+    <div className="py-10  w-full border-t flex flex-col gap-3 justify-center align-middle  ">
       {error && showError && (
         <div className="px-2 py-3 flex justify-between bg-red-100 border border-red-400 self-center rounded-md md:w-1/3">
-          <p className="text-red-600 text-sm font-medium">{error}</p>
+          <p className="text-red-600 text-sm font-medium"></p>
           <button onClick={() => setShowError(false)}>
             <FaTimes className="text-xl self-center text-gray-500" />
           </button>
@@ -137,7 +152,7 @@ const LoginPage = () => {
               </span>
             </label>
             <input
-              type="text"
+              type="password"
               className={`p-3 text-gray-600 border w-full rounded-md ${
                 Error.password
                   ? "border-red-500 outline-none"
@@ -169,6 +184,9 @@ const LoginPage = () => {
         <button
           className=" w-[75%] self-center bg-[#2260b7fa] p-3 px-5 flex gap-3 rounded-md "
           type="button"
+          onClick={() => {
+            dispatch(signinWithGoogleStart());
+          }}
         >
           <Image src={google} alt="google logo" className="w-[20px] h-[20px]" />
           <p className="self-center text-white text-sm font-semibold">

@@ -7,10 +7,19 @@ import {
   signInWithGoogleSucess,
   signinSucess,
   createUser,
+  signinWithGoogleStart,
 } from "../Redux/features/userSlice";
 import axios from "axios";
 import { nanoid, customAlphabet } from "nanoid";
+import { auth } from "@/firebase/firebaseconfig";
+import {
+  GoogleAuthProvider,
+  UserCredential,
+  signInWithPopup,
+} from "firebase/auth";
 import dotenv from "dotenv";
+
+const provider = new GoogleAuthProvider();
 dotenv.config();
 interface SignInAction {
   type: typeof signinSucess;
@@ -18,43 +27,83 @@ interface SignInAction {
 }
 interface SignUpAction {
   type: typeof signupSucess;
-  payload: { fullname: string; email: string };
+  payload: {
+    fullname: string;
+    email: string;
+    image?: string;
+    MobilePhone?: string;
+  };
+}
+interface SignInWithGoogleAction {
+  type: typeof signInWithGoogleSucess;
+  payload: {
+    fullname: string;
+    email: string;
+    image?: string;
+    MobilePhone?: string;
+  };
 }
 const dev = true;
+const Nanoid = customAlphabet("0123456789", 18);
 const SigninApi = async (credentials: { email: string; password: string }) => {
-  const response = await axios.post(
-    `${dev ? process.env.DEV_API_URL : process.env.PRD_API_URL}/auth/login`,
-    {
-      Email: credentials.email,
-      Password: credentials.password,
-    }
-  );
+  const response = await axios.post(`http://localhost:8000/auth/login`, {
+    Email: credentials.email,
+    Password: credentials.password,
+  });
   return response.data;
 };
 
-const SignupApi = async (credentials: { fullname: string; email: string }) => {
-  const nanoid = customAlphabet("0123456789", 18);
-  const response = await axios.post(
-    ` ${dev ? process.env.DEV_API_URL : process.env.PRD_API_URL}/auth/signup`,
-    {
-      Id: nanoid(),
-      FullName: credentials.fullname,
-      Password: "",
-      UserName: credentials.fullname,
-      Email: credentials.email,
-      Image: null,
-      About: null,
-      UserType: "Customer",
-      WorkingPhone: null,
-      MobilePhone: null,
-      CreatedDate: new Date(),
-    }
-  );
+const SignupApi = async (credentials: {
+  fullname: string;
+  email: string;
+  image?: string;
+  MobilePhone?: string;
+}) => {
+  const response = await axios.post(` http://localhost:8000/auth/signup`, {
+    Id: Nanoid(),
+    FullName: credentials.fullname,
+    Password: "",
+    UserName: credentials.fullname,
+    Email: credentials.email,
+    Image: credentials.image,
+    About: null,
+    UserType: "Customer",
+    WorkingPhone: null,
+    MobilePhone: credentials.MobilePhone,
+    CreatedDate: new Date(),
+  });
   return response.data;
 };
 
-const SigninWithGoogleApi = async () => {};
-
+const GoogleAuthWithFirebase = async () => {
+  const result = await signInWithPopup(auth, provider);
+  const credentials = GoogleAuthProvider.credentialFromResult(result);
+  const token = credentials?.accessToken;
+  const { displayName, phoneNumber, photoURL, email } = result.user;
+  return { displayName, phoneNumber, photoURL, email };
+};
+const SigninWithGoogleApi = async (User: {
+  FullName: string;
+  Email: string;
+  Image: string;
+  MobilePhone: string;
+}) => {
+  const user = await axios.post(" http://localhost:8000/auth/googleAuth", {
+    Id: Nanoid(),
+    FullName: User.FullName,
+    Password: "",
+    UserName: User.FullName,
+    Email: User.Email,
+    Image: User.Image,
+    About: null,
+    UserType: "Customer",
+    WorkingPhone: null,
+    MobilePhone: User.MobilePhone,
+    CreatedDate: new Date(),
+  });
+  console.log(user);
+  return user.data;
+};
 function* handleSignin(action: SignInAction): Generator<any, void, any> {
   try {
     const user = yield call(SigninApi, action.payload);
@@ -65,7 +114,6 @@ function* handleSignin(action: SignInAction): Generator<any, void, any> {
 function* handleSigUp(action: SignUpAction): Generator<any, void, any> {
   try {
     const user = yield call(SignupApi, action.payload);
-    console.log(user);
     yield put(createUser(user));
   } catch (e) {
     yield put(signUpFaliure("something went wrong . Please try again !!!"));
@@ -73,14 +121,27 @@ function* handleSigUp(action: SignUpAction): Generator<any, void, any> {
 }
 
 function* handleSigninWithGoogle(
-  action: ReturnType<typeof signInWithGoogleSucess>
-) {
+  action: SignInWithGoogleAction
+): Generator<any, void, any> {
   try {
-  } catch (e) {}
+    console.log("this is no me");
+    const {
+      displayName: FullName,
+      phoneNumber: MobilePhone,
+      photoURL: Image,
+      email: Email,
+    } = yield GoogleAuthWithFirebase();
+    const User = { FullName, Email, Image, MobilePhone };
+    const user = yield SigninWithGoogleApi(User);
+    console.log(user);
+    yield put(signInWithGoogleSucess(user));
+  } catch (e: any) {
+    console.log(e);
+  }
 }
 
 export function* userSaga() {
   yield takeLatest(signinSucess.type, handleSignin);
   yield takeLatest(signupSucess.type, handleSigUp);
-  yield takeLatest(signInWithGoogleSucess.type, handleSigninWithGoogle);
+  yield takeLatest(signinWithGoogleStart.type, handleSigninWithGoogle);
 }

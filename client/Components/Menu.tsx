@@ -41,7 +41,7 @@ const Menu = ({ open, setOpen }: MenuProps) => {
             {user && isAuth ? (
               <div className="bg-slate-100 p-4 h-14">
                 <Avatar
-                  src={user?.Profile}
+                  src={user?.Image || ""}
                   alt="profile pic"
                   className="w-[20px] h-[20px] bg-slate-400 rounded-full shadow-md"
                 >

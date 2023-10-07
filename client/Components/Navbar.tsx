@@ -145,8 +145,6 @@ export default Navbar;
 function UserProfileModal() {
   const agent = false;
   const { user } = useSelector(selectUser);
-  console.log(user?.Image);
-  console.log(user);
   return (
     <div className="bg-white w-[150px]  absolute top-[72px] right-0 border rounded-md flex flex-col gap-3 z-20">
       {user && (
@@ -166,7 +164,6 @@ function UserProfileModal() {
           <div className="flex flex-col gap-2">
             {agent ? (
               <>
-                {" "}
                 <Link
                   href={"/a/dashboard/default"}
                   className="p-2 text-gray-700 hover:bg-slate-100 text-sm font-semibold"

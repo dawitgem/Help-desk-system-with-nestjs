@@ -12,8 +12,4 @@ export class UserController {
 
   @Post('update/:id')
   async updateProfile(@Param('id') updateUserDto: UpdateUserDto) {}
-  @Get()
-  async getUser() {
-    return await this.UserService.Users();
-  }
 }

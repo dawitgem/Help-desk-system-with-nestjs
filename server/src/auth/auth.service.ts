@@ -10,17 +10,22 @@ export class AuthService {
     private readonly JWTService: JwtService,
     readonly UserService: UserService,
   ) {}
+
+  async generateToken(payload: any): Promise<string> {
+    return this.JWTService.sign(payload);
+  }
+
   async SignIn({ Email, Password }: SignInDto) {
     const user = await this.UserService.Login({ Email });
     if (!user) {
       throw new UnauthorizedException('Email not found');
     }
 
-    if (this.validatePassword(Password, user.Password))
+    if (!this.validatePassword(Password, user.Password))
       throw new UnauthorizedException('Invalid Password');
     const payload = { sub: user.Id, userName: user.UserName };
 
-    return { user, AccessToken: await this.JWTService.signAsync(payload) };
+    return { AccessToken: await this.generateToken(payload) };
   }
   private async validatePassword(
     Password: string,
@@ -38,6 +43,13 @@ export class AuthService {
     const { Email } = signupDto;
     let user = await this.UserService.Login({ Email });
     if (!user) user = await this.UserService.SignUP(signupDto);
+    const payload = { sub: user.Id, userName: user.UserName };
+    const AccessToken = await this.generateToken(payload);
+    return AccessToken;
+  }
+  async UserProfile({ userId }: any) {
+    const { userId: Id } = { userId };
+    const user = await this.UserService.User({ Id });
     return user;
   }
 }

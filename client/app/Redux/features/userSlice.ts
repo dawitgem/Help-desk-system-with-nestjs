@@ -31,6 +31,18 @@ const userSlice = createSlice({
       state.isAuth = true;
       state.error = null;
     },
+    getProfileStart: (state) => {
+      state.isAuth = false;
+    },
+    getProfile: (state, action: PayloadAction<user>) => {
+      state.user = action.payload;
+      state.isAuth = true;
+      state.error = null;
+    },
+    getProfileFaliure: (state, action: PayloadAction<string>) => {
+      state.isAuth = false;
+      state.error = action.payload;
+    },
     updateUserSuccess: (state, action: PayloadAction<user>) => {
       state.user = action.payload;
       state.error = null;
@@ -39,10 +51,7 @@ const userSlice = createSlice({
       state.error = action.payload;
     },
 
-    signupSucess: (
-      state,
-      action: PayloadAction<{ fullname: string; email: string }>
-    ) => {
+    signupSucess: (state) => {
       state.isAuth = true;
       state.error = null;
     },
@@ -51,13 +60,10 @@ const userSlice = createSlice({
       state.error = action.payload;
     },
     signinWithGoogleStart: (state) => {
-      console.log("this is stupid");
       state.error = null;
     },
 
-    signInWithGoogleSucess: (state, action: PayloadAction<user>) => {
-      console.log(action.payload);
-      state.user = action.payload;
+    signInWithGoogleSucess: (state) => {
       state.isAuth = true;
       state.error = null;
     },
@@ -65,10 +71,7 @@ const userSlice = createSlice({
       state.isAuth = false;
       state.error = action.payload;
     },
-    signinSucess: (
-      state,
-      action: PayloadAction<{ email: string; password: string }>
-    ) => {
+    signinSucess: (state) => {
       state.error = null;
       state.isAuth = true;
     },
@@ -77,10 +80,7 @@ const userSlice = createSlice({
       state.isAuth = false;
     },
 
-    LogoutSucess: (
-      state,
-      action: PayloadAction<{ email: string; password: string }>
-    ) => {
+    LogoutSucess: (state) => {
       state.user = null;
       state.isAuth = false;
       state.error = null;
@@ -102,6 +102,9 @@ export const {
   signInWithGoogleSucess,
   signUpFaliure,
   signinWithGoogleStart,
+  getProfile,
+  getProfileStart,
+  getProfileFaliure,
 } = userSlice.actions;
 export const selectUser = (state: User) => {
   return state.User;

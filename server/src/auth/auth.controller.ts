@@ -1,13 +1,26 @@
-import { Body, Controller, Get, Options, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Options,
+  Post,
+  Req,
+  Request,
+  Res,
+  Response,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto, SignUpDto } from 'src/user/user.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { JWTGuard } from './auth.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('signup')
-  async signup(@Body() signupDto: SignUpDto) {
+  async signup(@Request() signupDto: SignUpDto) {
     const { Id, FullName, UserName, Image, WorkingPhone, MobilePhone } =
       await this.authService.SignUp(signupDto);
     return { Id, FullName, UserName, Image, WorkingPhone, MobilePhone };
@@ -17,20 +30,20 @@ export class AuthController {
     return this.authService.SignIn(signin);
   }
   @Post('googleAuth')
-  async signinwithGoogle(@Body() signupDto: SignUpDto) {
-    const { Id, FullName, Email, UserName, Image, WorkingPhone, MobilePhone } =
-      await this.authService.signInWithGoogle(signupDto);
-    console.log(
-      Id,
-      FullName,
-      Email,
-      UserName,
-      Image,
-      WorkingPhone,
-      MobilePhone,
-    );
-    return { Id, FullName, UserName, Email, Image, WorkingPhone, MobilePhone };
+  async signinwithGoogle(@Req() req, @Res() res) {
+    const AccessToken = await this.authService.signInWithGoogle(req.body);
+    res.send(AccessToken);
   }
+  @UseGuards(JWTGuard)
+  @Get('profile')
+  async getProfile(@Request() req) {
+    const { userId } = req.user;
+    console.log({ userId });
+    const { Id, FullName, Email, UserName, Image, WorkingPhone, MobilePhone } =
+      await this.authService.UserProfile({ userId });
+    return { Id, FullName, Email, UserName, Image, WorkingPhone, MobilePhone };
+  }
+
   @Options()
   handleOptions() {
     // Provide custom response for OPTIONS requests

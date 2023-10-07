@@ -91,7 +91,7 @@ const LoginPage = () => {
     <div className="py-10  w-full border-t flex flex-col gap-3 justify-center align-middle  ">
       {error && showError && (
         <div className="px-2 py-3 flex justify-between bg-red-100 border border-red-400 self-center rounded-md md:w-1/3">
-          <p className="text-red-600 text-sm font-medium"></p>
+          <p className="text-red-600 text-sm font-medium">{error}</p>
           <button onClick={() => setShowError(false)}>
             <FaTimes className="text-xl self-center text-gray-500" />
           </button>

@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useEffect } from "react";
 import Header from "../../Components/Header";
 import Searchbox from "@/Components/Searchbox";
 
@@ -6,8 +7,14 @@ import { PiStackBold } from "react-icons/pi";
 import { BsFillFileEarmarkTextFill } from "react-icons/bs";
 import Link from "next/link";
 import UserOptions from "@/Components/UserOptions";
+import { useDispatch } from "react-redux";
+import { getProfile, getProfileStart } from "../Redux/features/userSlice";
 
 const Home = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getProfileStart());
+  }, []);
   return (
     <>
       <div className="bg-[#063750] h-[350px] flex flex-col align-middle justify-center gap-10 md:p-2 p-5  ">

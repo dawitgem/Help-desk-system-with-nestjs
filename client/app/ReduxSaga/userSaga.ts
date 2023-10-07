@@ -8,6 +8,8 @@ import {
   signinSucess,
   createUser,
   signinWithGoogleStart,
+  getProfile,
+  getProfileStart,
 } from "../Redux/features/userSlice";
 import axios from "axios";
 import { nanoid, customAlphabet } from "nanoid";
@@ -18,6 +20,7 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import dotenv from "dotenv";
+import { getAccessToken, setAccessToken } from "../AuthService";
 
 const provider = new GoogleAuthProvider();
 dotenv.config();
@@ -49,6 +52,15 @@ const SigninApi = async (credentials: { email: string; password: string }) => {
   const response = await axios.post(`http://localhost:8000/auth/login`, {
     Email: credentials.email,
     Password: credentials.password,
+  });
+  return response.data;
+};
+
+const getProfileApi = async () => {
+  const response = await axios.get(`http://localhost:8000/auth/profile`, {
+    headers: {
+      Authorization: `Bearer ${getAccessToken()}`,
+    },
   });
   return response.data;
 };
@@ -101,12 +113,12 @@ const SigninWithGoogleApi = async (User: {
     MobilePhone: User.MobilePhone,
     CreatedDate: new Date(),
   });
-  console.log(user);
   return user.data;
 };
 function* handleSignin(action: SignInAction): Generator<any, void, any> {
   try {
-    const user = yield call(SigninApi, action.payload);
+    const AccessToken = yield call(SigninApi, action.payload);
+    setAccessToken(AccessToken);
   } catch (e) {
     yield put(signInFaliure("something went wrong. please try again  "));
   }
@@ -124,7 +136,6 @@ function* handleSigninWithGoogle(
   action: SignInWithGoogleAction
 ): Generator<any, void, any> {
   try {
-    console.log("this is no me");
     const {
       displayName: FullName,
       phoneNumber: MobilePhone,
@@ -132,16 +143,24 @@ function* handleSigninWithGoogle(
       email: Email,
     } = yield GoogleAuthWithFirebase();
     const User = { FullName, Email, Image, MobilePhone };
-    const user = yield SigninWithGoogleApi(User);
-    console.log(user);
-    yield put(signInWithGoogleSucess(user));
+    const AccessToken = yield SigninWithGoogleApi(User);
+    setAccessToken(AccessToken);
   } catch (e: any) {
-    console.log(e);
+    yield put(signInWithGoogleFaliuer("something went wrong." + e.message));
   }
 }
 
+function* handleProfile(action: SignInAction): Generator<any, void, any> {
+  try {
+    const user = yield getProfileApi();
+    yield put(getProfile(user));
+  } catch (e) {
+    console.log(e);
+  }
+}
 export function* userSaga() {
   yield takeLatest(signinSucess.type, handleSignin);
   yield takeLatest(signupSucess.type, handleSigUp);
   yield takeLatest(signinWithGoogleStart.type, handleSigninWithGoogle);
+  yield takeLatest(getProfileStart.type, handleProfile);
 }

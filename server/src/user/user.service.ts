@@ -6,10 +6,16 @@ import { Prisma, Users } from '@prisma/client';
 @Injectable()
 export class UserService {
   constructor(private Prisma: PrismaService) {}
-  async Users():Promise<Users[] | null>{
-    const user=this.Prisma.users.findMany()
-     return user
+  async User({ Id }: Prisma.UsersWhereUniqueInput): Promise<Users | null> {
+    console.log({ Id });
+    const user = this.Prisma.users.findUnique({
+      where: {
+        Id,
+      },
+    });
+    return user;
   }
+
   async Login({ Email }: Prisma.UsersWhereUniqueInput): Promise<Users | null> {
     const user = this.Prisma.users.findUnique({
       where: {

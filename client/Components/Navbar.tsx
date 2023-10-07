@@ -3,12 +3,16 @@ import Link from "next/link";
 
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { CgMenuRight } from "react-icons/cg";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname, useRouter } from "next/navigation";
 import { Avatar } from "@mui/material";
 import dawit from "@/public/asset/download.png";
 import Menu from "./Menu";
-import { useSelector } from "react-redux";
-import { selectUser } from "@/app/Redux/features/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  LogoutSucess,
+  getProfileStart,
+  selectUser,
+} from "@/app/Redux/features/userSlice";
 
 const Navigation = ({ NavLinks }: any) => {
   const pathname = usePathname();
@@ -41,7 +45,11 @@ const Navbar = () => {
   const [openMenu, setOpenMenu] = useState(false);
   const [openProfileModal, setOpenProfileModal] = useState(false);
   const ProfilemodalRef = useRef<HTMLDivElement>(null);
+  const dispatch = useDispatch();
   useEffect(() => {
+    const getProfile = () => {
+      dispatch(getProfileStart());
+    };
     const handleClickOutside = (e: MouseEvent) => {
       if (
         ProfilemodalRef.current &&
@@ -53,7 +61,7 @@ const Navbar = () => {
       e.stopPropagation();
       handleClickOutside(e);
     });
-
+    getProfile();
     return document.removeEventListener("mousedown", handleClickOutside);
   }, []);
   useLayoutEffect(() => {}, []);
@@ -143,8 +151,12 @@ const Navbar = () => {
 export default Navbar;
 
 function UserProfileModal() {
+  const dispatch = useDispatch();
+  const router = useRouter();
+
   const agent = false;
   const { user } = useSelector(selectUser);
+  console.log(user);
   return (
     <div className="bg-white w-[150px]  absolute top-[72px] right-0 border rounded-md flex flex-col gap-3 z-20">
       {user && (
@@ -158,7 +170,7 @@ function UserProfileModal() {
               {user.FullName?.slice(0, 1)}
             </Avatar>
             <h1 className="text-gray-700 text-sm font-semibold self-center ">
-              {user.userName}
+              {user.UserName}
             </h1>
           </div>
           <div className="flex flex-col gap-2">
@@ -188,12 +200,15 @@ function UserProfileModal() {
               </>
             )}
 
-            <Link
-              href={"/a/dashboard/default"}
-              className="p-2 text-gray-700 hover:bg-slate-100 text-sm font-semibold"
+            <button
+              className="flex flex-col p-2 text-gray-700 hover:bg-slate-100 text-sm font-semibold"
+              onClick={() => {
+                router.push("/support/");
+                dispatch(LogoutSucess());
+              }}
             >
-              Sign out
-            </Link>
+              <p className="self-start">Sign out</p>
+            </button>
           </div>
         </>
       )}

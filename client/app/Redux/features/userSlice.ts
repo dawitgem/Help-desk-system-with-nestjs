@@ -6,7 +6,7 @@ interface user {
   Id: string;
   FullName: string | null;
   Email: string;
-  userName: string;
+  UserName: string;
   Image: string | null;
   userType: string;
   workPhone: string | null;
@@ -35,6 +35,7 @@ const userSlice = createSlice({
       state.isAuth = false;
     },
     getProfile: (state, action: PayloadAction<user>) => {
+      console.log(action.payload);
       state.user = action.payload;
       state.isAuth = true;
       state.error = null;
@@ -51,7 +52,10 @@ const userSlice = createSlice({
       state.error = action.payload;
     },
 
-    signupSucess: (state) => {
+    signupSucess: (
+      state,
+      action: PayloadAction<{ fullname: string; email: string }>
+    ) => {
       state.isAuth = true;
       state.error = null;
     },
@@ -71,7 +75,10 @@ const userSlice = createSlice({
       state.isAuth = false;
       state.error = action.payload;
     },
-    signinSucess: (state) => {
+    signinSucess: (
+      state,
+      action: PayloadAction<{ email: string; password: string }>
+    ) => {
       state.error = null;
       state.isAuth = true;
     },
@@ -105,6 +112,8 @@ export const {
   getProfile,
   getProfileStart,
   getProfileFaliure,
+  LogoutFaliure,
+  LogoutSucess,
 } = userSlice.actions;
 export const selectUser = (state: User) => {
   return state.User;

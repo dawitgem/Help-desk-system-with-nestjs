@@ -10,6 +10,8 @@ import {
   signinWithGoogleStart,
   getProfile,
   getProfileStart,
+  LogoutSucess,
+  LogoutFaliure,
 } from "../Redux/features/userSlice";
 import axios from "axios";
 import { nanoid, customAlphabet } from "nanoid";
@@ -20,7 +22,11 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import dotenv from "dotenv";
-import { getAccessToken, setAccessToken } from "../AuthService";
+import {
+  getAccessToken,
+  removeAccessToken,
+  setAccessToken,
+} from "../AuthService";
 
 const provider = new GoogleAuthProvider();
 dotenv.config();
@@ -115,10 +121,13 @@ const SigninWithGoogleApi = async (User: {
   });
   return user.data;
 };
+
 function* handleSignin(action: SignInAction): Generator<any, void, any> {
   try {
     const AccessToken = yield call(SigninApi, action.payload);
     setAccessToken(AccessToken);
+    const user = yield getProfileApi();
+    yield put(getProfile(user));
   } catch (e) {
     yield put(signInFaliure("something went wrong. please try again  "));
   }
@@ -145,6 +154,8 @@ function* handleSigninWithGoogle(
     const User = { FullName, Email, Image, MobilePhone };
     const AccessToken = yield SigninWithGoogleApi(User);
     setAccessToken(AccessToken);
+    const user = yield getProfileApi();
+    yield put(getProfile(user));
   } catch (e: any) {
     yield put(signInWithGoogleFaliuer("something went wrong." + e.message));
   }
@@ -158,9 +169,18 @@ function* handleProfile(action: SignInAction): Generator<any, void, any> {
     console.log(e);
   }
 }
+function* handleSignOut() {
+  try {
+    yield removeAccessToken();
+  } catch (e) {
+    console.log(e);
+    yield put(LogoutFaliure("something went wrong..."));
+  }
+}
 export function* userSaga() {
   yield takeLatest(signinSucess.type, handleSignin);
   yield takeLatest(signupSucess.type, handleSigUp);
   yield takeLatest(signinWithGoogleStart.type, handleSigninWithGoogle);
   yield takeLatest(getProfileStart.type, handleProfile);
+  yield takeLatest(LogoutSucess.type, handleSignOut);
 }

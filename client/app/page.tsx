@@ -4,11 +4,10 @@ import { redirect, useRouter } from "next/navigation";
 import { Box, CircularProgress, Skeleton, Stack } from "@mui/material";
 import Image from "next/image";
 import logo from "@/public/logo.svg";
+import { useDispatch } from "react-redux";
+import { getProfileStart } from "./Redux/features/userSlice";
 
 const Page = () => {
-  useEffect(() => {
-    redirect("/support");
-  }, []);
   return (
     <>
       <Box className="w-full h-screen flex flex-col gap-5 justify-center align-middle relative shadow-lg bg-slate-50">

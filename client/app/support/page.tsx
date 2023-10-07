@@ -7,14 +7,12 @@ import { PiStackBold } from "react-icons/pi";
 import { BsFillFileEarmarkTextFill } from "react-icons/bs";
 import Link from "next/link";
 import UserOptions from "@/Components/UserOptions";
-import { useDispatch } from "react-redux";
-import { getProfile, getProfileStart } from "../Redux/features/userSlice";
+import { useSelector } from "react-redux";
+import { selectUser } from "../Redux/features/userSlice";
 
 const Home = () => {
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(getProfileStart());
-  }, []);
+  const { user } = useSelector(selectUser);
+  console.log(user);
   return (
     <>
       <div className="bg-[#063750] h-[350px] flex flex-col align-middle justify-center gap-10 md:p-2 p-5  ">

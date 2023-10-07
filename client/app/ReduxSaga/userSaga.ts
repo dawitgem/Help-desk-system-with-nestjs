@@ -56,7 +56,7 @@ const dev = true;
 const Nanoid = customAlphabet("0123456789", 18);
 const SigninApi = async (credentials: { email: string; password: string }) => {
   const response = await axios.post(
-    `https://kns-support-api.vercel.app/auth/login`,
+    `https://kns-support-api-dawit2001.vercel.app/auth/login`,
     {
       Email: credentials.email,
       Password: credentials.password,
@@ -67,7 +67,7 @@ const SigninApi = async (credentials: { email: string; password: string }) => {
 
 const getProfileApi = async () => {
   const response = await axios.get(
-    `https://kns-support-api.vercel.app/auth/profile`,
+    `https://kns-support-api-dawit2001.vercel.app/auth/profile`,
     {
       headers: {
         Authorization: `Bearer ${getAccessToken()}`,
@@ -84,7 +84,7 @@ const SignupApi = async (credentials: {
   MobilePhone?: string;
 }) => {
   const response = await axios.post(
-    `https://kns-support-api.vercel.app/auth/signup`,
+    `https://kns-support-api-dawit2001.vercel.app/auth/signup`,
     {
       Id: Nanoid(),
       FullName: credentials.fullname,
@@ -116,7 +116,7 @@ const SigninWithGoogleApi = async (User: {
   MobilePhone: string;
 }) => {
   const user = await axios.post(
-    " https://kns-support-api.vercel.app/auth/googleAuth",
+    " https://kns-support-api-dawit2001.vercel.app/auth/googleAuth",
     {
       Id: Nanoid(),
       FullName: User.FullName,

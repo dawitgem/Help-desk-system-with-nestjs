@@ -55,19 +55,25 @@ interface SignInWithGoogleAction {
 const dev = true;
 const Nanoid = customAlphabet("0123456789", 18);
 const SigninApi = async (credentials: { email: string; password: string }) => {
-  const response = await axios.post(`http://localhost:8000/auth/login`, {
-    Email: credentials.email,
-    Password: credentials.password,
-  });
+  const response = await axios.post(
+    `https://kns-support-api.vercel.app/auth/login`,
+    {
+      Email: credentials.email,
+      Password: credentials.password,
+    }
+  );
   return response.data;
 };
 
 const getProfileApi = async () => {
-  const response = await axios.get(`http://localhost:8000/auth/profile`, {
-    headers: {
-      Authorization: `Bearer ${getAccessToken()}`,
-    },
-  });
+  const response = await axios.get(
+    `https://kns-support-api.vercel.app/auth/profile`,
+    {
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+      },
+    }
+  );
   return response.data;
 };
 
@@ -77,19 +83,22 @@ const SignupApi = async (credentials: {
   image?: string;
   MobilePhone?: string;
 }) => {
-  const response = await axios.post(` http://localhost:8000/auth/signup`, {
-    Id: Nanoid(),
-    FullName: credentials.fullname,
-    Password: "",
-    UserName: credentials.fullname,
-    Email: credentials.email,
-    Image: credentials.image,
-    About: null,
-    UserType: "Customer",
-    WorkingPhone: null,
-    MobilePhone: credentials.MobilePhone,
-    CreatedDate: new Date(),
-  });
+  const response = await axios.post(
+    `https://kns-support-api.vercel.app/auth/signup`,
+    {
+      Id: Nanoid(),
+      FullName: credentials.fullname,
+      Password: "",
+      UserName: credentials.fullname,
+      Email: credentials.email,
+      Image: credentials.image,
+      About: null,
+      UserType: "Customer",
+      WorkingPhone: null,
+      MobilePhone: credentials.MobilePhone,
+      CreatedDate: new Date(),
+    }
+  );
   return response.data;
 };
 
@@ -106,19 +115,22 @@ const SigninWithGoogleApi = async (User: {
   Image: string;
   MobilePhone: string;
 }) => {
-  const user = await axios.post(" http://localhost:8000/auth/googleAuth", {
-    Id: Nanoid(),
-    FullName: User.FullName,
-    Password: "",
-    UserName: User.FullName,
-    Email: User.Email,
-    Image: User.Image,
-    About: null,
-    UserType: "Customer",
-    WorkingPhone: null,
-    MobilePhone: User.MobilePhone,
-    CreatedDate: new Date(),
-  });
+  const user = await axios.post(
+    " https://kns-support-api.vercel.app/auth/googleAuth",
+    {
+      Id: Nanoid(),
+      FullName: User.FullName,
+      Password: "",
+      UserName: User.FullName,
+      Email: User.Email,
+      Image: User.Image,
+      About: null,
+      UserType: "Customer",
+      WorkingPhone: null,
+      MobilePhone: User.MobilePhone,
+      CreatedDate: new Date(),
+    }
+  );
   return user.data;
 };
 

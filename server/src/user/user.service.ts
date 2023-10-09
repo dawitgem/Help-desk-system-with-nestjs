@@ -7,7 +7,6 @@ import { Prisma, Users } from '@prisma/client';
 export class UserService {
   constructor(private Prisma: PrismaService) {}
   async User({ Id }: Prisma.UsersWhereUniqueInput): Promise<Users | null> {
-    console.log({ Id });
     const user = this.Prisma.users.findUnique({
       where: {
         Id,

@@ -22,11 +22,7 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import dotenv from "dotenv";
-import {
-  getAccessToken,
-  removeAccessToken,
-  setAccessToken,
-} from "../AuthService";
+import { removeAccessToken } from "../AuthService";
 
 const provider = new GoogleAuthProvider();
 dotenv.config();
@@ -70,8 +66,10 @@ const getProfileApi = async () => {
     `https://kns-support-api-dawit2001.vercel.app/auth/profile`,
     {
       headers: {
-        Authorization: `Bearer ${getAccessToken()}`,
+        "Content-Type": "application/json",
       },
+
+      withCredentials: true,
     }
   );
   return response.data;
@@ -129,15 +127,22 @@ const SigninWithGoogleApi = async (User: {
       WorkingPhone: null,
       MobilePhone: User.MobilePhone,
       CreatedDate: new Date(),
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      withCredentials: true,
     }
   );
+  console.log(user);
   return user.data;
 };
 
 function* handleSignin(action: SignInAction): Generator<any, void, any> {
   try {
     const AccessToken = yield call(SigninApi, action.payload);
-    setAccessToken(AccessToken);
     const user = yield getProfileApi();
     yield put(getProfile(user));
   } catch (e) {
@@ -165,7 +170,7 @@ function* handleSigninWithGoogle(
     } = yield GoogleAuthWithFirebase();
     const User = { FullName, Email, Image, MobilePhone };
     const AccessToken = yield SigninWithGoogleApi(User);
-    setAccessToken(AccessToken);
+
     const user = yield getProfileApi();
     yield put(getProfile(user));
   } catch (e: any) {
@@ -183,9 +188,18 @@ function* handleProfile(action: SignInAction): Generator<any, void, any> {
 }
 function* handleSignOut() {
   try {
-    yield removeAccessToken();
+    const response = axios.get(
+      " https://kns-support-api-dawit2001.vercel.app/auth/signout",
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        withCredentials: true,
+      }
+    );
+    console.log(response);
   } catch (e) {
-    console.log(e);
     yield put(LogoutFaliure("something went wrong..."));
   }
 }

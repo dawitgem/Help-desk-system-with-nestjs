@@ -7,13 +7,12 @@ import {
   Req,
   Request,
   Res,
-  Response,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto, SignUpDto } from 'src/user/user.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { JWTGuard } from './auth.guard';
+import { Request as request, Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -30,27 +29,67 @@ export class AuthController {
     return this.authService.SignIn(signin);
   }
   @Post('googleAuth')
-  async signinwithGoogle(@Req() req, @Res() res) {
+  async signinwithGoogle(
+    @Req() req: request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const AccessToken = await this.authService.signInWithGoogle(req.body);
-    res.send(AccessToken);
+    res
+      .cookie('access_token', AccessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        expires: new Date(Date.now() + 1 * 24 * 60 * 1000),
+      })
+      .send({ status: 'ok' });
+  }
+  @Get('signout')
+  async signout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('access_token');
+    res.send('user logged out');
   }
   @UseGuards(JWTGuard)
   @Get('profile')
   async getProfile(@Request() req) {
     const { userId } = req.user;
-    console.log({ userId });
     const { Id, FullName, Email, UserName, Image, WorkingPhone, MobilePhone } =
       await this.authService.UserProfile({ userId });
+
     return { Id, FullName, Email, UserName, Image, WorkingPhone, MobilePhone };
+  }
+
+  @Get('test-cookies')
+  testCookies(@Req() req: request) {
+    console.log(req.cookies);
+    return req.cookies;
+  }
+  @Get('set-cookies')
+  async setCookies(
+    @Req() req: request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    res.cookie(
+      'access_token',
+      'csdkfja;lskdjfla;ksjdflakjsdlfkjasl;dkfjal;skdfjlaksjdflkajsdlfk',
+      {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'none',
+        expires: new Date(Date.now() + 1 * 24 * 60 * 1000),
+      },
+    );
+    res.send(req.cookies);
   }
 
   @Options()
   handleOptions() {
-    // Provide custom response for OPTIONS requests
     return {
       statusCode: 200,
       headers: {
-        'Access-Control-Allow-Origin': '*', // Allow requests from any origin (not recommended for production)
+        'Access-Control-Allow-Origin': [
+          'http://localhost:3000',
+          'https://kns-support.vercel.app',
+        ],
         'Access-Control-Allow-Methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
         'Access-Control-Allow-Headers': 'Content-Type',
       },

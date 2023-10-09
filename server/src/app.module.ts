@@ -9,7 +9,6 @@ import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
 import { UserService } from './user/user.service';
 import { PassportModule } from '@nestjs/passport';
-import * as express from 'express';
 
 @Module({
   imports: [UserModule, AuthModule, PassportModule],
@@ -17,19 +16,5 @@ import * as express from 'express';
   providers: [AppService, PrismaService, AuthService, UserService],
 })
 export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(express.json(), express.urlencoded({ extended: true }))
-      .forRoutes('*');
-    consumer
-      .apply((req, res, next) => {
-        res.header('Access-Control-Allow-Origin', '*');
-        res.header(
-          'Access-Control-Allow-Headers',
-          'Origin, X-Requested-With, Content-Type, Accept',
-        );
-        next();
-      })
-      .forRoutes('*');
-  }
+  configure(consumer: MiddlewareConsumer) {}
 }

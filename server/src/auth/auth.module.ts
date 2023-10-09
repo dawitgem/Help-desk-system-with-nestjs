@@ -10,7 +10,6 @@ import { UserController } from 'src/user/user.controller';
 import { UserService } from 'src/user/user.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 
-console.log(process.env.JWT_SECRET_KEY);
 @Module({
   imports: [
     UserModule,

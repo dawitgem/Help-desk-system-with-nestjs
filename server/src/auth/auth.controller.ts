@@ -57,42 +57,4 @@ export class AuthController {
 
     return { Id, FullName, Email, UserName, Image, WorkingPhone, MobilePhone };
   }
-
-  @Get('test-cookies')
-  testCookies(@Req() req: request) {
-    console.log(req.cookies);
-    return req.cookies;
-  }
-  @Get('set-cookies')
-  async setCookies(
-    @Req() req: request,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    res.cookie(
-      'access_token',
-      'csdkfja;lskdjfla;ksjdflakjsdlfkjasl;dkfjal;skdfjlaksjdflkajsdlfk',
-      {
-        httpOnly: true,
-        secure: false,
-        sameSite: 'none',
-        expires: new Date(Date.now() + 1 * 24 * 60 * 1000),
-      },
-    );
-    res.send(req.cookies);
-  }
-
-  @Options()
-  handleOptions() {
-    return {
-      statusCode: 200,
-      headers: {
-        'Access-Control-Allow-Origin': [
-          'http://localhost:3000',
-          'https://kns-support.vercel.app',
-        ],
-        'Access-Control-Allow-Methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
-        'Access-Control-Allow-Headers': 'Content-Type',
-      },
-    };
-  }
 }

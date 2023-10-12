@@ -64,6 +64,7 @@ const ContactProfileForm = () => {
           behavior: "smooth",
         });
       }
+      return false;
     } else
       setError((prevState) => {
         return { ...prevState, Fullname: false };

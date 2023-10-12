@@ -1,6 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { getStorage, ref, uploadBytesResumable } from "firebase/storage";
 import { getAuth } from "firebase/auth";
+import dotenv from "dotenv";
+dotenv.config();
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTHDOMAIN,

@@ -24,10 +24,16 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import dotenv from "dotenv";
-import { removeAccessToken } from "../AuthService";
 
 const provider = new GoogleAuthProvider();
 dotenv.config();
+
+const api =
+  process.env.NEXT_PUBLIC_REACT_ENV === "PRODUCTION"
+    ? "https://kns-support-api.onrender.com"
+    : "http://localhost:8000";
+
+console.log(process.env.NEXT_PUBLIC_REACT_ENV);
 interface SignInAction {
   type: typeof signinSucess;
   payload: { email: string; password: string };
@@ -61,10 +67,9 @@ interface updateUserAction {
     MobilePhone: string | null;
   };
 }
-const dev = true;
 const Nanoid = customAlphabet("0123456789", 18);
 const SigninApi = async (credentials: { email: string; password: string }) => {
-  const response = await axios.post(`http://localhost:8000/auth/login`, {
+  const response = await axios.post(`${api}/auth/login`, {
     Email: credentials.email,
     Password: credentials.password,
   });
@@ -72,7 +77,7 @@ const SigninApi = async (credentials: { email: string; password: string }) => {
 };
 
 const getProfileApi = async () => {
-  const response = await axios.get(`http://localhost:8000/auth/profile`, {
+  const response = await axios.get(`${api}/auth/profile`, {
     headers: {
       "Content-Type": "application/json",
     },
@@ -88,7 +93,7 @@ const SignupApi = async (credentials: {
   image?: string;
   MobilePhone?: string;
 }) => {
-  const response = await axios.post(`http://localhost:8000/auth/signup`, {
+  const response = await axios.post(`${api}/auth/signup`, {
     Id: Nanoid(),
     FullName: credentials.fullname,
     Password: "",
@@ -118,7 +123,7 @@ const SigninWithGoogleApi = async (User: {
   MobilePhone: string;
 }) => {
   const user = await axios.post(
-    " http://localhost:8000/auth/googleAuth",
+    `${api}/auth/googleAuth`,
     {
       Id: Nanoid(),
       FullName: User.FullName,
@@ -151,15 +156,12 @@ const updateUserApi = async (Profile: {
   MobilePhone: string | null;
 }) => {
   const { FullName, Image, WorkingPhone, MobilePhone } = Profile;
-  const response = await axios.put(
-    `http://localhost:8000/user/update/${Profile.Id}`,
-    {
-      FullName,
-      Image,
-      WorkingPhone,
-      MobilePhone,
-    }
-  );
+  const response = await axios.put(`${api}/user/update/${Profile.Id}`, {
+    FullName,
+    Image,
+    WorkingPhone,
+    MobilePhone,
+  });
   console.log(response.data);
   return response.data;
 };
@@ -212,7 +214,7 @@ function* handleProfile(action: SignInAction): Generator<any, void, any> {
 }
 function* handleSignOut() {
   try {
-    const response = axios.get(" http://localhost:8000/auth/signout", {
+    const response = axios.get(`${api}/auth/signout`, {
       headers: {
         "Content-Type": "application/json",
       },

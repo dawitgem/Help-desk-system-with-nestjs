@@ -12,7 +12,6 @@ import { selectUser } from "../Redux/features/userSlice";
 
 const Home = () => {
   const { user } = useSelector(selectUser);
-  console.log(user);
   return (
     <>
       <div className="bg-[#063750] h-[350px] flex flex-col align-middle justify-center gap-10 md:p-2 p-5  ">

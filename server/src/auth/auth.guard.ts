@@ -15,9 +15,7 @@ export class JWTGuard extends AuthGuard('jwt') implements CanActivate {
     return super.canActivate(context);
   }
   handleRequest(err, user, info) {
-    console.log('come on man');
     if (err || !user) {
-      console.log('come on man this is stupid');
       throw err || new UnauthorizedException();
     }
     return user;

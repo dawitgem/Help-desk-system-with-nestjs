@@ -12,6 +12,8 @@ import {
   getProfileStart,
   LogoutSucess,
   LogoutFaliure,
+  updateUserSuccess,
+  updateUserFaliure,
 } from "../Redux/features/userSlice";
 import axios from "axios";
 import { nanoid, customAlphabet } from "nanoid";
@@ -48,30 +50,35 @@ interface SignInWithGoogleAction {
     MobilePhone?: string;
   };
 }
+
+interface updateUserAction {
+  type: typeof updateUserSuccess;
+  payload: {
+    Id: string;
+    FullName: string;
+    Image: string;
+    WorkingPhone: string | null;
+    MobilePhone: string | null;
+  };
+}
 const dev = true;
 const Nanoid = customAlphabet("0123456789", 18);
 const SigninApi = async (credentials: { email: string; password: string }) => {
-  const response = await axios.post(
-    `https://kns-support-api.onrender.com/auth/login`,
-    {
-      Email: credentials.email,
-      Password: credentials.password,
-    }
-  );
+  const response = await axios.post(`http://localhost:8000/auth/login`, {
+    Email: credentials.email,
+    Password: credentials.password,
+  });
   return response.data;
 };
 
 const getProfileApi = async () => {
-  const response = await axios.get(
-    `https://kns-support-api.onrender.com/auth/profile`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
+  const response = await axios.get(`http://localhost:8000/auth/profile`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
 
-      withCredentials: true,
-    }
-  );
+    withCredentials: true,
+  });
   return response.data;
 };
 
@@ -81,22 +88,19 @@ const SignupApi = async (credentials: {
   image?: string;
   MobilePhone?: string;
 }) => {
-  const response = await axios.post(
-    `https://kns-support-api.onrender.com/auth/signup`,
-    {
-      Id: Nanoid(),
-      FullName: credentials.fullname,
-      Password: "",
-      UserName: credentials.fullname,
-      Email: credentials.email,
-      Image: credentials.image,
-      About: null,
-      UserType: "Customer",
-      WorkingPhone: null,
-      MobilePhone: credentials.MobilePhone,
-      CreatedDate: new Date(),
-    }
-  );
+  const response = await axios.post(`http://localhost:8000/auth/signup`, {
+    Id: Nanoid(),
+    FullName: credentials.fullname,
+    Password: "",
+    UserName: credentials.fullname,
+    Email: credentials.email,
+    Image: credentials.image,
+    About: null,
+    UserType: "Customer",
+    WorkingPhone: null,
+    MobilePhone: credentials.MobilePhone,
+    CreatedDate: new Date(),
+  });
   return response.data;
 };
 
@@ -114,7 +118,7 @@ const SigninWithGoogleApi = async (User: {
   MobilePhone: string;
 }) => {
   const user = await axios.post(
-    " https://kns-support-api.onrender.com/auth/googleAuth",
+    " http://localhost:8000/auth/googleAuth",
     {
       Id: Nanoid(),
       FullName: User.FullName,
@@ -136,8 +140,28 @@ const SigninWithGoogleApi = async (User: {
       withCredentials: true,
     }
   );
-  console.log(user);
   return user.data;
+};
+
+const updateUserApi = async (Profile: {
+  Id: string;
+  FullName: string;
+  Image: string;
+  WorkingPhone: string | null;
+  MobilePhone: string | null;
+}) => {
+  const { FullName, Image, WorkingPhone, MobilePhone } = Profile;
+  const response = await axios.put(
+    `http://localhost:8000/user/update/${Profile.Id}`,
+    {
+      FullName,
+      Image,
+      WorkingPhone,
+      MobilePhone,
+    }
+  );
+  console.log(response.data);
+  return response.data;
 };
 
 function* handleSignin(action: SignInAction): Generator<any, void, any> {
@@ -169,7 +193,7 @@ function* handleSigninWithGoogle(
       email: Email,
     } = yield GoogleAuthWithFirebase();
     const User = { FullName, Email, Image, MobilePhone };
-    const AccessToken = yield SigninWithGoogleApi(User);
+    yield SigninWithGoogleApi(User);
 
     const user = yield getProfileApi();
     yield put(getProfile(user));
@@ -188,19 +212,27 @@ function* handleProfile(action: SignInAction): Generator<any, void, any> {
 }
 function* handleSignOut() {
   try {
-    const response = axios.get(
-      " https://kns-support-api.onrender.com/auth/signout",
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
+    const response = axios.get(" http://localhost:8000/auth/signout", {
+      headers: {
+        "Content-Type": "application/json",
+      },
 
-        withCredentials: true,
-      }
-    );
-    console.log(response);
+      withCredentials: true,
+    });
   } catch (e) {
     yield put(LogoutFaliure("something went wrong..."));
+  }
+}
+
+function* handleUpdateUser(
+  action: updateUserAction
+): Generator<any, void, any> {
+  try {
+    const user = yield call(updateUserApi, action.payload);
+    yield put(createUser(user));
+  } catch (e: any) {
+    yield put(updateUserFaliure(e.message));
+    console.log(e);
   }
 }
 export function* userSaga() {
@@ -209,4 +241,5 @@ export function* userSaga() {
   yield takeLatest(signinWithGoogleStart.type, handleSigninWithGoogle);
   yield takeLatest(getProfileStart.type, handleProfile);
   yield takeLatest(LogoutSucess.type, handleSignOut);
+  yield takeLatest(updateUserSuccess.type, handleUpdateUser);
 }

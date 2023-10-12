@@ -1,11 +1,17 @@
 "use client";
 import Link from "next/link";
 
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { CgMenuRight } from "react-icons/cg";
-import { redirect, usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Avatar } from "@mui/material";
-import dawit from "@/public/asset/download.png";
 import Menu from "./Menu";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -102,7 +108,9 @@ const Navbar = () => {
                     {user.FullName?.slice(0, 1)}
                   </Avatar>
                 </button>
-                {openProfileModal && <UserProfileModal />}
+                {openProfileModal && (
+                  <UserProfileModal setOpen={setOpenProfileModal} />
+                )}
               </div>
             </>
           ) : (
@@ -149,14 +157,15 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
-function UserProfileModal() {
+interface UserProfileModalProps {
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}
+function UserProfileModal({ setOpen }: UserProfileModalProps) {
   const dispatch = useDispatch();
   const router = useRouter();
 
   const agent = false;
   const { user } = useSelector(selectUser);
-  console.log(user);
   return (
     <div className="bg-white w-[150px]  absolute top-[72px] right-0 border rounded-md flex flex-col gap-3 z-20">
       {user && (
@@ -194,6 +203,9 @@ function UserProfileModal() {
                 <Link
                   href={"/support/profile/edit"}
                   className="p-2 text-gray-700 hover:bg-slate-100 text-sm font-semibold"
+                  onClick={() => {
+                    setOpen(false);
+                  }}
                 >
                   My profile
                 </Link>

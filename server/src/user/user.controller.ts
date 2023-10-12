@@ -1,15 +1,36 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Put } from '@nestjs/common';
 import { UserService } from './user.service';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateUserDto } from './user.dto';
 
 @Controller('user')
 export class UserController {
-  constructor(
-    private readonly UserService: UserService,
-    PrismaService: PrismaService,
-  ) {}
+  constructor(private readonly UserService: UserService) {}
 
-  @Post('update/:id')
-  async updateProfile(@Param('id') updateUserDto: UpdateUserDto) {}
+  @Put('update/:id')
+  async updateProfile(
+    @Param('id') userId: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    const user = await this.UserService.updateUser(userId, updateUserDto);
+    const {
+      Id,
+      FullName,
+      Email,
+      UserName,
+      Image,
+      UserType,
+      WorkingPhone,
+      MobilePhone,
+    } = user;
+    return {
+      Id,
+      FullName,
+      Email,
+      UserName,
+      Image,
+      UserType,
+      WorkingPhone,
+      MobilePhone,
+    };
+  }
 }

@@ -4,13 +4,13 @@ import { error } from "console";
 
 interface user {
   Id: string;
-  FullName: string | null;
+  FullName?: string | null;
   Email: string;
-  UserName: string;
-  Image: string | null;
+  UserName?: string | null;
+  Image?: string | null;
   userType: string;
-  workPhone: string | null;
-  mobilePhone: string | null;
+  WorkingPhone?: string | null;
+  MobilePhone?: string | null;
 }
 interface userState {
   user: user | null;
@@ -35,7 +35,6 @@ const userSlice = createSlice({
       state.isAuth = false;
     },
     getProfile: (state, action: PayloadAction<user>) => {
-      console.log(action.payload);
       state.user = action.payload;
       state.isAuth = true;
       state.error = null;
@@ -44,8 +43,17 @@ const userSlice = createSlice({
       state.isAuth = false;
       state.error = action.payload;
     },
-    updateUserSuccess: (state, action: PayloadAction<user>) => {
-      state.user = action.payload;
+    updateUserSuccess: (
+      state,
+      action: PayloadAction<{
+        Id: string;
+        FullName: any;
+        Image: any;
+        WorkingPhone: any;
+        MobilePhone: any;
+      }>
+    ) => {
+      console.log("come the hell");
       state.error = null;
     },
     updateUserFaliure: (state, action: PayloadAction<string>) => {
@@ -56,6 +64,8 @@ const userSlice = createSlice({
       state,
       action: PayloadAction<{ fullname: string; email: string }>
     ) => {
+      console.log("this is stupid");
+      console.log(action.payload);
       state.isAuth = true;
       state.error = null;
     },

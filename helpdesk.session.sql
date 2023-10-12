@@ -1,1 +1,1 @@
-Delete  FROM Users;
+SELECT *  FROM Users;

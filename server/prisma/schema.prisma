@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("PRODUCTION_URL")
+  url      = env("DATABASE_URL")
 }
 
 model Users {
@@ -195,6 +195,11 @@ model Images {
   CannedResponse   CannedResponse? @relation(fields: [CannedResponseId], references: [Id])
   Ticket           Tickets?        @relation(fields: [TicketId], references: [Id])
   Reply            Reply?          @relation(fields: [ReplyId], references: [Id])
+}
+
+model Hi {
+  Id   String @id
+  name String
 }
 
 model Reply {

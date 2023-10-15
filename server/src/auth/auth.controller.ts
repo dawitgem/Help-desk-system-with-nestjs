@@ -18,16 +18,30 @@ import { Request as request, Response } from 'express';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  private setAccessTokenCookie = (res: Response, AccessToken: string) => {
+    res.cookie('access_token', AccessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      expires: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
+      path: '/',
+    });
+  };
+
   @Post('signup')
-  async signup(@Body() signupDto: SignUpDto) {
-    const { Id, FullName, UserName, Image, WorkingPhone, MobilePhone } =
-      await this.authService.SignUp(signupDto);
-    return { Id, FullName, UserName, Image, WorkingPhone, MobilePhone };
+  async signup(@Req() req: request, @Res({ passthrough: true }) res: Response) {
+    const AccessToken = await this.authService.SignUp(req.body);
+    res.clearCookie('access_token');
+    this.setAccessTokenCookie(res, AccessToken);
+    res.send('successfully registerd');
   }
 
   @Post('login')
-  async signin(@Body() signin: SignInDto) {
-    return this.authService.SignIn(signin);
+  async signin(@Req() req: request, @Res({ passthrough: true }) res: Response) {
+    const AccessToken = await this.authService.SignIn(req.body);
+    res.clearCookie('access_token');
+    this.setAccessTokenCookie(res, AccessToken);
+    res.send('successfully loggedin');
   }
   @Post('googleAuth')
   async signinwithGoogle(
@@ -35,14 +49,9 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const AccessToken = await this.authService.signInWithGoogle(req.body);
-    res
-      .cookie('access_token', AccessToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none',
-        expires: new Date(Date.now() + 1 * 24 * 60 * 1000),
-      })
-      .send({ status: 'ok' });
+    res.clearCookie('access_token');
+    this.setAccessTokenCookie(res, AccessToken);
+    res.send({ status: 'ok' });
   }
   @Get('signout')
   async signout(@Res({ passthrough: true }) res: Response) {

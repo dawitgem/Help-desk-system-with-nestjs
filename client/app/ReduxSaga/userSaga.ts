@@ -14,6 +14,8 @@ import {
   LogoutFaliure,
   updateUserSuccess,
   updateUserFaliure,
+  updatePasswordSuccess,
+  updatePasswordRequest,
 } from "../Redux/features/userSlice";
 import axios from "axios";
 import { nanoid, customAlphabet } from "nanoid";
@@ -43,8 +45,7 @@ interface SignUpAction {
   payload: {
     fullname: string;
     email: string;
-    image?: string;
-    MobilePhone?: string;
+    password: string;
   };
 }
 interface SignInWithGoogleAction {
@@ -67,12 +68,30 @@ interface updateUserAction {
     MobilePhone: string | null;
   };
 }
+interface updatePasswordACtion {
+  type: typeof updatePasswordSuccess;
+  payload: {
+    Id: string;
+    currentPassword: string;
+    newPassword: string;
+  };
+}
 const Nanoid = customAlphabet("0123456789", 18);
 const SigninApi = async (credentials: { email: string; password: string }) => {
-  const response = await axios.post(`${api}/auth/login`, {
-    Email: credentials.email,
-    Password: credentials.password,
-  });
+  const response = await axios.post(
+    `${api}/auth/login`,
+    {
+      Email: credentials.email,
+      Password: credentials.password,
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      withCredentials: true,
+    }
+  );
   return response.data;
 };
 
@@ -92,20 +111,31 @@ const SignupApi = async (credentials: {
   email: string;
   image?: string;
   MobilePhone?: string;
+  password: string;
 }) => {
-  const response = await axios.post(`${api}/auth/signup`, {
-    Id: Nanoid(),
-    FullName: credentials.fullname,
-    Password: "",
-    UserName: credentials.fullname,
-    Email: credentials.email,
-    Image: credentials.image,
-    About: null,
-    UserType: "Customer",
-    WorkingPhone: null,
-    MobilePhone: credentials.MobilePhone,
-    CreatedDate: new Date(),
-  });
+  const response = await axios.post(
+    `${api}/auth/signup`,
+    {
+      Id: Nanoid(),
+      FullName: credentials.fullname,
+      Password: credentials.password,
+      UserName: credentials.fullname,
+      Email: credentials.email,
+      Image: credentials.image,
+      About: null,
+      UserType: "Customer",
+      WorkingPhone: null,
+      MobilePhone: credentials.MobilePhone,
+      CreatedDate: new Date(),
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      withCredentials: true,
+    }
+  );
   return response.data;
 };
 
@@ -122,7 +152,7 @@ const SigninWithGoogleApi = async (User: {
   Image: string;
   MobilePhone: string;
 }) => {
-  const user = await axios.post(
+  const response = await axios.post(
     `${api}/auth/googleAuth`,
     {
       Id: Nanoid(),
@@ -145,7 +175,7 @@ const SigninWithGoogleApi = async (User: {
       withCredentials: true,
     }
   );
-  return user.data;
+  return response.data;
 };
 
 const updateUserApi = async (Profile: {
@@ -158,11 +188,26 @@ const updateUserApi = async (Profile: {
   const { FullName, Image, WorkingPhone, MobilePhone } = Profile;
   const response = await axios.put(`${api}/user/update/${Profile.Id}`, {
     FullName,
+    UserName: FullName,
     Image,
     WorkingPhone,
     MobilePhone,
   });
-  console.log(response.data);
+  return response.data;
+};
+
+const updateUserPasswordApi = async (Passwords: {
+  Id: string;
+  currentPassword: string;
+  newPassword: string;
+}) => {
+  const response = await axios.put(
+    `${api}/user/updatePassword/${Passwords.Id}`,
+    {
+      currentPassword: Passwords.currentPassword,
+      newPassword: Passwords.newPassword,
+    }
+  );
   return response.data;
 };
 
@@ -177,7 +222,9 @@ function* handleSignin(action: SignInAction): Generator<any, void, any> {
 }
 function* handleSigUp(action: SignUpAction): Generator<any, void, any> {
   try {
-    const user = yield call(SignupApi, action.payload);
+    const response = yield call(SignupApi, action.payload);
+    console.log(response);
+    const user = yield getProfileApi();
     yield put(createUser(user));
   } catch (e) {
     yield put(signUpFaliure("something went wrong . Please try again !!!"));
@@ -196,7 +243,6 @@ function* handleSigninWithGoogle(
     } = yield GoogleAuthWithFirebase();
     const User = { FullName, Email, Image, MobilePhone };
     yield SigninWithGoogleApi(User);
-
     const user = yield getProfileApi();
     yield put(getProfile(user));
   } catch (e: any) {
@@ -237,6 +283,16 @@ function* handleUpdateUser(
     console.log(e);
   }
 }
+function* handleUpdateUserPassword(
+  action: updatePasswordACtion
+): Generator<any, void, any> {
+  try {
+    const user = yield call(updateUserPasswordApi, action.payload);
+    yield put(updatePasswordSuccess(user));
+  } catch (e: any) {
+    yield put(updateUserFaliure(e.response.data.message));
+  }
+}
 export function* userSaga() {
   yield takeLatest(signinSucess.type, handleSignin);
   yield takeLatest(signupSucess.type, handleSigUp);
@@ -244,4 +300,5 @@ export function* userSaga() {
   yield takeLatest(getProfileStart.type, handleProfile);
   yield takeLatest(LogoutSucess.type, handleSignOut);
   yield takeLatest(updateUserSuccess.type, handleUpdateUser);
+  yield takeLatest(updatePasswordRequest.type, handleUpdateUserPassword);
 }

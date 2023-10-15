@@ -12,42 +12,48 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { FaTimes } from "react-icons/fa";
 import { redirect, useRouter } from "next/navigation";
+import { Checkbox } from "@mui/material";
+import { validatePassword } from "firebase/auth";
 
 const SignUpPage = () => {
   const dispatch = useDispatch();
   const { user, isAuth, error } = useSelector(selectUser);
+  const [showPassword, setShowPassword] = useState(false);
   const [showError, setShowError] = useState(false);
-  const [formData, setFormData] = useState({ fullname: "", email: "" });
-  const [Error, setError] = useState({ email: false, fullname: false });
+  const [formData, setFormData] = useState({
+    fullname: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [Error, setError] = useState({
+    email: false,
+    fullname: false,
+    password: false,
+    confirmPassword: false,
+  });
   const [ErrorMessage, setErrorMessage] = useState({
     email: "",
     fullname: "",
+    password: "",
+    confirmPassword: "",
   });
   const router = useRouter();
 
   const validateForm = () => {
     let valid = true;
     if (!formData.email) {
-      setError((prevState) => ({ ...prevState, ["email"]: true }));
-      setErrorMessage({
+      setError((prevState) => ({ ...prevState, email: true }));
+      setErrorMessage((prevState) => ({
+        ...prevState,
         email: "This field is required",
-        fullname: "This field is required",
-      });
+      }));
       valid = false;
     }
-    if (!formData.fullname && formData.email) {
-      setError((prevState) => ({ ...prevState, ["fullname"]: true }));
-      setErrorMessage({
-        email: "This field is required",
-        fullname: "This field is required",
-      });
-      valid = false;
-    }
-    if (!formData.fullname && !formData.email) {
-      setError((prevState) => ({ ...prevState, ["fullname"]: false }));
-      setErrorMessage({
-        email: "This field is required",
-        fullname: "This field is required",
+    if (!formData.fullname) {
+      setError((prevState) => ({ ...prevState, fullname: true }));
+      setErrorMessage((prevState) => {
+        return { ...prevState, fullname: "This field is required" };
       });
       valid = false;
     }
@@ -57,23 +63,85 @@ const SignUpPage = () => {
   const validateEmail = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email) && !formData.fullname) {
-      setError({ email: true, fullname: true });
+      setError((prevState) => {
+        return { ...prevState, email: true, fullname: true };
+      });
       setErrorMessage((prevState) => {
-        return { ...prevState, ["email"]: "Please enter valid email address" };
+        return { ...prevState, email: "Please enter valid email address" };
       });
       return false;
     }
     if (!emailRegex.test(formData.email) && formData.fullname) {
-      setError({ email: true, fullname: false });
+      setError((prevState) => {
+        return { ...prevState, email: true, fullname: false };
+      });
       setErrorMessage((prevState) => {
-        return { ...prevState, ["email"]: "Please enter valid email address" };
+        return { ...prevState, email: "Please enter valid email address" };
       });
       return false;
     } else return true;
   };
+  const validatePassword = () => {
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&=.#$%^*()-_+/><,"'])[A-Za-z\d@$!%*?&=.#$%^*()-_+/><,"']{8,}$/;
+
+    let valid = true;
+    if (!formData.password) {
+      setError((prevState) => ({
+        ...prevState,
+        password: true,
+      }));
+      setErrorMessage((prevState) => {
+        return { ...prevState, password: "This field is required" };
+      });
+      valid = false;
+    }
+    if (!formData.confirmPassword) {
+      setError((prevState) => ({
+        ...prevState,
+        confirmPassword: true,
+      }));
+      setErrorMessage((prevState) => ({
+        ...prevState,
+        confirmPassword: "This field is required",
+      }));
+      valid = false;
+    }
+    if (formData.password && passwordRegex.test(formData.password) === false) {
+      setError((prevState) => ({
+        ...prevState,
+        password: true,
+      }));
+      setErrorMessage((prevState) => ({
+        ...prevState,
+        password:
+          "invalid password Pattern . it must include {atleaset 8 characters,A-Z,0-9,special character}",
+      }));
+      valid = false;
+    }
+    if (
+      formData.password &&
+      passwordRegex.test(formData.password) &&
+      formData.confirmPassword &&
+      formData.password != formData.confirmPassword
+    ) {
+      setError((prevState) => ({
+        ...prevState,
+        confirmPassword: true,
+      }));
+      setErrorMessage((prevState) => ({
+        ...prevState,
+        confirmPassword: "Password doesn't match",
+      }));
+      valid = false;
+    }
+
+    return valid;
+  };
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (validateForm() && validateEmail()) dispatch(signupSucess(formData));
+    if (validateForm() && validateEmail() && validatePassword())
+      dispatch(signupSucess(formData));
   };
   useEffect(() => {
     const CheckUser = () => {
@@ -114,7 +182,7 @@ const SignUpPage = () => {
         </div>
         <form action="" className="flex flex-col gap-3" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-2">
-            <label htmlFor="" className="text-gray-600 text-sm font-semibold">
+            <label className="text-gray-600 text-sm font-semibold">
               Full name
               <span className="text-red-600 font-bold text-lg self-center ml-2">
                 *
@@ -122,6 +190,7 @@ const SignUpPage = () => {
             </label>
             <input
               type="text"
+              id="fullname"
               className={`p-3 text-gray-600 border w-full rounded-md ${
                 Error.fullname
                   ? "border-red-500 outline-none"
@@ -129,22 +198,24 @@ const SignUpPage = () => {
               }  placeholder:text-sm `}
               onChange={(e) => {
                 setFormData((prevState) => {
-                  return { ...prevState, ["fullname"]: e.target.value };
+                  return { ...prevState, fullname: e.target.value };
                 });
               }}
               onFocus={() => {
-                if (!formData.email && Error.fullname)
-                  setError({ email: true, fullname: false });
-                else setError({ ...Error, fullname: false });
+                setError((prevState) => {
+                  return { ...prevState, fullname: false };
+                });
               }}
               placeholder="Full name"
             />
             {Error.fullname && (
-              <p className="text-red-600 text-[12px]">{ErrorMessage.email}</p>
+              <p className="text-red-600 text-[12px]">
+                {ErrorMessage.fullname}
+              </p>
             )}
           </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="" className="text-gray-600 text-sm font-semibold">
+            <label className="text-gray-600 text-sm font-semibold">
               Email
               <span className="text-red-600 font-bold text-lg self-center ml-2">
                 *
@@ -152,6 +223,7 @@ const SignUpPage = () => {
             </label>
             <input
               type="text"
+              id="email"
               className={`p-3 text-gray-600 border w-full rounded-md ${
                 Error.email
                   ? "border-red-500 outline-none"
@@ -159,20 +231,93 @@ const SignUpPage = () => {
               }  placeholder:text-sm `}
               onChange={(e) => {
                 setFormData((prevState) => {
-                  return { ...prevState, ["email"]: e.target.value };
+                  return { ...prevState, email: e.target.value };
                 });
               }}
               onFocus={() => {
-                if (!formData.fullname && Error.email)
-                  setError({ email: false, fullname: true });
-                else setError({ ...Error, email: false });
+                setError((prevState) => {
+                  return { ...prevState, email: false };
+                });
               }}
               placeholder="Email"
             />
             {Error.email && (
               <p className="text-red-600 text-[12px]">{ErrorMessage.email}</p>
             )}
+          </div>{" "}
+          <div className="flex flex-col gap-2">
+            <label className="text-gray-600 text-sm font-semibold">
+              password
+              <span className="text-red-600 font-bold text-lg self-center ml-2">
+                *
+              </span>
+            </label>
+            <input
+              type={`${showPassword ? "text" : "password"}`}
+              id="password"
+              className={`p-3 text-gray-600 border w-full rounded-md ${
+                Error.password
+                  ? "border-red-500 outline-none"
+                  : "outline-blue-500 hover:border-black "
+              }  placeholder:text-sm `}
+              onChange={(e) => {
+                setFormData((prevState) => {
+                  return { ...prevState, password: e.target.value };
+                });
+              }}
+              onFocus={() => {
+                setError((prevState) => {
+                  return { ...prevState, password: false };
+                });
+              }}
+              placeholder="Password"
+            />
+            {Error.password && (
+              <p className="text-red-600 text-[12px]">
+                {ErrorMessage.password}
+              </p>
+            )}
           </div>
+          <div className="flex flex-col gap-2">
+            <label className="text-gray-600 text-sm font-semibold">
+              confirm password
+              <span className="text-red-600 font-bold text-lg self-center ml-2">
+                *
+              </span>
+            </label>
+            <input
+              type={`${showPassword ? "text" : "password"}`}
+              id="confirmpassword"
+              className={`p-3 text-gray-600 border w-full rounded-md ${
+                Error.confirmPassword
+                  ? "border-red-500 outline-none"
+                  : "outline-blue-500 hover:border-black "
+              }  placeholder:text-sm `}
+              onChange={(e) => {
+                setFormData((prevState) => {
+                  return { ...prevState, confirmPassword: e.target.value };
+                });
+              }}
+              onFocus={() => {
+                setError((prevState) => {
+                  return { ...prevState, confirmPassword: false };
+                });
+              }}
+              placeholder="Confirm password"
+            />
+            {Error.confirmPassword && (
+              <p className="text-red-600 text-[12px]">
+                {ErrorMessage.confirmPassword}
+              </p>
+            )}
+          </div>
+          <li className="flex gap-2 text-sm text-gray-700 font-semibold  ">
+            <Checkbox
+              sx={{ "& .MuiSvgIcon-root": { fontSize: 18 } }}
+              onChange={(e) => setShowPassword(e.target.checked)}
+            />
+            <p className="self-center">Show Password</p>
+          </li>
           <button className="bg-[#063750] text-white p-3 text-sm rounded-md">
             Register
           </button>

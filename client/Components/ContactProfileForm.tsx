@@ -1,4 +1,8 @@
-import { selectUser, updateUserSuccess } from "@/app/Redux/features/userSlice";
+import {
+  selectUser,
+  updateUserFaliure,
+  updateUserSuccess,
+} from "@/app/Redux/features/userSlice";
 import { Alert, Avatar, Snackbar } from "@mui/material";
 import Link from "next/link";
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
@@ -9,16 +13,20 @@ import {
   ref,
   UploadTask,
   deleteObject,
+  StorageReference,
 } from "firebase/storage";
 import { LiaTimesSolid } from "react-icons/lia";
 import { useRouter } from "next/navigation";
 
 const ContactProfileForm = () => {
-  const { user, isAuth, error } = useSelector(selectUser);
+  const { user, isAuth, error, Loading } = useSelector(selectUser);
   const dispatch = useDispatch();
+  const [uploadRef, setUploadRef] = useState<StorageReference>();
   const [successFullUpdate, setSuccessFullUpdate] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const [isValid, setIsValid] = useState(false);
+  const [showError, setShowError] = useState(false);
   const [uploadTask, setUploadTask] = useState<UploadTask | null>(null);
   const [disabled, setDisabled] = useState<boolean>(true);
   const router = useRouter();
@@ -36,6 +44,7 @@ const ContactProfileForm = () => {
   const [isDataChanged, setDataChanged] = useState(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setIsValid(false);
     setDisabled(false);
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -44,7 +53,6 @@ const ContactProfileForm = () => {
 
   const validatePhone = (phone: string) => {
     const pattern = /^(\+\d{12}|\d{10})$/;
-    console.log(pattern.test(phone));
     return pattern.test(phone);
   };
   const validateForm = () => {
@@ -70,7 +78,6 @@ const ContactProfileForm = () => {
         return { ...prevState, Fullname: false };
       });
     if (formData.workphone) {
-      console.log(formData.workphone);
       validatePhone(formData.workphone)
         ? setError((prevState) => {
             return { ...prevState, workPhone: false };
@@ -92,8 +99,9 @@ const ContactProfileForm = () => {
     }
     return valid;
   };
-  const profileRef = ref(storage, `userProfile/${user?.Id}`);
   const uploadProfileToFirebase = (file: File) => {
+    const profileRef = ref(storage, `userProfile/${user?.Id}/${file.name}`);
+    setUploadRef(profileRef);
     const uploadTask = uploadBytesResumable(profileRef, file);
     setUploadTask(uploadTask);
     uploadTask.on(
@@ -112,7 +120,6 @@ const ContactProfileForm = () => {
           case "storage/canceled":
             break;
           case "storage/unknown":
-            console.log(Error.serverResponse);
             break;
         }
       },
@@ -132,6 +139,7 @@ const ContactProfileForm = () => {
     }
   };
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
+    setIsValid(false);
     setDisabled(false);
     const file = event.target.files?.[0];
     if (file) {
@@ -152,9 +160,10 @@ const ContactProfileForm = () => {
           MobilePhone: formData.mobilephone,
         })
       );
-      if (!error) setSuccessFullUpdate(true);
-    } else setSuccessFullUpdate(false);
+      setIsValid(true);
+    }
   };
+
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       if (isDataChanged) {
@@ -162,19 +171,41 @@ const ContactProfileForm = () => {
         event.returnValue = "";
       }
     };
-    if (successFullUpdate) {
-      setTimeout(() => {
-        router.push("/support/");
-      }, 800);
-    }
-
+    const checkError = () => {
+      const element = document.getElementById("fullname");
+      if (!Loading && isValid && error !== null) {
+        if (element) {
+          const offset = 300;
+          const elementPosition =
+            element.getBoundingClientRect().top + window.scrollY;
+          window.scrollTo({
+            top: elementPosition - offset,
+            behavior: "smooth",
+          });
+        }
+        setSuccessFullUpdate(false);
+        setShowError(true);
+      }
+      if (!Loading && isValid && error === null) {
+        setSuccessFullUpdate(true);
+        setTimeout(() => {
+          router.push("/support/");
+        }, 1000);
+      }
+    };
+    checkError();
     window.addEventListener("beforeunload", (e: BeforeUnloadEvent) => {
       handleBeforeUnload(e);
     });
+
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [isDataChanged, successFullUpdate]);
+  }, [isDataChanged, Loading]);
+  console.log(
+    !Loading && isValid && error !== null,
+    !Loading && isValid && error === null
+  );
   return (
     <>
       <Snackbar
@@ -190,6 +221,20 @@ const ContactProfileForm = () => {
         className="bg-white border shadow-md rounded-lg w-full "
         id="fullname"
       >
+        {error && showError && (
+          <div className="p-3 border bg-red-200 border-red-400 flex justify-between">
+            <p className="text-sm font-medium text-red-600">{error}</p>
+            <button
+              className="text-lg text-gray-800"
+              onClick={() => {
+                setIsValid(false);
+                setShowError(false);
+              }}
+            >
+              <LiaTimesSolid />
+            </button>
+          </div>
+        )}
         <form action="" className="md:p-10 p-3  w-full" onSubmit={handleSubmit}>
           <div className="flex lg:flex-row flex-col gap-5 md:justify-between w-full">
             <ul className="flex flex-col gap-8 w-full">
@@ -287,14 +332,14 @@ const ContactProfileForm = () => {
               <Avatar
                 alt="image"
                 src={formData.Image || " "}
-                className="md:w-[150px] md:h-[150px] w-[80px] h-[80px] self-center bg-slate-400 rounded-full shadow-md object-contain "
+                className="w-[150px] h-[150px]  self-center bg-slate-400 rounded-full shadow-md object-contain "
               >
                 {user?.FullName ? user.FullName.slice(0, 1) : " "}
               </Avatar>
               {selectedImage ? (
                 <>
                   {!uploadProgress && (
-                    <div className="flex gap-3">
+                    <div className="flex gap-3 self-center">
                       <label
                         htmlFor="Image"
                         className="p-3 border border-gray-300 rounded-md text-gray-600 text-sm bg-slate-50 text-center self-center shadow-sm cursor-pointer"
@@ -305,8 +350,9 @@ const ContactProfileForm = () => {
                         className="p-3 border border-gray-300 rounded-md text-gray-600 text-sm bg-slate-50 text-center self-center shadow-sm"
                         type="button"
                         onClick={async () => {
+                          setIsValid(false);
                           try {
-                            await deleteObject(profileRef);
+                            if (uploadRef) await deleteObject(uploadRef);
                           } catch (Error: any) {
                             console.error(
                               "Error deleting file:",

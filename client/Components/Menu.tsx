@@ -1,7 +1,13 @@
+"use client";
 import { Avatar, Backdrop } from "@mui/material";
-import React, { Dispatch, SetStateAction } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { FaTimes } from "react-icons/fa";
-import dawit from "@/public/asset/download.png";
 import { LiaHomeSolid } from "react-icons/lia";
 import { BsBook } from "react-icons/bs";
 import { RiTicket2Line } from "react-icons/ri";
@@ -9,6 +15,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSelector } from "react-redux";
 import { selectUser } from "@/app/Redux/features/userSlice";
+import { UserProfileModal } from "./Navbar";
 
 interface MenuProps {
   open: boolean;
@@ -17,7 +24,22 @@ interface MenuProps {
 const Menu = ({ open, setOpen }: MenuProps) => {
   const pathname = usePathname();
   const { user, isAuth, error } = useSelector(selectUser);
+  const [openProfileModal, setOpenProfileModal] = useState(false);
+  const ProfilemodalRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        ProfilemodalRef.current &&
+        !ProfilemodalRef.current.contains(e.target as Node)
+      )
+        setOpenProfileModal(false);
+    };
+    document.addEventListener("click", (e: MouseEvent) => {
+      handleClickOutside(e);
+    });
+    return document.removeEventListener("click", handleClickOutside);
+  }, []);
   return (
     <div className="md:hidden block">
       <Backdrop
@@ -30,7 +52,7 @@ const Menu = ({ open, setOpen }: MenuProps) => {
         }}
         open={open}
       >
-        <div className="flex w-[300px] h-full  ">
+        <div className="flex w-[230px] h-full  ">
           <button
             className="bg-slate-50 w-[40px] h-[40px] border border-gray-200 flex flex-col p-1 rounded-bl-md"
             onClick={() => setOpen(false)}
@@ -39,14 +61,36 @@ const Menu = ({ open, setOpen }: MenuProps) => {
           </button>
           <div className="w-full h-full flex flex-col gap-4 bg-white ">
             {user && isAuth ? (
-              <div className="bg-slate-100 p-4 h-14">
-                <Avatar
-                  src={user?.Image || ""}
-                  alt="profile pic"
-                  className="w-[20px] h-[20px] bg-slate-400 rounded-full shadow-md"
-                >
-                  {user.FullName?.slice(0, 1)}
-                </Avatar>
+              <div className="bg-slate-100 p-2 h-14" ref={ProfilemodalRef}>
+                <div className="flex gap-10">
+                  <button
+                    className="w-[40px] h-[40px] rounded-full bg-slate-800"
+                    onClick={() => {
+                      setOpenProfileModal((prevState) => !prevState);
+                    }}
+                  >
+                    <Avatar
+                      src={user?.Image || ""}
+                      alt="profile pic"
+                      className="w-full h-full bg-slate-400 rounded-full shadow-md"
+                    >
+                      {user.FullName?.slice(0, 1)}
+                    </Avatar>
+                  </button>
+                  <p className="text-md text-gray-700 font-semibold self-center">
+                    {user.UserName}
+                  </p>
+                </div>
+                {openProfileModal && (
+                  <UserProfileModal
+                    setOpen={setOpenProfileModal}
+                    top={40}
+                    right={195}
+                    width={120}
+                    avatar={false}
+                    setOpenMenu={setOpen}
+                  />
+                )}
               </div>
             ) : (
               <div className="flex text-gray-700 text-sm font-medium gap-2 bg-slate-50 p-4 h-14">
@@ -66,7 +110,7 @@ const Menu = ({ open, setOpen }: MenuProps) => {
                 </Link>
               </div>
             )}
-            <div className="bg-white w-full h-full flex flex-col gap-4 px-4 pt-4">
+            <div className="bg-white w-full h-full flex flex-col gap-4 px-2 pt-4">
               <Link
                 href={"/support/"}
                 className={`flex gap-2  p-3 font-medium  text-[17px]  ${

@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("PRODUCTION_URL")
+  url      = env("DATABASE_URL")
 }
 
 model Users {
@@ -16,7 +16,7 @@ model Users {
   UserName      String
   Email         String                 @unique
   Password      String
-  Image         String?
+  Image         String?                @db.LongText
   UserType      String
   About         String?                @db.LongText
   CreatedDate   DateTime

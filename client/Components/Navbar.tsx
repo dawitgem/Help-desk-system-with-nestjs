@@ -70,7 +70,6 @@ const Navbar = () => {
     getProfile();
     return document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-  useLayoutEffect(() => {}, []);
   return (
     <div className="md:p-0 p-4">
       <nav className="hidden md:block">
@@ -109,7 +108,13 @@ const Navbar = () => {
                   </Avatar>
                 </button>
                 {openProfileModal && (
-                  <UserProfileModal setOpen={setOpenProfileModal} />
+                  <UserProfileModal
+                    setOpen={setOpenProfileModal}
+                    top={72}
+                    right={0}
+                    width={150}
+                    avatar={true}
+                  />
                 )}
               </div>
             </>
@@ -159,41 +164,66 @@ const Navbar = () => {
 export default Navbar;
 interface UserProfileModalProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
+  top: number;
+  right: number;
+  width: number;
+  avatar: boolean;
+  setOpenMenu?: Dispatch<SetStateAction<boolean>>;
 }
-function UserProfileModal({ setOpen }: UserProfileModalProps) {
+export function UserProfileModal({
+  setOpen,
+  top,
+  right,
+  width,
+  avatar,
+  setOpenMenu,
+}: UserProfileModalProps) {
   const dispatch = useDispatch();
   const router = useRouter();
 
   const agent = false;
   const { user } = useSelector(selectUser);
   return (
-    <div className="bg-white w-[150px]  absolute top-[72px] right-0 border rounded-md flex flex-col gap-3 z-20">
+    <div
+      className="bg-white   absolute  border rounded-md flex flex-col gap-3 z-20 "
+      style={{ width: `${width}px`, top: `${top}px`, right: `${right}px` }}
+    >
       {user && (
         <>
-          <div className="flex gap-4 p-2 border-b">
-            <Avatar
-              src={user?.Image || " "}
-              alt="profile pic"
-              className="w-[30px] h-[30px] bg-slate-400 rounded-full shadow-md"
-            >
-              {user.FullName?.slice(0, 1)}
-            </Avatar>
-            <h1 className="text-gray-700 text-sm font-semibold self-center ">
-              {user.UserName}
-            </h1>
-          </div>
+          {avatar && (
+            <div className="flex gap-4 p-2 border-b">
+              <Avatar
+                src={user?.Image || " "}
+                alt="profile pic"
+                className="w-[30px] h-[30px] bg-slate-400 rounded-full shadow-md"
+              >
+                {user.FullName?.slice(0, 1)}
+              </Avatar>
+              <h1 className="text-gray-700 text-sm font-semibold self-center ">
+                {user.UserName}
+              </h1>
+            </div>
+          )}
           <div className="flex flex-col gap-2">
             {agent ? (
               <>
                 <Link
                   href={"/a/dashboard/default"}
                   className="p-2 text-gray-700 hover:bg-slate-100 text-sm font-semibold"
+                  onClick={() => {
+                    if (setOpenMenu) setOpenMenu(false);
+                    setOpen(false);
+                  }}
                 >
                   Dashboard
                 </Link>
                 <Link
                   href={"/a/dashboard/default"}
                   className="p-2 text-gray-700 hover:bg-slate-100 text-sm font-semibold"
+                  onClick={() => {
+                    if (setOpenMenu) setOpenMenu(false);
+                    setOpen(false);
+                  }}
                 >
                   MyProfile
                 </Link>
@@ -204,6 +234,10 @@ function UserProfileModal({ setOpen }: UserProfileModalProps) {
                   href={"/support/profile/edit"}
                   className="p-2 text-gray-700 hover:bg-slate-100 text-sm font-semibold"
                   onClick={() => {
+                    if (setOpenMenu) {
+                      console.log("come on man");
+                      setOpenMenu(false);
+                    }
                     setOpen(false);
                   }}
                 >
@@ -215,6 +249,9 @@ function UserProfileModal({ setOpen }: UserProfileModalProps) {
             <button
               className="flex flex-col p-2 text-gray-700 hover:bg-slate-100 text-sm font-semibold"
               onClick={() => {
+                if (setOpenMenu) {
+                  setOpenMenu(false);
+                }
                 router.push("/support/");
                 dispatch(LogoutSucess());
               }}

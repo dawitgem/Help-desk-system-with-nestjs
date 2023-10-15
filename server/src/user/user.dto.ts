@@ -19,11 +19,15 @@ export class SignInDto {
 
 export class UpdateUserDto {
   FullName: string | null;
+  UserName: string | null;
   Image: string | null;
   WorkingPhone: string | null;
   MobilePhone: string | null;
 }
-
+export class UpdatePasswordDto {
+  currentPassword: string;
+  newPassword: string;
+}
 export class GoogleUserDto {
   Id: string;
   FullName: string | null;

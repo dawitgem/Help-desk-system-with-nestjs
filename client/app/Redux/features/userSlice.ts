@@ -14,12 +14,14 @@ interface user {
 }
 interface userState {
   user: user | null;
+  Loading: boolean;
   isAuth: boolean;
   error: string | null;
 }
 const initialState: userState = {
   user: null,
   isAuth: false,
+  Loading: false,
   error: null,
 };
 const userSlice = createSlice({
@@ -27,20 +29,49 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     createUser: (state, action: PayloadAction<user>) => {
+      state.Loading = false;
       state.user = action.payload;
       state.isAuth = true;
       state.error = null;
     },
     getProfileStart: (state) => {
+      state.Loading = true;
       state.isAuth = false;
     },
     getProfile: (state, action: PayloadAction<user>) => {
+      state.Loading = false;
       state.user = action.payload;
       state.isAuth = true;
       state.error = null;
     },
     getProfileFaliure: (state, action: PayloadAction<string>) => {
+      state.Loading = false;
       state.isAuth = false;
+      state.error = action.payload;
+    },
+    updatePasswordRequest: (
+      state,
+      action: PayloadAction<{
+        Id: string;
+        currentPassword: string;
+        newPassword: string;
+      }>
+    ) => {
+      state.Loading = true;
+    },
+
+    updatePasswordSuccess: (state, action: PayloadAction<user>) => {
+      state.Loading = false;
+      state.user = action.payload;
+      state.error = null;
+    },
+
+    updatePasswordFaliure: (state, action: PayloadAction<string>) => {
+      state.Loading = false;
+      state.error = action.payload;
+    },
+    updateUserFaliure: (state, action: PayloadAction<string>) => {
+      state.Loading = false;
       state.error = action.payload;
     },
     updateUserSuccess: (
@@ -53,35 +84,41 @@ const userSlice = createSlice({
         MobilePhone: any;
       }>
     ) => {
-      console.log("come the hell");
+      state.Loading = true;
       state.error = null;
-    },
-    updateUserFaliure: (state, action: PayloadAction<string>) => {
-      state.error = action.payload;
     },
 
     signupSucess: (
       state,
-      action: PayloadAction<{ fullname: string; email: string }>
+      action: PayloadAction<{
+        fullname: string;
+        email: string;
+        password: string;
+      }>
     ) => {
-      console.log("this is stupid");
-      console.log(action.payload);
+      state.Loading = false;
+
       state.isAuth = true;
       state.error = null;
     },
     signUpFaliure: (state, action: PayloadAction<string>) => {
+      state.Loading = false;
       state.isAuth = false;
       state.error = action.payload;
     },
     signinWithGoogleStart: (state) => {
+      state.Loading = true;
       state.error = null;
     },
 
     signInWithGoogleSucess: (state) => {
+      state.Loading = false;
+
       state.isAuth = true;
       state.error = null;
     },
     signInWithGoogleFaliuer: (state, action: PayloadAction<string>) => {
+      state.Loading = false;
       state.isAuth = false;
       state.error = action.payload;
     },
@@ -89,20 +126,27 @@ const userSlice = createSlice({
       state,
       action: PayloadAction<{ email: string; password: string }>
     ) => {
+      state.Loading = false;
+
       state.error = null;
       state.isAuth = true;
     },
     signInFaliure: (state, action: PayloadAction<string>) => {
+      state.Loading = false;
+
       state.error = action.payload;
       state.isAuth = false;
     },
 
     LogoutSucess: (state) => {
+      state.Loading = false;
       state.user = null;
       state.isAuth = false;
       state.error = null;
     },
     LogoutFaliure: (state, action: PayloadAction<string>) => {
+      state.Loading = false;
+
       state.error = action.payload;
     },
   },
@@ -114,6 +158,9 @@ export const {
   createUser,
   updateUserSuccess,
   updateUserFaliure,
+  updatePasswordRequest,
+  updatePasswordSuccess,
+  updatePasswordFaliure,
   signInFaliure,
   signInWithGoogleFaliuer,
   signInWithGoogleSucess,

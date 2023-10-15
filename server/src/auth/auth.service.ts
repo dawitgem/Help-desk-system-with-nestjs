@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
-import * as bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
 import { SignInDto, SignUpDto } from 'src/user/user.dto';
 
 @Injectable()
@@ -24,8 +24,8 @@ export class AuthService {
     if (!this.validatePassword(Password, user.Password))
       throw new UnauthorizedException('Invalid Password');
     const payload = { sub: user.Id, userName: user.UserName };
-
-    return { AccessToken: await this.generateToken(payload) };
+    const AccessToken = await this.generateToken(payload);
+    return AccessToken;
   }
   private async validatePassword(
     Password: string,
@@ -36,7 +36,11 @@ export class AuthService {
 
   async SignUp(signUpDto: SignUpDto) {
     const user = await this.UserService.SignUP(signUpDto);
-    return user;
+    console.log(user);
+    const payload = { sub: user.Id, userName: user.UserName };
+    const AccessToken = await this.generateToken(payload);
+
+    return AccessToken;
   }
 
   async signInWithGoogle(signupDto: SignUpDto) {

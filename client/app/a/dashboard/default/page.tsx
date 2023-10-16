@@ -31,7 +31,6 @@ const DefaultDashboardPage = () => {
   const SelectDeptRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const handleClickOutSide = (e: MouseEvent) => {
-      console.log("hi there");
       if (
         SelectDeptRef.current &&
         !SelectDeptRef.current.contains(e.target as Node)

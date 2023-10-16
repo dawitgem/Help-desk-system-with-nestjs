@@ -53,6 +53,17 @@ export class AuthController {
     this.setAccessTokenCookie(res, AccessToken);
     res.send({ status: 'ok' });
   }
+
+  @Post('googleAuth/agent')
+  async signinwithGoogleAgent(
+    @Req() req: request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const AccessToken = await this.authService.signInWithGoogleAgent(req.body);
+    res.clearCookie('access_token');
+    this.setAccessTokenCookie(res, AccessToken);
+    res.send({ status: 'ok' });
+  }
   @Get('signout')
   async signout(@Res({ passthrough: true }) res: Response) {
     res.clearCookie('access_token');
@@ -62,9 +73,26 @@ export class AuthController {
   @Get('profile')
   async getProfile(@Request() req) {
     const { userId } = req.user;
-    const { Id, FullName, Email, UserName, Image, WorkingPhone, MobilePhone } =
-      await this.authService.UserProfile({ userId });
+    const {
+      Id,
+      FullName,
+      Email,
+      UserName,
+      UserType,
+      Image,
+      WorkingPhone,
+      MobilePhone,
+    } = await this.authService.UserProfile({ userId });
 
-    return { Id, FullName, Email, UserName, Image, WorkingPhone, MobilePhone };
+    return {
+      Id,
+      FullName,
+      Email,
+      UserName,
+      UserType,
+      Image,
+      WorkingPhone,
+      MobilePhone,
+    };
   }
 }

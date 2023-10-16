@@ -15,6 +15,11 @@ import NewDropDownMenu from "./NewDropDownMenu";
 import SearchModal from "./SearchModal";
 import NotificationModal from "./NotificationModal";
 import AgentProfileModal from "./AgentProfileModal";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  AgentgetProfileStart,
+  selectAgent,
+} from "@/app/Redux/features/agentSlice";
 
 interface NavbarAgentProps {
   currentPage: string;
@@ -26,6 +31,7 @@ interface NavbarAgentProps {
 
 const notifcation1 = false;
 const NavbarAgent = ({ currentPage, link, setAction }: NavbarAgentProps) => {
+  const { agent, error, isAuth, Loading } = useSelector(selectAgent);
   const [IsNewModalOpen, setIsNewModalOpen] = useState(false);
   const [IsSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [IsProfileModalOpen, setIsProfileModalOpen] = useState(false);
@@ -36,8 +42,12 @@ const NavbarAgent = ({ currentPage, link, setAction }: NavbarAgentProps) => {
   const SearchModalRef = useRef<HTMLDivElement>(null);
   const ProfileModalRef = useRef<HTMLDivElement>(null);
   const NotificationModalRef = useRef<HTMLDivElement>(null);
+  const dispatch = useDispatch();
 
   useEffect(() => {
+    const getProfile = () => {
+      dispatch(AgentgetProfileStart());
+    };
     const handleClickOutside = (e: MouseEvent) => {
       if (
         NewDropDownRef.current &&
@@ -61,7 +71,7 @@ const NavbarAgent = ({ currentPage, link, setAction }: NavbarAgentProps) => {
       )
         setIsNotificationModalOpen(false);
     };
-
+    getProfile();
     document.addEventListener("mousedown", (e) => {
       e.stopPropagation();
       handleClickOutside(e);
@@ -139,20 +149,21 @@ const NavbarAgent = ({ currentPage, link, setAction }: NavbarAgentProps) => {
             </button>
             {IsNotificationModalOpen && <NotificationModal />}
           </div>
-          <div className="h-full relative" ref={ProfileModalRef}>
+          <div className="w-full h-full " ref={ProfileModalRef}>
             <button
-              className="w-[35px] h-[35px] rounded-full bg-slate-500"
+              className="w-[35px] h-[35px] rounded-full bg-slate-500 shadow-md"
               onClick={(e) => {
                 e.stopPropagation();
                 setIsProfileModalOpen((prevState) => !prevState);
               }}
             >
               <Avatar
+                src={agent?.Image || " "}
                 variant="circular"
                 alt="image"
-                className="w-[35px] h-[35px] bg-slate-400 rounded-full shadow-md"
+                className=" bg-slate-400 rounded-full "
               >
-                N
+                {agent?.FullName?.slice(0, 1)}
               </Avatar>
             </button>
             {IsProfileModalOpen && <AgentProfileModal />}

@@ -19,6 +19,13 @@ export class UserService {
     return user;
   }
 
+  async LoginAgent(where: Prisma.UsersWhereUniqueInput): Promise<Users | null> {
+    const user = await this.Prisma.users.findUnique({
+      where: where,
+    });
+    return user;
+  }
+
   async Login({ Email }: Prisma.UsersWhereUniqueInput): Promise<Users | null> {
     const user = await this.Prisma.users.findUnique({
       where: {

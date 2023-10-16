@@ -1,55 +1,54 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { User } from "../reducers";
-import { error } from "console";
+import { Agent } from "../reducers";
 
-interface user {
+interface agent {
   Id: string;
   FullName?: string | null;
   Email: string;
-  UserName?: string | null;
+  agentName?: string | null;
   Image?: string | null;
-  UserType: string;
+  agentType: string;
   WorkingPhone?: string | null;
   MobilePhone?: string | null;
 }
-interface userState {
-  user: user | null;
+interface agentState {
+  agent: agent | null;
   Loading: boolean;
   isAuth: boolean;
   error: string | null;
 }
-const initialState: userState = {
-  user: null,
+const initialState: agentState = {
+  agent: null,
   isAuth: false,
   Loading: false,
   error: null,
 };
-const userSlice = createSlice({
-  name: "user",
+const agentSlice = createSlice({
+  name: "agent",
   initialState,
   reducers: {
-    createUser: (state, action: PayloadAction<user>) => {
+    createAgent: (state, action: PayloadAction<agent>) => {
       state.Loading = false;
-      state.user = action.payload;
+      state.agent = action.payload;
       state.isAuth = true;
       state.error = null;
     },
-    getProfileStart: (state) => {
+    AgentgetProfileStart: (state) => {
       state.Loading = true;
       state.isAuth = false;
     },
-    getProfile: (state, action: PayloadAction<user>) => {
+    AgentgetProfile: (state, action: PayloadAction<agent>) => {
       state.Loading = false;
-      state.user = action.payload;
+      state.agent = action.payload;
       state.isAuth = true;
       state.error = null;
     },
-    getProfileFaliure: (state, action: PayloadAction<string>) => {
+    AgentgetProfileFaliure: (state, action: PayloadAction<string>) => {
       state.Loading = false;
       state.isAuth = false;
       state.error = action.payload;
     },
-    updatePasswordRequest: (
+    AgentupdatePasswordRequest: (
       state,
       action: PayloadAction<{
         Id: string;
@@ -60,21 +59,21 @@ const userSlice = createSlice({
       state.Loading = true;
     },
 
-    updatePasswordSuccess: (state, action: PayloadAction<user>) => {
+    AgentupdatePasswordSuccess: (state, action: PayloadAction<agent>) => {
       state.Loading = false;
-      state.user = action.payload;
+      state.agent = action.payload;
       state.error = null;
     },
 
-    updatePasswordFaliure: (state, action: PayloadAction<string>) => {
+    AgentupdatePasswordFaliure: (state, action: PayloadAction<string>) => {
       state.Loading = false;
       state.error = action.payload;
     },
-    updateUserFaliure: (state, action: PayloadAction<string>) => {
+    updateAgentFaliure: (state, action: PayloadAction<string>) => {
       state.Loading = false;
       state.error = action.payload;
     },
-    updateUserSuccess: (
+    updateAgentSuccess: (
       state,
       action: PayloadAction<{
         Id: string;
@@ -88,7 +87,7 @@ const userSlice = createSlice({
       state.error = null;
     },
 
-    signupSucess: (
+    AgentsignupSucess: (
       state,
       action: PayloadAction<{
         fullname: string;
@@ -101,28 +100,28 @@ const userSlice = createSlice({
       state.isAuth = true;
       state.error = null;
     },
-    signUpFaliure: (state, action: PayloadAction<string>) => {
+    AgentsignUpFaliure: (state, action: PayloadAction<string>) => {
       state.Loading = false;
       state.isAuth = false;
       state.error = action.payload;
     },
-    signinWithGoogleStart: (state) => {
+    AgentsigninWithGoogleStart: (state) => {
       state.Loading = true;
       state.error = null;
     },
 
-    signInWithGoogleSucess: (state) => {
+    AgentsignInWithGoogleSucess: (state) => {
       state.Loading = false;
 
       state.isAuth = true;
       state.error = null;
     },
-    signInWithGoogleFaliuer: (state, action: PayloadAction<string>) => {
+    AgentsignInWithGoogleFaliuer: (state, action: PayloadAction<string>) => {
       state.Loading = false;
       state.isAuth = false;
       state.error = action.payload;
     },
-    signinSucess: (
+    AgentsigninSucess: (
       state,
       action: PayloadAction<{ email: string; password: string }>
     ) => {
@@ -131,20 +130,20 @@ const userSlice = createSlice({
       state.error = null;
       state.isAuth = true;
     },
-    signInFaliure: (state, action: PayloadAction<string>) => {
+    AgentsignInFaliure: (state, action: PayloadAction<string>) => {
       state.Loading = false;
 
       state.error = action.payload;
       state.isAuth = false;
     },
 
-    LogoutSucess: (state) => {
+    AgentLogoutSucess: (state) => {
       state.Loading = false;
-      state.user = null;
+      state.agent = null;
       state.isAuth = false;
       state.error = null;
     },
-    LogoutFaliure: (state, action: PayloadAction<string>) => {
+    AgentLogoutFaliure: (state, action: PayloadAction<string>) => {
       state.Loading = false;
 
       state.error = action.payload;
@@ -153,26 +152,26 @@ const userSlice = createSlice({
 });
 
 export const {
-  signupSucess,
-  signinSucess,
-  createUser,
-  updateUserSuccess,
-  updateUserFaliure,
-  updatePasswordRequest,
-  updatePasswordSuccess,
-  updatePasswordFaliure,
-  signInFaliure,
-  signInWithGoogleFaliuer,
-  signInWithGoogleSucess,
-  signUpFaliure,
-  signinWithGoogleStart,
-  getProfile,
-  getProfileStart,
-  getProfileFaliure,
-  LogoutFaliure,
-  LogoutSucess,
-} = userSlice.actions;
-export const selectUser = (state: User) => {
-  return state.User;
+  AgentsignupSucess,
+  AgentsigninSucess,
+  createAgent,
+  updateAgentSuccess,
+  updateAgentFaliure,
+  AgentupdatePasswordRequest,
+  AgentupdatePasswordSuccess,
+  AgentupdatePasswordFaliure,
+  AgentsignInFaliure,
+  AgentsignInWithGoogleFaliuer,
+  AgentsignInWithGoogleSucess,
+  AgentsignUpFaliure,
+  AgentsigninWithGoogleStart,
+  AgentgetProfile,
+  AgentgetProfileStart,
+  AgentgetProfileFaliure,
+  AgentLogoutFaliure,
+  AgentLogoutSucess,
+} = agentSlice.actions;
+export const selectAgent = (state: Agent) => {
+  return state.Agent;
 };
-export default userSlice.reducer;
+export default agentSlice.reducer;

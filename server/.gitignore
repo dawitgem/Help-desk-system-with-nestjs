@@ -1,5 +1,5 @@
 node_modules
 # Keep environment variables out of version control
-.env
+.env*
 .vercel
 helpdesk-e3015-firebase-adminsdk-ns1jb-f31e85c4a8.json

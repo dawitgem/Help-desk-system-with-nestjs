@@ -2,15 +2,7 @@
 import NavbarAgent from "@/Components/NavbarAgent";
 import React, { useMemo, useState } from "react";
 import Checkbox from "@mui/material/Checkbox";
-import {
-  BsChevronBarDown,
-  BsChevronDown,
-  BsFillCaretDownFill,
-  BsFolder,
-  BsPlus,
-  BsSearch,
-  BsTrash,
-} from "react-icons/bs";
+import { BsFillCaretDownFill, BsPlus, BsSearch } from "react-icons/bs";
 import { FormControlLabel } from "@mui/material";
 import dynamic from "next/dynamic";
 import { IoFileTrayFullOutline } from "react-icons/io5";

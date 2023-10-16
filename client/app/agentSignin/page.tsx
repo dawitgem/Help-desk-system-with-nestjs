@@ -1,5 +1,5 @@
 "use client";
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import logo from "@/public/logo.svg";
 import Image from "next/image";
 import google from "@/public/asset/google.svg";
@@ -7,10 +7,19 @@ import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser, signinSucess } from "../Redux/features/userSlice";
 import { FaTimes } from "react-icons/fa";
+import { BsBack } from "react-icons/bs";
+import { BiArrowBack } from "react-icons/bi";
+import {
+  AgentsigninSucess,
+  AgentsigninWithGoogleStart,
+  selectAgent,
+} from "../Redux/features/agentSlice";
+import { useRouter } from "next/navigation";
 
 const AgentLogin = () => {
   const dispatch = useDispatch();
-  const { isAuth, error } = useSelector(selectUser);
+  const { agent, isAuth, error, Loading } = useSelector(selectAgent);
+  const router = useRouter();
   const [showError, setShowError] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [Error, setError] = useState({ email: false, password: false });
@@ -70,9 +79,20 @@ const AgentLogin = () => {
   };
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (validateForm() && validateEmail()) dispatch(signinSucess(formData));
-    if (error) setShowError(true);
+    if (validateForm() && validateEmail())
+      dispatch(AgentsigninSucess(formData));
   };
+  useEffect(() => {
+    const CheckUser = () => {
+      if (error) {
+        setShowError(true);
+      }
+      if (isAuth && agent) router.push("/a/dashboard/default");
+    };
+    CheckUser();
+  }, [agent, error]);
+  console.log(agent, error);
+
   return (
     <div className="flex flex-col gap-8 justify-center align-middle bg-slate-100 pt-8">
       <div className="flex justify-center align-middle self-center">
@@ -102,6 +122,10 @@ const AgentLogin = () => {
             <button
               className=" w-full self-center bg-[#2260b7fa] p-3 px-5 flex gap-3 rounded-md "
               type="button"
+              onClick={() => {
+                console.log("come onman");
+                dispatch(AgentsigninWithGoogleStart());
+              }}
             >
               <Image
                 src={google}
@@ -169,7 +193,15 @@ const AgentLogin = () => {
                 </p>
               )}
             </li>
-            <li className="self-end">
+            <li className="flex justify-between">
+              <Link
+                href={"/support/login"}
+                className="text-blue-700 hover:text-black text-[13px] flex gap-2"
+              >
+                <BiArrowBack className="text-gray-800 text-lg" />
+                <p className="text-sm font-bold text-gray-800">Back</p>
+              </Link>
+
               <Link
                 href={""}
                 className="text-blue-700 hover:text-black text-[13px]"

@@ -11,7 +11,7 @@ import React, {
 } from "react";
 import { CgMenuRight } from "react-icons/cg";
 import { usePathname, useRouter } from "next/navigation";
-import { Avatar } from "@mui/material";
+import { Avatar, CircularProgress } from "@mui/material";
 import Menu from "./Menu";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -47,15 +47,13 @@ const Navigation = ({ NavLinks }: any) => {
   );
 };
 const Navbar = () => {
-  const { user, isAuth, error } = useSelector(selectUser);
+  const { user, isAuth, error, Loading } = useSelector(selectUser);
   const [openMenu, setOpenMenu] = useState(false);
   const [openProfileModal, setOpenProfileModal] = useState(false);
   const ProfilemodalRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
+
   useEffect(() => {
-    const getProfile = () => {
-      dispatch(getProfileStart());
-    };
     const handleClickOutside = (e: MouseEvent) => {
       if (
         ProfilemodalRef.current &&
@@ -67,97 +65,99 @@ const Navbar = () => {
       e.stopPropagation();
       handleClickOutside(e);
     });
-    getProfile();
     return document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-  return (
-    <div className="md:p-0 p-4">
-      <nav className="hidden md:block">
-        <ul className="flex lg:gap-8 md:gap-1 pt-[10px]">
-          <Navigation
-            NavLinks={[
-              { link: "Home", href: "/support" },
-              { link: "Knowledgebase", href: "/support/solutions" },
-            ]}
-          />
 
-          {user && isAuth ? (
-            <>
-              <Navigation
-                NavLinks={[{ link: "Ticket", href: "/support/tickets" }]}
-              />
-              <li className="mt-4 ">
-                <Link
-                  href="/support/tickets/new"
-                  className=" lg:w-[80px] w-[20px] px-2 py-3 border  bg-white  rounded-lg text-gray-700  md:text-[15px] text-sm font-medium"
-                >
-                  Submit ticket
-                </Link>
-              </li>
-              <div className="relative " ref={ProfilemodalRef}>
-                <button
-                  className=""
-                  onClick={() => setOpenProfileModal(!openProfileModal)}
-                >
-                  <Avatar
-                    src={user.Image || " "}
-                    alt="image"
-                    className="w-[50px] h-[50px] bg-slate-400 rounded-full shadow-md object-contain uppercase text-xl  "
-                  >
-                    {user.FullName?.slice(0, 1)}
-                  </Avatar>
-                </button>
-                {openProfileModal && (
-                  <UserProfileModal
-                    setOpen={setOpenProfileModal}
-                    top={72}
-                    right={0}
-                    width={150}
-                    avatar={true}
-                  />
-                )}
-              </div>
-            </>
-          ) : (
-            <>
-              <li className="mt-4 ">
-                <Link
-                  href="/support/tickets/new"
-                  className=" p-3 border  bg-white  rounded-lg text-gray-700 text-sm font-medium"
-                >
-                  Submit Ticket
-                </Link>
-              </li>
-              <div className="flex divide-x divide-black gap-3">
-                <li className="mt-4">
+  return (
+    <>
+      <div className="md:p-0 p-4">
+        <nav className="hidden md:block">
+          <ul className="flex lg:gap-8 md:gap-1 pt-[10px]">
+            <Navigation
+              NavLinks={[
+                { link: "Home", href: "/support" },
+                { link: "Knowledgebase", href: "/support/solutions" },
+              ]}
+            />
+
+            {user && isAuth ? (
+              <>
+                <Navigation
+                  NavLinks={[{ link: "Ticket", href: "/support/tickets" }]}
+                />
+                <li className="mt-4 ">
                   <Link
-                    className="p-4 text-md text-gray-700 font-semibold"
-                    href={"/support/login"}
+                    href="/support/tickets/new"
+                    className=" lg:w-[80px] w-[20px] px-2 py-3 border  bg-white  rounded-lg text-gray-700  md:text-[15px] text-sm font-medium"
                   >
-                    Login
+                    Submit ticket
                   </Link>
                 </li>
-                <li className="mt-4">
-                  <Link
-                    className="p-4 ml-2 text-md text-gray-700 font-semibold"
-                    href={"/support/signup"}
+                <div className="relative " ref={ProfilemodalRef}>
+                  <button
+                    className=""
+                    onClick={() => setOpenProfileModal(!openProfileModal)}
                   >
-                    Sign up
+                    <Avatar
+                      src={user.Image || " "}
+                      alt="image"
+                      className="w-[50px] h-[50px] bg-slate-400 rounded-full shadow-md object-contain uppercase text-xl  "
+                    >
+                      {user.FullName?.slice(0, 1)}
+                    </Avatar>
+                  </button>
+                  {openProfileModal && (
+                    <UserProfileModal
+                      setOpen={setOpenProfileModal}
+                      top={72}
+                      right={0}
+                      width={150}
+                      avatar={true}
+                    />
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <li className="mt-4 ">
+                  <Link
+                    href="/support/tickets/new"
+                    className=" p-3 border  bg-white  rounded-lg text-gray-700 text-sm font-medium"
+                  >
+                    Submit Ticket
                   </Link>
                 </li>
-              </div>
-            </>
-          )}
-        </ul>
-      </nav>
-      <button
-        className="md:hidden   text-2xl mt-6   "
-        onClick={() => setOpenMenu(true)}
-      >
-        <CgMenuRight />
-      </button>
-      {openMenu && <Menu open={openMenu} setOpen={setOpenMenu} />}
-    </div>
+                <div className="flex divide-x divide-black gap-3">
+                  <li className="mt-4">
+                    <Link
+                      className="p-4 text-md text-gray-700 font-semibold"
+                      href={"/support/login"}
+                    >
+                      Login
+                    </Link>
+                  </li>
+                  <li className="mt-4">
+                    <Link
+                      className="p-4 ml-2 text-md text-gray-700 font-semibold"
+                      href={"/support/signup"}
+                    >
+                      Sign up
+                    </Link>
+                  </li>
+                </div>
+              </>
+            )}
+          </ul>
+        </nav>
+        <button
+          className="md:hidden   text-2xl mt-6   "
+          onClick={() => setOpenMenu(true)}
+        >
+          <CgMenuRight />
+        </button>
+        {openMenu && <Menu open={openMenu} setOpen={setOpenMenu} />}
+      </div>
+    </>
   );
 };
 
@@ -181,8 +181,7 @@ export function UserProfileModal({
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const agent = false;
-  const { user } = useSelector(selectUser);
+  const { user, isAuth } = useSelector(selectUser);
   return (
     <div
       className="bg-white   absolute  border rounded-md flex flex-col gap-3 z-20 "
@@ -205,7 +204,7 @@ export function UserProfileModal({
             </div>
           )}
           <div className="flex flex-col gap-2">
-            {agent ? (
+            {user && user.UserType !== "Customer" ? (
               <>
                 <Link
                   href={"/a/dashboard/default"}
@@ -218,7 +217,7 @@ export function UserProfileModal({
                   Dashboard
                 </Link>
                 <Link
-                  href={"/a/dashboard/default"}
+                  href={"/support/profile/edit"}
                   className="p-2 text-gray-700 hover:bg-slate-100 text-sm font-semibold"
                   onClick={() => {
                     if (setOpenMenu) setOpenMenu(false);

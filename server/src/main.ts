@@ -6,6 +6,8 @@ import dotenv from 'dotenv';
 async function bootstrap() {
   dotenv.config();
 
+  console.log(process.env.JWT_SECRET_KEY);
+
   const app = await NestFactory.create(AppModule);
   app.enableCors({
     origin: ['http://localhost:3000', 'https://kns-support.vercel.app'],

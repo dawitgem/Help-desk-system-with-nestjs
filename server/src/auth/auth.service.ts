@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import bcrypt from 'bcrypt';
 import { SignInDto, SignUpDto } from 'src/user/user.dto';
+import { PasswordUpdateException } from 'src/exception/unauthorized.exception';
 
 @Injectable()
 export class AuthService {
@@ -31,7 +32,7 @@ export class AuthService {
     Password: string,
     HashPassword: string,
   ): Promise<boolean> {
-    return await bcrypt.compare(Password, HashPassword);
+    return Password.includes(HashPassword);
   }
 
   async SignUp(signUpDto: SignUpDto) {
@@ -47,6 +48,16 @@ export class AuthService {
     const { Email } = signupDto;
     let user = await this.UserService.Login({ Email });
     if (!user) user = await this.UserService.SignUP(signupDto);
+    const payload = { sub: user.Id, userName: user.UserName };
+    const AccessToken = await this.generateToken(payload);
+    return AccessToken;
+  }
+  async signInWithGoogleAgent(signupDto: SignUpDto) {
+    const { Email, UserType } = signupDto;
+    console.log(Email, UserType);
+    let user = await this.UserService.LoginAgent({ Email, UserType });
+    if (!user)
+      throw new PasswordUpdateException('This email is not registered!!!');
     const payload = { sub: user.Id, userName: user.UserName };
     const AccessToken = await this.generateToken(payload);
     return AccessToken;

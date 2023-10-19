@@ -45,7 +45,9 @@ const ArticlePage = () => {
           Icon={<PiTicket className="md:text-5xl text-2xl text-slate-50" />}
         />
         {Loading ? (
-          <CircularProgress className="self-center text-3xl  " />
+          <div className="p-10 flex flex-col">
+            <CircularProgress className="self-center text-3xl  " />
+          </div>
         ) : (
           <>
             {Tickets.length !== 0 ? (

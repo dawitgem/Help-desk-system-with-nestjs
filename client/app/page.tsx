@@ -22,6 +22,7 @@ const Page = () => {
   }, []);
 
   useEffect(() => {
+    if (user === null) redirect("/support/");
     if (user && isAuth && user.UserType === "Customer") redirect("/support/");
     if (
       user &&

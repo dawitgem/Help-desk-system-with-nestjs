@@ -1,5 +1,13 @@
+"use client";
 import dynamic from "next/dynamic";
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import "react-quill/dist/quill.snow.css";
 
 interface ErrorType {
@@ -11,7 +19,15 @@ interface ErrorType {
 interface EditorProps {
   modules: object;
   style?: string;
-  setValue: Dispatch<SetStateAction<string>>;
+  setValue: Dispatch<
+    SetStateAction<{
+      IssueType: string;
+      Email: string | undefined;
+      Subject: string;
+      Description: string;
+      Priority: string;
+    }>
+  >;
   setError: Dispatch<SetStateAction<ErrorType>>;
 }
 const Editor = ({ modules, style, setValue, setError }: EditorProps) => {
@@ -20,6 +36,29 @@ const Editor = ({ modules, style, setValue, setError }: EditorProps) => {
     () => dynamic(() => import("react-quill"), { ssr: false }),
     []
   );
+  const editorRef = useRef(null);
+
+  useEffect(() => {
+    const editorContainer = document.getElementById("Description"); // Replace with your actual container ID
+
+    if (editorContainer) {
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          // Handle mutations if needed
+          console.log("Content changed");
+        });
+      });
+
+      const config = { childList: true, subtree: true };
+      observer.observe(editorContainer, config);
+
+      return () => {
+        observer.disconnect();
+      };
+    } else {
+      console.error("Editor container not found.");
+    }
+  }, []);
 
   const onChange = (html: string) => {
     setError((prevState) => {
@@ -34,7 +73,7 @@ const Editor = ({ modules, style, setValue, setError }: EditorProps) => {
       const alt = img.getAttribute("alt");
       imageInputs.push({ src, alt });
     });
-    setValue(html);
+    setValue((prevState) => ({ ...prevState, Description: html }));
   };
   return (
     <div className={`${style ? style : "w-[70%]"} w-full`}>
@@ -42,8 +81,11 @@ const Editor = ({ modules, style, setValue, setError }: EditorProps) => {
         modules={modules}
         theme="snow"
         onChange={onChange}
+        onFocus={() => {
+          setError((prevState) => ({ ...prevState, Discription: false }));
+        }}
         placeholder="Type here"
-        id="Discription"
+        id="Description"
       />
     </div>
   );

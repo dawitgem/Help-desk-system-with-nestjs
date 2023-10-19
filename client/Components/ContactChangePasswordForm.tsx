@@ -165,10 +165,7 @@ const ContactChangePasswordForm = () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [isDataChanged, Loading]);
-  console.log(
-    !Loading && isValid && error !== null,
-    !Loading && isValid && error === null
-  );
+
   return (
     <>
       <Snackbar

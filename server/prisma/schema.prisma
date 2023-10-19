@@ -42,10 +42,11 @@ model UserSession {
 }
 
 model Tickets {
-  Id               Int             @id @default(autoincrement())
-  UserId           String
+  Id               String          @id
+  UserId           String?
   Type             String
   ReportedVia      String
+  Email            String
   Priority         String
   Subject          String          @db.Text
   Content          String          @db.LongText
@@ -58,7 +59,7 @@ model Tickets {
   Reply            Reply[]
   Attachement      Attachement[]
   Images           Images[]
-  User             Users           @relation(fields: [UserId], references: [Id])
+  User             Users?          @relation(fields: [UserId], references: [Id])
   Department       Department?     @relation(fields: [DepartmentId], references: [Id])
 
   @@index([UserId])
@@ -67,7 +68,7 @@ model Tickets {
 
 model TicketHistory {
   Id         String  @id
-  TicketId   Int
+  TicketId   String
   AssignedTo String
   Status     String
   Note       String? @db.LongText
@@ -171,14 +172,14 @@ model ShiftAgent {
 model Attachement {
   Id               String          @id
   FileName         String
-  FilePath         String
+  FilePath         String          @db.LongText
   Size             Decimal
   Mimi_Type        String
-  TicketId         Int?
+  TicketId         String?
   ReplyId          Int?
   CannedResponseId Int?
-  Createdat        String
-  CreatedBy        String
+  Createdat        DateTime
+  CreatedBy        String?
   Ticket           Tickets?        @relation(fields: [TicketId], references: [Id])
   Reply            Reply?          @relation(fields: [ReplyId], references: [Id])
   CannedResponse   CannedResponse? @relation(fields: [CannedResponseId], references: [Id])
@@ -186,7 +187,7 @@ model Attachement {
 
 model Images {
   Id               String          @id
-  TicketId         Int?
+  TicketId         String?
   ReplyId          Int?
   CannedResponseId Int?
   ImagePath        String
@@ -205,7 +206,7 @@ model Hi {
 model Reply {
   Id          Int           @id
   AgentId     String
-  TicketId    Int
+  TicketId    String
   Content     String        @db.LongText
   TimeStamp   DateTime      @db.Timestamp()
   Attachement Attachement[]

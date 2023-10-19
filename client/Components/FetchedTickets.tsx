@@ -26,6 +26,7 @@ const options = [
     label: "Sort by",
   },
 ];
+
 const FetchedTickets = () => {
   return (
     <div className="md:p-20 ">

@@ -9,9 +9,10 @@ import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
 import { UserService } from './user/user.service';
 import { PassportModule } from '@nestjs/passport';
+import { TicketModule } from './ticket/ticket.module';
 
 @Module({
-  imports: [UserModule, AuthModule, PassportModule],
+  imports: [UserModule, AuthModule, PassportModule, TicketModule],
   controllers: [AppController, UserController, AuthController],
   providers: [AppService, PrismaService, AuthService, UserService],
 })

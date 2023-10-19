@@ -19,12 +19,12 @@ const ArticlePage = () => {
   const { user, isAuth } = useSelector(selectUser);
   const [isLoaded, setIsLoaded] = useState(false);
   const dispatch = useDispatch();
-  useEffect(() => {
-    const fetchUser = () => {
-      dispatch(getProfileStart());
-    };
-    fetchUser();
-  }, []);
+  // useEffect(() => {
+  //   const fetchUser = () => {
+  //     dispatch(getProfileStart());
+  //   };
+  //   fetchUser();
+  // }, []);
   useEffect(() => {
     if (user) {
       dispatch(fetchTicketStart(user.Id));

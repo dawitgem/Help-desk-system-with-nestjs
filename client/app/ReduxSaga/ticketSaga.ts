@@ -6,6 +6,9 @@ import {
   addTicketFaliure,
   addTicketStart,
   addTicketSuccess,
+  deleteTicketFaliure,
+  deleteTicketStart,
+  deleteTicketSuccess,
   fetchAttachmentFaliure,
   fetchAttachmentStart,
   fetchAttachmentSuccess,
@@ -50,6 +53,14 @@ interface AddAttachementAction {
 interface FetchTicketAction {
   type: typeof fetchTicketStart;
   payload: {
+    userId: string;
+    offset: number;
+    limit: number;
+  };
+}
+interface DeleteTicketAction {
+  type: typeof deleteTicketStart;
+  payload: {
     Id: string;
   };
 }
@@ -60,17 +71,20 @@ const api =
 const Nanoid = customAlphabet("0123456789", 18);
 
 let TicketId = Nanoid();
-const fetchTickets = async (User: { Id: string }) => {
-  const { Id } = User;
-  console.log(User);
-  const response = await axios.get(`${api}/ticket/user/${User}`);
-  const Tickets = await response.data;
-  return Tickets;
+const fetchTickets = async (User: {
+  userId: string;
+  offset: number;
+  limit: number;
+}) => {
+  const response = await axios.get(
+    `${api}/ticket/user/${User.userId}?offset=${User.offset}&limit=${User.limit}`
+  );
+  return response.data;
 };
 const fetchAttachments = async () => {
   const response = await axios.get(`${api}/ticket/attachment`);
-  const Tickets = await response.data;
-  return Tickets;
+  const attachment = await response.data;
+  return attachment;
 };
 const addTicketApi = async (Ticket: {
   IssueType: string | null;
@@ -158,7 +172,6 @@ const addAttachementApi = async (file: File[]) => {
   const promise = file.map(async (file, i) => await uploadFile(file));
   const url = await Promise.all(promise);
   const response = file.map(async (file, i) => {
-    console.log(url[i]);
     const response = await axios.post(`${api}/ticket/attachment/new`, {
       Id: Nanoid(),
       FileName: file.name,
@@ -170,17 +183,21 @@ const addAttachementApi = async (file: File[]) => {
     });
     return response.data;
   });
-  console.log(await Promise.all(response));
   return await Promise.all(response);
 };
 
+const deleteTicketApi = async (Ticket: { Id: string }) => {
+  console.log(Ticket);
+  const response = axios.delete(`${api}/ticket/${Ticket}`);
+  return (await response).data;
+};
 function* handleFetchTicket(
   action: FetchTicketAction
 ): Generator<any, void, any> {
   try {
-    const Tickets = yield call(fetchTickets, action.payload);
-    yield put(fetchTicketSuccess(Tickets));
-    console.log(Tickets);
+    const { Ticket, count } = yield call(fetchTickets, action.payload);
+    console.log(Ticket);
+    yield put(fetchTicketSuccess({ Ticket: Ticket, count: count }));
   } catch (e: any) {
     console.log(e);
     yield put(fetchTicketFaliure(e.response.data.message));
@@ -219,9 +236,22 @@ function* handleFetchAttachments(): Generator<any, void, any> {
     yield put(fetchAttachmentFaliure(e.response.data.message));
   }
 }
+function* handleDeleteTicket(
+  action: DeleteTicketAction
+): Generator<any, void, any> {
+  try {
+    console.log(action.payload);
+    const ticket = yield call(deleteTicketApi, action.payload);
+    console.log(ticket);
+    yield put(deleteTicketSuccess(ticket));
+  } catch (e: any) {
+    yield put(deleteTicketFaliure(e.response.data.message));
+  }
+}
 export function* TicketSaga() {
   yield takeLatest(fetchTicketStart.type, handleFetchTicket);
   yield takeLatest(addTicketStart.type, handleAddTicket);
   yield takeLatest(addAttachementStart.type, handleAddAttachement);
   yield takeLatest(fetchAttachmentStart.type, handleFetchAttachments);
+  yield takeLatest(deleteTicketStart.type, handleDeleteTicket);
 }

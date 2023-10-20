@@ -14,20 +14,17 @@ import { useDispatch, useSelector } from "react-redux";
 import noResultImage from "@/public/asset/no-results.png";
 import { CircularProgress } from "@mui/material";
 
-const ArticlePage = () => {
+const TicketsPage = () => {
   const { Tickets, Loading, error } = useSelector(selectTicket);
   const { user, isAuth } = useSelector(selectUser);
   const [isLoaded, setIsLoaded] = useState(false);
   const dispatch = useDispatch();
-  // useEffect(() => {
-  //   const fetchUser = () => {
-  //     dispatch(getProfileStart());
-  //   };
-  //   fetchUser();
-  // }, []);
+  const [offset, setOffset] = useState(Tickets.length);
+
   useEffect(() => {
-    if (user) {
-      dispatch(fetchTicketStart(user.Id));
+    if (user && offset === 0) {
+      console.log(Tickets);
+      dispatch(fetchTicketStart({ userId: user.Id, offset: 0, limit: 5 }));
       dispatch(fetchAttachmentStart());
     }
   }, [user]);
@@ -35,6 +32,15 @@ const ArticlePage = () => {
     if (Loading) setIsLoaded(false);
     if (Tickets) setIsLoaded(true);
   }, [error, Loading]);
+  const handleClick = () => {
+    const offset = Tickets.length;
+    setOffset(offset);
+    if (user)
+      dispatch(
+        fetchTicketStart({ userId: user?.Id, offset: offset, limit: 5 })
+      );
+  };
+  console.log(offset);
   return (
     <>
       <div className="flex flex-col ">
@@ -44,31 +50,23 @@ const ArticlePage = () => {
           Links={[{ link: "Home", href: "/support/" }]}
           Icon={<PiTicket className="md:text-5xl text-2xl text-slate-50" />}
         />
-        {Loading ? (
-          <div className="p-10 flex flex-col">
-            <CircularProgress className="self-center text-3xl  " />
-          </div>
+        {Tickets.length !== 0 ? (
+          <FetchedTickets handleClick={handleClick} />
         ) : (
-          <>
-            {Tickets.length !== 0 ? (
-              <FetchedTickets />
-            ) : (
-              <div className="flex flex-col gap-4 self-center p-10">
-                <Image
-                  src={noResultImage}
-                  alt="no result image"
-                  className="w-[150px] h-[150px] self-center"
-                />
-                <p className="text-gray-600 self-center text-sm">
-                  Sorry ! You haven't issued any Ticket Yet!!!
-                </p>
-              </div>
-            )}
-          </>
+          <div className="flex flex-col gap-4 self-center p-10">
+            <Image
+              src={noResultImage}
+              alt="no result image"
+              className="w-[150px] h-[150px] self-center"
+            />
+            <p className="text-gray-600 self-center text-sm">
+              Sorry ! You haven't issued any Ticket Yet!!!
+            </p>
+          </div>
         )}
       </div>
     </>
   );
 };
 
-export default ArticlePage;
+export default TicketsPage;

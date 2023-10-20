@@ -41,9 +41,7 @@ export class UserService {
     if (data.Password) {
       try {
         Password = await bcrypt.hash(data.Password, 10);
-      } catch (e) {
-        console.log(e);
-      }
+      } catch (e) {}
     } else Password = ' ';
     const user = await this.Prisma.users.create({
       data: {

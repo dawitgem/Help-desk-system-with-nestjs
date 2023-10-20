@@ -22,7 +22,6 @@ export class UserController {
     @Body() updateUserDto: UpdateUserDto,
   ) {
     const user = await this.UserService.updateUser(userId, updateUserDto);
-    console.log(user);
     if (user) {
       const {
         Id,
@@ -52,7 +51,6 @@ export class UserController {
     @Param('id') userId: string,
     @Body() UpdatePassword: UpdatePasswordDto,
   ) {
-    console.log(UpdatePassword)
     const user = await this.UserService.updatePassword(userId, UpdatePassword);
     const {
       Id,

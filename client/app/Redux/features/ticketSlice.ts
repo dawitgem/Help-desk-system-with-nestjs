@@ -36,7 +36,7 @@ interface TicketSate {
 const initialState: TicketSate = {
   Tickets: [],
   Attachement: [],
-  hasMore: false,
+  hasMore: true,
   Loading: false,
   error: null,
 };
@@ -64,7 +64,6 @@ const TicketSlice = createSlice({
         UserId?: string;
       }>
     ) => {
-      console.log(action.payload);
       state.Loading = true;
       state.error = null;
     },
@@ -78,20 +77,29 @@ const TicketSlice = createSlice({
       state.error = action.payload;
     },
 
-    fetchTicketStart: (state, action: PayloadAction<string>) => {
+    fetchTicketStart: (
+      state,
+      action: PayloadAction<{ userId: string; offset: number; limit: number }>
+    ) => {
       state.Loading = true;
       state.error = null;
+      state.hasMore = false;
     },
-    fetchTicketSuccess: (state, action: PayloadAction<Ticket[]>) => {
-      state.Tickets = action.payload;
+    fetchTicketSuccess: (
+      state,
+      action: PayloadAction<{ Ticket: Ticket[]; count: number }>
+    ) => {
+      state.Tickets = [...state.Tickets, ...action.payload.Ticket];
       state.Loading = false;
       state.error = null;
+      state.hasMore = action.payload.count - state.Tickets.length !== 0;
     },
     fetchTicketFaliure: (state, action: PayloadAction<string>) => {
       state.Loading = false;
       state.error = action.payload;
+      state.hasMore = false;
     },
-    updateTicketStart: (state) => {
+    updateTicketStart: (state, action: PayloadAction<string>) => {
       state.Loading = true;
       state.error = null;
     },
@@ -137,6 +145,21 @@ const TicketSlice = createSlice({
       console.log(action.payload);
       state.error = action.payload;
     },
+    deleteTicketStart: (state, action: PayloadAction<string>) => {
+      state.Loading = true;
+      state.error = null;
+    },
+    deleteTicketSuccess: (state, action: PayloadAction<Ticket>) => {
+      state.Tickets = state.Tickets.filter(
+        (ticket) => ticket.Id !== action.payload.Id
+      );
+      state.Loading = false;
+      state.error = null;
+    },
+    deleteTicketFaliure: (state, action: PayloadAction<string>) => {
+      state.Loading = false;
+      state.error = action.payload;
+    },
   },
 });
 
@@ -156,6 +179,9 @@ export const {
   fetchAttachmentFaliure,
   fetchAttachmentStart,
   fetchAttachmentSuccess,
+  deleteTicketFaliure,
+  deleteTicketStart,
+  deleteTicketSuccess,
 } = TicketSlice.actions;
 export const selectTicket = (state: TicketType) => state.Ticket;
 export default TicketSlice.reducer;

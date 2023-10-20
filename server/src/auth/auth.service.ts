@@ -37,7 +37,6 @@ export class AuthService {
 
   async SignUp(signUpDto: SignUpDto) {
     const user = await this.UserService.SignUP(signUpDto);
-    console.log(user);
     const payload = { sub: user.Id, userName: user.UserName };
     const AccessToken = await this.generateToken(payload);
 
@@ -54,7 +53,6 @@ export class AuthService {
   }
   async signInWithGoogleAgent(signupDto: SignUpDto) {
     const { Email, UserType } = signupDto;
-    console.log(Email, UserType);
     let user = await this.UserService.LoginAgent({ Email, UserType });
     if (!user)
       throw new PasswordUpdateException('This email is not registered!!!');

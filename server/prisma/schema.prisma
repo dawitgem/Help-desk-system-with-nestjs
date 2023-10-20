@@ -175,7 +175,7 @@ model Attachement {
   FilePath         String          @db.LongText
   Size             Decimal
   Mimi_Type        String
-  TicketId         String?
+  TicketId         String
   ReplyId          Int?
   CannedResponseId Int?
   Createdat        DateTime

@@ -20,9 +20,9 @@ const TicketList = () => {
         <Link
           key={i}
           href={`../support/tickets/${ticket.Id}`}
-          className=" self-center p-5 border w-[90%] rounded-md hover:border-blue-800 flex justify-between"
+          className=" self-center py-2 px-5 border md:w-[90%] w-[100%] rounded-md hover:border-blue-800 flex justify-between"
         >
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-2">
             <h1 className="text-xl font-bold text-gray-700">
               {ticket.Subject}
             </h1>
@@ -31,8 +31,10 @@ const TicketList = () => {
             </p>
           </div>
           <div className="flex gap-1">
-            <span className="m-1 w-[20px] h-[20px] text-blue border-inherit border bg-green-600 rounded-md"></span>
-            <h1 className="text-lg text-gray-600">Open</h1>
+            <span className="self-center m-1 md:w-[15px] md:h-[15px] w-[10px] h-[10px] text-blue border-inherit border bg-green-600 md:rounded-md rounded-sm"></span>
+            <h1 className="md:text-lg text-sm text-gray-600 self-center font-medium">
+              Open
+            </h1>
           </div>
         </Link>
       ))}

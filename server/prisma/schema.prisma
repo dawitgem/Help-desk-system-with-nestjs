@@ -171,10 +171,10 @@ model ShiftAgent {
 
 model Attachement {
   Id               String          @id
-  FileName         String
+  FileName         String          @db.LongText
   FilePath         String          @db.LongText
   Size             Decimal
-  Mimi_Type        String
+  Mimi_Type        String          @db.LongText
   TicketId         String
   ReplyId          Int?
   CannedResponseId Int?

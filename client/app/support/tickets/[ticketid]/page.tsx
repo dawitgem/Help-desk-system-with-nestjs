@@ -98,7 +98,7 @@ const TicketIdPage = ({ params }: { params: { ticketid: string } }) => {
           ]}
           Icon={<BsTicket className="md:text-5xl text-2xl text-slate-50" />}
         />
-        <div className="md:px-20 h-full md:p-10 p-1">
+        <div className="md:px-20 h-full md:p-10 p-1 w-full ">
           <div className="bg-white md:p-10 rounded-lg flex flex-col gap-5 ">
             <Snackbar
               open={successDelete}
@@ -139,8 +139,8 @@ const TicketIdPage = ({ params }: { params: { ticketid: string } }) => {
                 <BsTrash className="md:text-xl text-sm text-gray-500" />
               </button>
             </div>
-            <div className="p-3 border">
-              <p className="text-xl text-gray-800 text-center font-bold underline w-full break-words">
+            <div className="p-3 border w-full">
+              <p className="text-xl text-gray-800 text-center font-bold underline w-[90%] break-words">
                 {ticket?.Subject}
               </p>
               <div

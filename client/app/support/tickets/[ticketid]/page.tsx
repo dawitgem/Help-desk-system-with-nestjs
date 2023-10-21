@@ -140,10 +140,13 @@ const TicketIdPage = ({ params }: { params: { ticketid: string } }) => {
               </button>
             </div>
             <div className="p-3 border">
-              <p className="text-xl text-gray-800 text-center font-bold underline">
+              <p className="text-xl text-gray-800 text-center font-bold underline w-full break-words">
                 {ticket?.Subject}
               </p>
-              <div dangerouslySetInnerHTML={{ __html: sanitaizeContent }}></div>
+              <div
+                dangerouslySetInnerHTML={{ __html: sanitaizeContent }}
+                className="w-full break-words"
+              ></div>
             </div>
             {attachment && attachment.length !== 0 && (
               <div className="flex flex-col gap-5 ">

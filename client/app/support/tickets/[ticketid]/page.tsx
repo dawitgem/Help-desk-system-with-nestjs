@@ -52,7 +52,26 @@ const TicketIdPage = ({ params }: { params: { ticketid: string } }) => {
       try {
         const response = await axios.get(`${api}/ticket/${params.ticketid}`);
         const ticket = await response.data;
-        setTicket(ticket);
+        const {
+          Id,
+          Type:IssueType,
+          Email,
+          Subject,
+          Content,
+          Priority,
+          UserId,
+          CreatedAt,
+        } = ticket;
+        setTicket({
+          Id,
+          IssueType,
+          Email,
+          Subject,
+          Content,
+          Priority,
+          UserId,
+          CreatedAt,
+        } );
         const attachResponse = await axios.get(
           `${api}/ticket/attachment/${params.ticketid}`
         );
@@ -85,6 +104,7 @@ const TicketIdPage = ({ params }: { params: { ticketid: string } }) => {
       }, 1000);
     }
   }, [error, Loading, isValid]);
+  
 
   return (
     <>
@@ -174,7 +194,14 @@ const TicketIdPage = ({ params }: { params: { ticketid: string } }) => {
           </div>
         </div>
       </div>
-      {open && <EditTicket setOpen={setOpen} open={open} />}
+      {open && (
+        <EditTicket
+          setOpen={setOpen}
+          open={open}
+          Ticket={ticket}
+          Attachment={attachment}
+        />
+      )}
     </>
   );
 };

@@ -99,7 +99,7 @@ const TicketSlice = createSlice({
       state.error = action.payload;
       state.hasMore = false;
     },
-    updateTicketStart: (state, action: PayloadAction<string>) => {
+    updateTicketStart: (state, action: PayloadAction<Ticket>) => {
       state.Loading = true;
       state.error = null;
     },
@@ -113,6 +113,21 @@ const TicketSlice = createSlice({
       state.error = null;
     },
     updateTicketFaliure: (state, action: PayloadAction<string>) => {
+      state.Loading = false;
+      state.error = action.payload;
+    },
+    deleteTicketStart: (state, action: PayloadAction<string>) => {
+      state.Loading = true;
+      state.error = null;
+    },
+    deleteTicketSuccess: (state, action: PayloadAction<Ticket>) => {
+      state.Tickets = state.Tickets.filter(
+        (ticket) => ticket.Id !== action.payload.Id
+      );
+      state.Loading = false;
+      state.error = null;
+    },
+    deleteTicketFaliure: (state, action: PayloadAction<string>) => {
       state.Loading = false;
       state.error = action.payload;
     },
@@ -145,20 +160,35 @@ const TicketSlice = createSlice({
       console.log(action.payload);
       state.error = action.payload;
     },
-    deleteTicketStart: (state, action: PayloadAction<string>) => {
+    updateAttachmentStart: (
+      state,
+      action: PayloadAction<{ ticket: Ticket; file: Attachement[] | null }>
+    ) => {
       state.Loading = true;
       state.error = null;
     },
-    deleteTicketSuccess: (state, action: PayloadAction<Ticket>) => {
-      state.Tickets = state.Tickets.filter(
-        (ticket) => ticket.Id !== action.payload.Id
-      );
+    updateAttachmentSucess: (state, action: PayloadAction<Attachement[]>) => {
+      console.log(action.payload);
+      state.Attachement = action.payload;
+      state.error = null;
       state.Loading = false;
+    },
+    updateAttachmentFaliure: (state, action: PayloadAction<string>) => {
+      (state.error = action.payload), (state.Loading = false);
+    },
+    deleteAttachmentStart: (state, action: PayloadAction<Attachement>) => {
       state.error = null;
     },
-    deleteTicketFaliure: (state, action: PayloadAction<string>) => {
+    deleteAttachmentSuccess: (state, action: PayloadAction<Attachement>) => {
+      state.Attachement = state.Attachement.filter(
+        (attach) => attach.Id !== action.payload.Id
+      );
+      state.error = null;
       state.Loading = false;
+    },
+    deleteAttachmentFaliure: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
+      state.Loading = false;
     },
   },
 });
@@ -179,9 +209,15 @@ export const {
   fetchAttachmentFaliure,
   fetchAttachmentStart,
   fetchAttachmentSuccess,
+  updateAttachmentFaliure,
+  updateAttachmentStart,
+  updateAttachmentSucess,
   deleteTicketFaliure,
   deleteTicketStart,
   deleteTicketSuccess,
+  deleteAttachmentFaliure,
+  deleteAttachmentStart,
+  deleteAttachmentSuccess,
 } = TicketSlice.actions;
 export const selectTicket = (state: TicketType) => state.Ticket;
 export default TicketSlice.reducer;

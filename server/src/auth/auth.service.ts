@@ -19,7 +19,9 @@ export class AuthService {
   async SignIn({ Email, Password }: SignInDto) {
     const user = await this.UserService.Login({ Email });
     if (!user) {
-      throw new UnauthorizedException('Email not found');
+      throw new UnauthorizedException(
+        'Email not found.Please enter your valid email !!!',
+      );
     }
 
     if (!this.validatePassword(Password, user.Password))

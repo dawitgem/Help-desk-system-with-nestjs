@@ -53,7 +53,7 @@ const FetchedTickets = ({ handleClick }: FetchedTicketsProps) => {
               key={i}
               className="w-[20%]  "
               disablePortal
-              id="combo-box-demo"
+              id={`combo-box-demo${i + 1}`}
               options={option.option}
               renderInput={(params) => (
                 <TextField

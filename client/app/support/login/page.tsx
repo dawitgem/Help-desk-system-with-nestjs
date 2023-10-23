@@ -8,15 +8,17 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   selectUser,
   signInWithGoogleSucess,
+  signinStart,
   signinSucess,
   signinWithGoogleStart,
 } from "@/app/Redux/features/userSlice";
 import { FaTimes } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import { CircularProgress } from "@mui/material";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
-  const { user, isAuth, error } = useSelector(selectUser);
+  const { user, isAuth, error, Loading } = useSelector(selectUser);
   const [showError, setShowError] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [Error, setError] = useState({ email: false, password: false });
@@ -75,7 +77,7 @@ const LoginPage = () => {
   };
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (validateForm() && validateEmail()) dispatch(signinSucess(formData));
+    if (validateForm() && validateEmail()) dispatch(signinStart(formData));
   };
   const router = useRouter();
   useEffect(() => {
@@ -99,10 +101,15 @@ const LoginPage = () => {
       )}
       <div className="bg-white md:w-1/3 w-[90%] p-6 flex flex-col gap-5 shadow-md rounded-md border self-center">
         <div className="flex flex-col gap-2">
-          <h1 className="text-gray-700 text-2xl font-black">
-            {" "}
-            Log in to Kns support portal
-          </h1>
+          <div className="flex justify-between">
+            <h1 className="text-gray-700 text-2xl font-black">
+              {" "}
+              Log in to Kns support portal
+            </h1>
+            {Loading && (
+              <CircularProgress size={20} thickness={4} color="secondary" />
+            )}
+          </div>
           <div className="flex gap-2 ">
             <p className="text-gray-400 font-semibold text-sm">Are you New ?</p>
             <Link
@@ -113,9 +120,12 @@ const LoginPage = () => {
             </Link>
           </div>
         </div>
-        <form action="" className="flex flex-col gap-3" onSubmit={handleSubmit}>
+        <form action="" className="flex flex-col gap-3" onSubmit={handleSubmit} id="loginForm">
           <div className="flex flex-col gap-2">
-            <label htmlFor="" className="text-gray-600 text-sm font-semibold">
+            <label
+              htmlFor="Email"
+              className="text-gray-600 text-sm font-semibold"
+            >
               Email Address
               <span className="text-red-600 font-bold text-lg self-center ml-2">
                 *
@@ -123,11 +133,17 @@ const LoginPage = () => {
             </label>
             <input
               type="text"
+              id="Email"
+              disabled={Loading}
               className={`p-3 text-gray-600 border w-full rounded-md ${
                 Error.email
                   ? "border-red-500 outline-none"
                   : "outline-gray-200 "
-              }  placeholder:text-sm `}
+              }  placeholder:text-sm   ${
+                Loading
+                  ? "cursor-not-allowed opacity-50"
+                  : "cursor-pointer opacity-100"
+              }`}
               placeholder="Your Email Address"
               onChange={(e) => {
                 setFormData((prevState) => {
@@ -145,7 +161,10 @@ const LoginPage = () => {
             )}
           </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="" className="text-gray-600 text-sm font-semibold">
+            <label
+              htmlFor="signinPassword"
+              className="text-gray-600 text-sm font-semibold"
+            >
               Password
               <span className="text-red-600 font-bold text-lg self-center ml-2">
                 *
@@ -153,11 +172,17 @@ const LoginPage = () => {
             </label>
             <input
               type="password"
+              id="signinPassword"
+              disabled={Loading}
               className={`p-3 text-gray-600 border w-full rounded-md ${
                 Error.password
                   ? "border-red-500 outline-none"
                   : "outline-gray-200 "
-              }  placeholder:text-sm `}
+              }  placeholder:text-sm     ${
+                Loading
+                  ? "cursor-not-allowed opacity-50"
+                  : "cursor-pointer opacity-100"
+              }`}
               placeholder="password"
               onChange={(e) => {
                 setFormData((prevState) => {
@@ -174,7 +199,14 @@ const LoginPage = () => {
               <p className="text-red-600 text-[12px]">This field is required</p>
             )}
           </div>
-          <button className="bg-[#063750] text-white p-3 text-sm rounded-md">
+          <button
+            className={`bg-[#063750] text-white p-3 text-sm rounded-md ${
+              Loading
+                ? "cursor-not-allowed opacity-50"
+                : "cursor-pointer opacity-100"
+            }`}
+            disabled={Loading}
+          >
             Log in
           </button>
         </form>
@@ -182,7 +214,11 @@ const LoginPage = () => {
           ... or login with
         </p>
         <button
-          className=" w-[75%] self-center bg-[#2260b7fa] p-3 px-5 flex gap-3 rounded-md "
+          className={` w-[75%] self-center bg-[#2260b7fa] p-3 px-5 flex gap-3 rounded-md ${
+            Loading
+              ? "cursor-not-allowed opacity-50"
+              : "cursor-pointer opacity-100"
+          }`}
           type="button"
           onClick={() => {
             dispatch(signinWithGoogleStart());

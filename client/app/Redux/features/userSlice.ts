@@ -35,7 +35,7 @@ const userSlice = createSlice({
       state.error = null;
     },
     getProfileStart: (state) => {
-      state.Loading = true;
+      // state.Loading = true;
       state.isAuth = false;
     },
     getProfile: (state, action: PayloadAction<user>) => {
@@ -87,8 +87,7 @@ const userSlice = createSlice({
       state.Loading = true;
       state.error = null;
     },
-
-    signupSucess: (
+    signupStart: (
       state,
       action: PayloadAction<{
         fullname: string;
@@ -96,8 +95,11 @@ const userSlice = createSlice({
         password: string;
       }>
     ) => {
+      state.Loading = true;
+      state.error = null;
+    },
+    signupSucess: (state) => {
       state.Loading = false;
-
       state.isAuth = true;
       state.error = null;
     },
@@ -122,10 +124,14 @@ const userSlice = createSlice({
       state.isAuth = false;
       state.error = action.payload;
     },
-    signinSucess: (
+    signinStart: (
       state,
       action: PayloadAction<{ email: string; password: string }>
     ) => {
+      state.Loading = true;
+      state.error = null;
+    },
+    signinSucess: (state) => {
       state.Loading = false;
 
       state.error = null;
@@ -154,6 +160,8 @@ const userSlice = createSlice({
 
 export const {
   signupSucess,
+  signupStart,
+  signinStart,
   signinSucess,
   createUser,
   updateUserSuccess,

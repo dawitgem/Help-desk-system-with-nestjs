@@ -1,12 +1,19 @@
+import {
+  Attachement,
+  deleteAttachmentStart,
+} from "@/app/Redux/features/ticketSlice";
 import React, { Dispatch, SetStateAction } from "react";
 import { LiaTimesSolid } from "react-icons/lia";
+import { useDispatch } from "react-redux";
 
 interface AttachmentListsProps {
-  attachment: File[] | null;
-  setAttachement: Dispatch<SetStateAction<File[] | null>>;
+  attachment: any;
+  setAttachement: Dispatch<SetStateAction<any>>;
+  setChanged: Dispatch<SetStateAction<boolean>>;
   formatBytes: (size: number) => string;
   message?: string;
   error?: boolean;
+  DeleteAttach: boolean;
 }
 const AttachmentLists = ({
   attachment,
@@ -14,14 +21,17 @@ const AttachmentLists = ({
   formatBytes,
   message,
   error,
+  setChanged,
+  DeleteAttach,
 }: AttachmentListsProps) => {
+  const dispatch = useDispatch();
   return (
     <div>
       {attachment && (
         <div className="text-gray-700 flex flex-col gap-5">
           <p className="text-sm font-medium">{message}</p>
-          <div className="grid grid-cols-2 gap-2 w-3/4">
-            {attachment.map((attach, i) => (
+          <div className="grid md:grid-cols-2 grid-cols-1 gap-2 w-3/4">
+            {attachment.map((attach: any, i: any) => (
               <div
                 key={i}
                 className={`border ${
@@ -32,19 +42,27 @@ const AttachmentLists = ({
                   className="text-sm text-gray-600 hover:bg-slate-100 rounded-full w-[20px] h-[20px]"
                   type="button"
                   onClick={() => {
-                    setAttachement(
-                      attachment.filter((attach) => attach != attachment[i])
+                    if (DeleteAttach && "FileName" in attach) {
+                      console.log(attach);
+                      dispatch(deleteAttachmentStart(attach.Id));
+                    }
+                    setChanged(true);
+                    const filter = attachment.filter(
+                      (file: any) => file !== attachment[i]
                     );
+                    setAttachement(filter);
                   }}
                 >
                   <LiaTimesSolid />
                 </button>
                 <p className="text-gray-700 font-medium text-[12px]">
-                  {attach.name.substring(0, 15) + "..."}
+                  {"name" in attach
+                    ? attach.name.substring(0, 15) + "..."
+                    : attach.FileName.substring(0, 15) + "..."}
                 </p>
 
                 <p className="text-gray-700 text-[11px]">
-                  ({formatBytes(attach.size)})
+                  ({formatBytes("size" in attach ? attach.size : attach.Size)})
                 </p>
               </div>
             ))}

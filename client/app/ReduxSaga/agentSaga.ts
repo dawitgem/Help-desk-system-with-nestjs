@@ -42,7 +42,6 @@ const api =
     ? "https://kns-support-api.onrender.com"
     : "http://localhost:8000";
 
-console.log(process.env.NEXT_PUBLIC_REACT_ENV);
 interface SignInAction {
   type: typeof signinSucess;
   payload: { email: string; password: string };
@@ -159,7 +158,6 @@ const SigninWithGoogleApi = async (User: {
   Image: string;
   MobilePhone: string;
 }) => {
-  console.log(User);
   const response = await axios.post(
     `${api}/auth/googleAuth/agent`,
     {
@@ -188,7 +186,6 @@ const SigninWithGoogleApi = async (User: {
 
 function* handleAgentSignin(action: SignInAction): Generator<any, void, any> {
   try {
-    console.log(action.payload);
     const AccessToken = yield call(SigninApi, action.payload);
     const user = yield getProfileApi();
     yield put(AgentgetProfile(user));
@@ -199,7 +196,6 @@ function* handleAgentSignin(action: SignInAction): Generator<any, void, any> {
 function* handleAgentSignUp(action: SignUpAction): Generator<any, void, any> {
   try {
     const response = yield call(SignupApi, action.payload);
-    console.log(response);
     const user = yield getProfileApi();
     yield put(createUser(user));
   } catch (e) {
@@ -234,9 +230,7 @@ function* handleAgentProfile(action: SignInAction): Generator<any, void, any> {
   try {
     const user = yield getProfileApi();
     yield put(AgentgetProfile(user));
-  } catch (e) {
-    console.log(e);
-  }
+  } catch (e) {}
 }
 function* handleSignOut() {
   try {

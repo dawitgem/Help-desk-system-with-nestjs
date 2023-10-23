@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import { TicketService } from './ticket.service';
@@ -176,6 +177,58 @@ export class TicketController {
       TicketId,
       Createdat,
       CreatedBy,
+    };
+  }
+  @Delete('attachment/:Id')
+  async deleteAttachment(@Param('Id') attachId: string) {
+    const attachement = await this.TicketService.deleteAttachment(attachId);
+    console.log(attachement);
+    const {
+      Id,
+      FileName,
+      FilePath,
+      Size,
+      Mimi_Type,
+      TicketId,
+      Createdat,
+      CreatedBy,
+    } = attachement;
+    return {
+      Id,
+      FileName,
+      FilePath,
+      Size,
+      Mimi_Type,
+      TicketId,
+      Createdat,
+      CreatedBy,
+    };
+  }
+  @Put(':Id')
+  async updateTicket(
+    @Param('Id') userId: string,
+    @Body() updateTicket: newTicketDto,
+  ) {
+    const Ticket = await this.TicketService.updateTicket(userId, updateTicket);
+    const {
+      Id,
+      Type: IssueType,
+      Priority,
+      Subject,
+      Content: Description,
+      UserId,
+      CreatedAt,
+      UpdatedAt,
+    } = Ticket;
+    return {
+      Id,
+      IssueType,
+      Priority,
+      Subject,
+      Description,
+      UserId,
+      CreatedAt,
+      UpdatedAt,
     };
   }
   @Delete(':Id')

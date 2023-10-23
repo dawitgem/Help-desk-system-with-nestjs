@@ -1,5 +1,13 @@
 "use client";
-import { Autocomplete, Backdrop, TextField } from "@mui/material";
+import {
+  Alert,
+  Autocomplete,
+  Backdrop,
+  CircularProgress,
+  Snackbar,
+  TextField,
+  fabClasses,
+} from "@mui/material";
 import React, {
   ChangeEvent,
   Dispatch,
@@ -14,9 +22,14 @@ import { LiaTimesSolid } from "react-icons/lia";
 import AttachmentLists from "./AttachmentLists";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser } from "@/app/Redux/features/userSlice";
-import { selectTicket } from "@/app/Redux/features/ticketSlice";
+import {
+  Attachement,
+  Ticket,
+  selectTicket,
+  updateAttachmentStart,
+} from "@/app/Redux/features/ticketSlice";
 import { useRouter } from "next/navigation";
-import Editor from "./Editor";
+import Editor, { TicketEditor } from "./Editor";
 import { modules } from "@/Inputs";
 import { BsPaperclip } from "react-icons/bs";
 interface AutocompleteOption {
@@ -28,19 +41,23 @@ const priorityOptions = ["Low", "Medium", "High", "Urgent"];
 interface EditTicketProps {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
+  Ticket: any;
+  Attachment?: Attachement[];
 }
-const EditTicket = ({ open, setOpen }: EditTicketProps) => {
+const EditTicket = ({ open, setOpen, Ticket, Attachment }: EditTicketProps) => {
   const { user } = useSelector(selectUser);
   const { error, Loading } = useSelector(selectTicket);
+  const [IsChanged, setIsChanged] = useState(false);
   const [showError, setShowError] = useState(false);
   const [successFullUpdate, setSuccessFullUpdate] = useState(false);
+  const [removedAttachment, setRemovedAttachment] = useState<Attachement[]>();
   const [isValid, setIsValid] = useState(false);
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
-    IssueType: "",
-    Email: user?.Email,
-    Subject: "",
-    Description: "",
+    IssueType: Ticket.IssueType || "",
+    Email: user?.Email || " ",
+    Subject: Ticket?.Subject || " ",
+    Description: Ticket?.Content || " ",
     Priority: priorityOptions[0],
   });
   const [ErrorMessage, setErrorMessage] = useState("");
@@ -50,14 +67,11 @@ const EditTicket = ({ open, setOpen }: EditTicketProps) => {
     Subject: false,
     Discription: false,
   });
-  const [attachment, setAttachement] = useState<File[] | null>([]);
-  const [ErrorAttachments, setErrorAttachments] = useState<File[] | null>([]);
-  const [CumulativeErrorFiles, setCumulativeErrorFiles] = useState<
-    File[] | null
-  >([]);
-  const [ErrorDirectoryAttachments, setErrorDirectoryAttachments] = useState<
-    File[] | null
-  >([]);
+  const [attachment, setAttachement] = useState<any>(Attachment);
+  const [ErrorAttachments, setErrorAttachments] = useState<any>([]);
+  const [CumulativeErrorFiles, setCumulativeErrorFiles] = useState<any>([]);
+  const [ErrorDirectoryAttachments, setErrorDirectoryAttachments] =
+    useState<any>([]);
   const router = useRouter();
 
   const validateInput = (inputId: string) => {
@@ -75,6 +89,7 @@ const EditTicket = ({ open, setOpen }: EditTicketProps) => {
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setIsChanged(true);
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
@@ -128,7 +143,7 @@ const EditTicket = ({ open, setOpen }: EditTicketProps) => {
   };
 
   const attachFiles = (
-    Action: Dispatch<SetStateAction<File[] | null>>,
+    Action: Dispatch<SetStateAction<File[] | null | Attachement[]>>,
     e: ChangeEvent<HTMLInputElement>
   ) => {
     if (e.target.files) {
@@ -138,17 +153,20 @@ const EditTicket = ({ open, setOpen }: EditTicketProps) => {
   };
 
   const AttachmentChangeHandle = (e: ChangeEvent<HTMLInputElement>) => {
+    setIsChanged(true);
     const maxsize = 20 * 1024 * 1024;
     const selectedFile = e.target.files?.[0];
     if (e.target.files && selectedFile) {
       if (selectedFile.size > maxsize) {
         attachFiles(setErrorAttachments, e);
-      } else if (attachment?.some((file) => file.name === selectedFile.name))
+      } else if (
+        attachment?.some((file: any) => file.FileName === selectedFile.name)
+      )
         e.target.value = "";
       else if (
         attachment &&
         [...attachment, ...Array.from(e.target.files)]?.reduce(
-          (count, { size }) => {
+          (count, { size }: any) => {
             count += size;
             return count;
           },
@@ -167,17 +185,27 @@ const EditTicket = ({ open, setOpen }: EditTicketProps) => {
     e.preventDefault();
     if (validateForm()) {
       setIsValid(true);
-      const { IssueType, Subject, Description, Email, Priority } = formData;
-      const ticket = {
+      const {
         IssueType,
         Subject,
-        Description,
+        Description: Content,
+        Email,
+        Priority,
+      } = formData;
+      const ticket = {
+        Id: Ticket.Id,
+        IssueType,
+        Subject,
+        Content,
         Email,
         Priority,
         UserId: user?.Id,
+        CreatedAt: Ticket.CreatedAt,
       };
+      console.log(ticket);
       const file = attachment;
-      //   dispatch(addAttachementStart({ ticket, file }));
+      console.log(file);
+      dispatch(updateAttachmentStart({ ticket, file }));
     }
   };
   useEffect(() => {
@@ -202,7 +230,7 @@ const EditTicket = ({ open, setOpen }: EditTicketProps) => {
       if (!Loading && isValid && error === null) {
         setFormData({
           IssueType: "",
-          Email: user?.Email,
+          Email: user?.Email || " ",
           Subject: "",
           Description: "",
           Priority: priorityOptions[0],
@@ -210,14 +238,14 @@ const EditTicket = ({ open, setOpen }: EditTicketProps) => {
         setSuccessFullUpdate(true);
         setTimeout(() => {
           setSuccessFullUpdate(false);
-          router.push("/support/");
+          router.push("/support/tickets");
         }, 1000);
       }
     };
 
     checkError();
   }, [isValid, Loading, error]);
-  console.log(!Loading && isValid && error === null);
+  console.log(removedAttachment);
   return (
     <Backdrop
       sx={{
@@ -229,183 +257,262 @@ const EditTicket = ({ open, setOpen }: EditTicketProps) => {
       }}
       open={open}
     >
-      <div className="flex   border-t-2 border-[#102034] w-2/3  justify-self-end self-start overflow-auto h-screen">
+      <Snackbar
+        open={successFullUpdate}
+        autoHideDuration={1000}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        className="w-[400px]"
+      >
+        <Alert severity="success" sx={{ width: "100%" }}>
+          Successfully Issued
+        </Alert>
+      </Snackbar>
+      {error && showError && (
+        <div className="p-3 border bg-red-200 border-red-400 flex justify-between">
+          <Alert severity="error" className="w-[90%]  bg-red-200">
+            {error}
+          </Alert>
+          <button
+            className="text-lg text-gray-800"
+            onClick={() => {
+              setShowError(false);
+            }}
+          >
+            <LiaTimesSolid />
+          </button>
+        </div>
+      )}
+      <div className="flex   border-t-2 border-[#102034] md:w-2/3 w-full  justify-self-end self-start h-screen">
         <button
-          className="bg-[#102034] text-white text-xl p-[2px] w-[25px] h-[25px]"
+          className="md:block hidden bg-[#102034] text-white text-xl p-[2px] w-[25px] h-[25px]"
           onClick={() => setOpen(false)}
         >
           <LiaTimesSolid />
         </button>
-        <div className="bg-white w-full h-full py-5 px-10 flex flex-col gap-5">
-          <div className="flex gap-5">
-            <div className="flex">
-              <RxUpdate className="text-5xl text-gray-700 " />
-              <RiTicket2Line className="text-3xl text-gray-700 self-center mt-3 -ml-1 border-2 border-white rounded-full absolute top-[19px] right-[59%]" />
+        <div className="bg-white w-full h-full   md:px-10 px-2 flex flex-col gap-5">
+          <div className="flex justify-between">
+            <div className="flex gap-5">
+              <div className="flex">
+                <RiTicket2Line className="text-5xl text-gray-500 self-center mt-3 -ml-1 border-2 border-white rounded-full " />
+                <RxUpdate className="text-xl text-gray-700 self-end" />
+              </div>
+              <h2 className="text-lg text-gray-800 font-medium self-center">
+                Edit Ticket
+              </h2>
             </div>
-            <h2 className="text-lg text-gray-800 font-medium self-center">
-              Edit Ticket
-            </h2>
+            {Loading && <CircularProgress color="secondary" size={30} />}
           </div>
           <form
             onSubmit={handleSubmit}
-            className="h-full overflow-auto bg-white rounded-lg  md:p-10 p-2 flex flex-col gap-5"
+            id="Fullname"
+            className="h-screen  bg-white rounded-lg  md:p-10 p-2 flex flex-col gap-5 "
           >
-            <div className="flex flex-col gap-1">
-              <h1 className="md:text-xl text-sm text-gray-600 font-bold ">
-                What is your issue ?{" "}
-                <span className="text-red-500 self-center"> *</span>
-              </h1>
+            <div className="md:h-[65vh] h-[70vh] overflow-auto px-2">
+              <div className="flex flex-col gap-1">
+                <h1 className="md:text-xl text-sm text-gray-600 font-bold ">
+                  What is your issue ?{" "}
+                  <span className="text-red-500 self-center"> *</span>
+                </h1>
+                <Autocomplete
+                  disabled={Loading}
+                  className={`md:w-[70%] w-[full] ${
+                    Loading
+                      ? "opacity-50 cursor-not-allowed"
+                      : "opacity-100 cursor-pointer"
+                  }`}
+                  onChange={(event: any, newValue: any) => {
+                    setError((prevState) => {
+                      return { ...prevState, issueType: false };
+                    });
+                    setFormData((prevState) => ({
+                      ...prevState,
+                      IssueType: newValue,
+                    }));
+                  }}
+                  onInputChange={(event, newInputValue) => {}}
+                  id="issueType"
+                  options={options}
+                  value={formData.IssueType}
+                  renderInput={(params) => (
+                    <TextField key={params.id} {...params} label="Issue type" />
+                  )}
+                />
+                {Error.issueType && (
+                  <p className="text-[12px] text-red-500">
+                    This field is required
+                  </p>
+                )}
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="md:text-lg text-sm text-gray-700 font-semibold ">
+                  Email <span className="text-red-700">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="Email"
+                  name="Email"
+                  disabled={Loading}
+                  className={`md:w-[70%] w-full h-14 border-2  outline-none focus:outline-2 focus:outline-blue-500 hover:outline-1 hover:outline-black
+          rounded-md ${
+            Loading
+              ? "opacity-50 cursor-not-allowed"
+              : "opacity-100 cursor-pointer"
+          }`}
+                  value={formData.Email || ""}
+                  onChange={handleChange}
+                  onFocus={() =>
+                    setError((prevState) => ({ ...prevState, Email: false }))
+                  }
+                />
+                {Error.Email && (
+                  <p className="text-[12px] text-red-500">{ErrorMessage}</p>
+                )}
+              </div>
+              <label className="md:text-lg text-sm text-gray-d700 font-semibold ">
+                Priority
+              </label>
               <Autocomplete
-                className="md:w-[70%] w-[full] "
-                onChange={(event: any, newValue: any) => {
-                  setError((prevState) => {
-                    return { ...prevState, issueType: false };
-                  });
+                className={`md:w-[70%] w-[full] ${
+                  Loading
+                    ? "opacity-50 cursor-not-allowed"
+                    : "opacity-100 cursor-pointer"
+                } `}
+                inputValue={formData.Priority}
+                disabled={Loading}
+                onInputChange={(event, newPriority) => {
                   setFormData((prevState) => ({
                     ...prevState,
-                    IssueType: newValue,
+                    Priority: newPriority,
                   }));
                 }}
-                onInputChange={(event, newInputValue) => {}}
-                id="issueType"
-                options={options}
+                id="combo-box-demo"
+                options={priorityOptions}
+                value={formData.Priority}
                 renderInput={(params) => (
-                  <TextField key={params.id} {...params} label="Issue type" />
+                  <TextField key={params.id} {...params} label="Priority" />
                 )}
               />
-              {Error.issueType && (
-                <p className="text-[12px] text-red-500">
-                  This field is required
-                </p>
-              )}
-            </div>
-            <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1">
+                <label className="md:text-lg text-sm text-gray-700 font-semibold ">
+                  Subject <span className="text-red-700">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="Subject"
+                  name="Subject"
+                  className={`md:w-[70%] w-full h-14 border-2  outline-none focus:outline-2 focus:outline-blue-500 hover:outline-1 hover:outline-black
+          rounded-md ${
+            Loading
+              ? "opacity-50 cursor-not-allowed"
+              : "opacity-100 cursor-pointer"
+          }`}
+                  value={formData.Subject}
+                  autoFocus={Error.Subject}
+                  onChange={handleChange}
+                  disabled={Loading}
+                  onFocus={() =>
+                    setError((prevState) => ({ ...prevState, Subject: false }))
+                  }
+                />
+                {Error.Subject && (
+                  <p className="text-[12px] text-red-500">
+                    This field is required
+                  </p>
+                )}
+              </div>
               <label className="md:text-lg text-sm text-gray-700 font-semibold ">
-                Email <span className="text-red-700">*</span>
+                Description <span className="text-red-700">*</span>
               </label>
-              <input
-                type="text"
-                id="Email"
-                name="Email"
-                className="md:w-[70%] w-full h-14 border-2  outline-none focus:outline-2 focus:outline-blue-500 hover:outline-1 hover:outline-black
-          rounded-md"
-                value={formData.Email || ""}
-                onChange={handleChange}
-                onFocus={() =>
-                  setError((prevState) => ({ ...prevState, Email: false }))
-                }
-              />
-              {Error.Email && (
-                <p className="text-[12px] text-red-500">{ErrorMessage}</p>
-              )}
-            </div>
-            <label className="md:text-lg text-sm text-gray-d700 font-semibold ">
-              Priority
-            </label>
-            <Autocomplete
-              className="md:w-[70%] w-[full] "
-              inputValue={formData.Priority}
-              onInputChange={(event, newPriority) => {
-                setFormData((prevState) => ({
-                  ...prevState,
-                  Priority: newPriority,
-                }));
-              }}
-              id="combo-box-demo"
-              options={priorityOptions}
-              renderInput={(params) => (
-                <TextField key={1} {...params} label="Priority" />
-              )}
-            />
-            <div className="flex flex-col gap-1">
-              <label className="md:text-lg text-sm text-gray-700 font-semibold ">
-                Subject <span className="text-red-700">*</span>
-              </label>
-              <input
-                type="text"
-                id="Subject"
-                name="Subject"
-                className="md:w-[70%] w-full h-14 border-2  outline-none focus:outline-2 focus:outline-blue-500 hover:outline-1 hover:outline-black
-          rounded-md"
-                autoFocus={Error.Subject}
-                onChange={handleChange}
-                onFocus={() =>
-                  setError((prevState) => ({ ...prevState, Subject: false }))
-                }
-              />
-              {Error.Subject && (
-                <p className="text-[12px] text-red-500">
-                  This field is required
-                </p>
-              )}
-            </div>
-            <label className="md:text-lg text-sm text-gray-700 font-semibold ">
-              Description <span className="text-red-700">*</span>
-            </label>
-            <div className="flex flex-col gap-1">
-              <Editor
-                modules={modules}
-                setValue={setFormData}
-                setError={setError}
-              />
-              {Error.Discription && (
-                <p className="text-[12px] text-red-500">
-                  This field is required
-                </p>
-              )}
-            </div>
+              <div className="flex flex-col gap-1">
+                <TicketEditor
+                  modules={modules}
+                  setValue={setFormData}
+                  setError={setError}
+                  value={formData.Description}
+                  setChanged={setIsChanged}
+                />
+                {Error.Discription && (
+                  <p className="text-[12px] text-red-500">
+                    This field is required
+                  </p>
+                )}
+              </div>
 
-            <label htmlFor="attachment" className="flex gap-1 ">
-              <BsPaperclip className="self-center text-gray-700" />
-              <span className="text-blue-600 hover:text-gray-700 text-md font-medium">
-                Attachment
-              </span>
-            </label>
-            <input
-              id="attachment"
-              type="file"
-              hidden
-              onChange={AttachmentChangeHandle}
-            />
-            {attachment && (
-              <AttachmentLists
-                attachment={attachment}
-                setAttachement={setAttachement}
-                formatBytes={formatBytes}
+              <label htmlFor="attachment" className="flex gap-1 ">
+                <BsPaperclip className="self-center text-gray-700" />
+                <span className="text-blue-600 hover:text-gray-700 text-md font-medium">
+                  Attachment
+                </span>
+              </label>
+              <input
+                id="attachment"
+                type="file"
+                hidden
+                onChange={AttachmentChangeHandle}
               />
-            )}
-            {CumulativeErrorFiles?.length != 0 && (
-              <AttachmentLists
-                setAttachement={setCumulativeErrorFiles}
-                attachment={CumulativeErrorFiles}
-                formatBytes={formatBytes}
-                message="Cumulative file size can't exceed 20MB"
-                error={true}
-              />
-            )}
-            {ErrorAttachments?.length !== 0 && (
-              <AttachmentLists
-                attachment={ErrorAttachments}
-                setAttachement={setErrorAttachments}
-                formatBytes={formatBytes}
-                message="File size can't exceed 20MB"
-                error={true}
-              />
-            )}
-            {ErrorDirectoryAttachments?.length !== 0 && (
-              <AttachmentLists
-                attachment={ErrorDirectoryAttachments}
-                setAttachement={setErrorDirectoryAttachments}
-                formatBytes={formatBytes}
-                message="Can't Use Directories . You should use only files with Extension {.jpg,.pdf e.t.c}"
-                error={true}
-              />
-            )}
+              {attachment && (
+                <AttachmentLists
+                  setRemovedAttachment={setRemovedAttachment}
+                  DeleteAttach={true}
+                  setChanged={setIsChanged}
+                  attachment={attachment}
+                  setAttachement={setAttachement}
+                  formatBytes={formatBytes}
+                />
+              )}
+              {CumulativeErrorFiles?.length != 0 && (
+                <AttachmentLists
+                  setRemovedAttachment={setRemovedAttachment}
+                  DeleteAttach={false}
+                  setChanged={setIsChanged}
+                  setAttachement={setCumulativeErrorFiles}
+                  attachment={CumulativeErrorFiles}
+                  formatBytes={formatBytes}
+                  message="Cumulative file size can't exceed 20MB"
+                  error={true}
+                />
+              )}
+              {ErrorAttachments?.length !== 0 && (
+                <AttachmentLists
+                  setRemovedAttachment={setRemovedAttachment}
+                  DeleteAttach={false}
+                  setChanged={setIsChanged}
+                  attachment={ErrorAttachments}
+                  setAttachement={setErrorAttachments}
+                  formatBytes={formatBytes}
+                  message="File size can't exceed 20MB"
+                  error={true}
+                />
+              )}
+              {ErrorDirectoryAttachments?.length !== 0 && (
+                <AttachmentLists
+                  setRemovedAttachment={setRemovedAttachment}
+                  DeleteAttach={false}
+                  setChanged={setIsChanged}
+                  attachment={ErrorDirectoryAttachments}
+                  setAttachement={setErrorDirectoryAttachments}
+                  formatBytes={formatBytes}
+                  message="Can't Use Directories . You should use only files with Extension {.jpg,.pdf e.t.c}"
+                  error={true}
+                />
+              )}
+            </div>
             <div className="flex gap-2 p-5">
-              <button className="p-3  text-sm bg-slate-50 border rounded-md  border-gray-300">
+              <button
+                className="p-3  text-sm bg-slate-50 border rounded-md  border-gray-300"
+                type="button"
+                onClick={() => setOpen(false)}
+              >
                 cancel
-              </button>{" "}
-              <button className="p-3  text-sm text-white bg-[#063750] border rounded-md ">
+              </button>
+              <button
+                className={`p-3  text-sm text-white bg-[#063750] border rounded-md ${
+                  !IsChanged || Loading
+                    ? "opacity-70 cursor-not-allowed"
+                    : "opacity-100 cursor-pointer"
+                } `}
+                disabled={!IsChanged || Loading}
+              >
                 submit
               </button>
             </div>

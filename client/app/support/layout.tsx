@@ -16,8 +16,6 @@ export default function SupportLayout({
   useEffect(() => {
     const getProfile = () => {
       dispatch(getProfileStart());
-      console.log("this is not the best thing to me");
-      console.log(user);
     };
 
     getProfile();

@@ -6,16 +6,15 @@ import Image from "next/image";
 import logo from "@/public/logo.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { getProfileStart, selectUser } from "./Redux/features/userSlice";
+import { LuAlertOctagon } from "react-icons/lu";
 
 const Page = () => {
   const dispatch = useDispatch();
-  const { user, isAuth, Loading } = useSelector(selectUser);
+  const { user, isAuth, Loading, error } = useSelector(selectUser);
 
   useEffect(() => {
     const getProfile = () => {
       dispatch(getProfileStart());
-      console.log("this is not the best thing to me");
-      console.log(user);
     };
 
     getProfile();
@@ -33,18 +32,27 @@ const Page = () => {
   }, [user]);
   return (
     <>
-      <Box className="w-full h-screen flex flex-col gap-5 justify-center align-middle relative shadow-lg bg-slate-50">
-        <Image
-          src={logo}
-          alt="Logo"
-          className="w-[30px] h-[30px] self-center "
-        />
-        <CircularProgress className="self-center text-3xl  " />
+      {error ? (
+        <div className="flex justify-center bg-slate-600 align-middle h-screen gap-5">
+          <LuAlertOctagon className="text-xl text-white place-self-center" />
+          <p className="text-lg text-slate-50 font-semibold self-center opacity-80">
+            {error}
+          </p>
+        </div>
+      ) : (
+        <Box className="w-full h-screen flex flex-col gap-5 justify-center align-middle relative shadow-lg bg-slate-50">
+          <Image
+            src={logo}
+            alt="Logo"
+            className="w-[30px] h-[30px] self-center "
+          />
+          <CircularProgress className="self-center text-3xl  " />
 
-        <h1 className="text-3xl text-blue-400 font-black self-center">
-          Kns Support Service
-        </h1>
-      </Box>
+          <h1 className="text-3xl text-blue-400 font-black self-center">
+            Kns Support Service
+          </h1>
+        </Box>
+      )}
     </>
   );
 };

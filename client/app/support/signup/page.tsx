@@ -7,17 +7,18 @@ import Link from "next/link";
 import {
   selectUser,
   signinSucess,
+  signupStart,
   signupSucess,
 } from "@/app/Redux/features/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { FaTimes } from "react-icons/fa";
 import { redirect, useRouter } from "next/navigation";
-import { Checkbox } from "@mui/material";
+import { Checkbox, CircularProgress } from "@mui/material";
 import { validatePassword } from "firebase/auth";
 
 const SignUpPage = () => {
   const dispatch = useDispatch();
-  const { user, isAuth, error } = useSelector(selectUser);
+  const { user, isAuth, error, Loading } = useSelector(selectUser);
   const [showPassword, setShowPassword] = useState(false);
   const [showError, setShowError] = useState(false);
   const [formData, setFormData] = useState({
@@ -141,7 +142,7 @@ const SignUpPage = () => {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (validateForm() && validateEmail() && validatePassword())
-      dispatch(signupSucess(formData));
+      dispatch(signupStart(formData));
   };
   useEffect(() => {
     const CheckUser = () => {
@@ -164,10 +165,14 @@ const SignUpPage = () => {
       )}
       <div className="self-center bg-white md:w-1/3 w-[90%] p-6 flex flex-col gap-5 shadow-md rounded-md border">
         <div className="flex flex-col gap-2">
-          <h1 className="text-gray-700 text-2xl font-black">
-            {" "}
-            Sign up for Kns support portal
-          </h1>
+          <div className="flex justify-between">
+            <h1 className="text-gray-700 text-2xl font-black">
+              Sign up for Kns support portal
+            </h1>
+            {Loading && (
+              <CircularProgress size={20} thickness={4} color="secondary" />
+            )}
+          </div>
           <div className="flex gap-2 ">
             <p className="text-gray-400 font-semibold text-sm">
               Already a user ?
@@ -180,9 +185,17 @@ const SignUpPage = () => {
             </Link>
           </div>
         </div>
-        <form action="" className="flex flex-col gap-3" onSubmit={handleSubmit}>
+        <form
+          action=""
+          className="flex flex-col gap-3"
+          onSubmit={handleSubmit}
+          id="signupForm"
+        >
           <div className="flex flex-col gap-2">
-            <label className="text-gray-600 text-sm font-semibold">
+            <label
+              htmlFor="fullname"
+              className="text-gray-600 text-sm font-semibold"
+            >
               Full name
               <span className="text-red-600 font-bold text-lg self-center ml-2">
                 *
@@ -191,11 +204,16 @@ const SignUpPage = () => {
             <input
               type="text"
               id="fullname"
+              disabled={Loading}
               className={`p-3 text-gray-600 border w-full rounded-md ${
                 Error.fullname
                   ? "border-red-500 outline-none"
                   : "outline-blue-500 hover:border-black "
-              }  placeholder:text-sm `}
+              }  placeholder:text-sm   ${
+                Loading
+                  ? "cursor-not-allowed opacity-50"
+                  : "cursor-pointer opacity-100"
+              } `}
               onChange={(e) => {
                 setFormData((prevState) => {
                   return { ...prevState, fullname: e.target.value };
@@ -215,7 +233,10 @@ const SignUpPage = () => {
             )}
           </div>
           <div className="flex flex-col gap-2">
-            <label className="text-gray-600 text-sm font-semibold">
+            <label
+              htmlFor="signUpEmail"
+              className="text-gray-600 text-sm font-semibold"
+            >
               Email
               <span className="text-red-600 font-bold text-lg self-center ml-2">
                 *
@@ -223,12 +244,17 @@ const SignUpPage = () => {
             </label>
             <input
               type="text"
-              id="email"
+              id="signUpEmail"
+              disabled={Loading}
               className={`p-3 text-gray-600 border w-full rounded-md ${
                 Error.email
                   ? "border-red-500 outline-none"
                   : "outline-blue-500 hover:border-black "
-              }  placeholder:text-sm `}
+              }  placeholder:text-sm ${
+                Loading
+                  ? "cursor-not-allowed opacity-50"
+                  : "cursor-pointer opacity-100"
+              }`}
               onChange={(e) => {
                 setFormData((prevState) => {
                   return { ...prevState, email: e.target.value };
@@ -246,7 +272,10 @@ const SignUpPage = () => {
             )}
           </div>{" "}
           <div className="flex flex-col gap-2">
-            <label className="text-gray-600 text-sm font-semibold">
+            <label
+              htmlFor="signupPassword"
+              className="text-gray-600 text-sm font-semibold"
+            >
               password
               <span className="text-red-600 font-bold text-lg self-center ml-2">
                 *
@@ -254,12 +283,17 @@ const SignUpPage = () => {
             </label>
             <input
               type={`${showPassword ? "text" : "password"}`}
-              id="password"
+              id="signupPassword"
+              disabled={Loading}
               className={`p-3 text-gray-600 border w-full rounded-md ${
                 Error.password
                   ? "border-red-500 outline-none"
                   : "outline-blue-500 hover:border-black "
-              }  placeholder:text-sm `}
+              }  placeholder:text-sm  ${
+                Loading
+                  ? "cursor-not-allowed opacity-50"
+                  : "cursor-pointer opacity-100"
+              }`}
               onChange={(e) => {
                 setFormData((prevState) => {
                   return { ...prevState, password: e.target.value };
@@ -279,7 +313,10 @@ const SignUpPage = () => {
             )}
           </div>
           <div className="flex flex-col gap-2">
-            <label className="text-gray-600 text-sm font-semibold">
+            <label
+              htmlFor="confirmpassword"
+              className="text-gray-600 text-sm font-semibold"
+            >
               confirm password
               <span className="text-red-600 font-bold text-lg self-center ml-2">
                 *
@@ -288,11 +325,16 @@ const SignUpPage = () => {
             <input
               type={`${showPassword ? "text" : "password"}`}
               id="confirmpassword"
+              disabled={Loading}
               className={`p-3 text-gray-600 border w-full rounded-md ${
                 Error.confirmPassword
                   ? "border-red-500 outline-none"
                   : "outline-blue-500 hover:border-black "
-              }  placeholder:text-sm `}
+              }  placeholder:text-sm  ${
+                Loading
+                  ? "cursor-not-allowed opacity-50"
+                  : "cursor-pointer opacity-100"
+              }`}
               onChange={(e) => {
                 setFormData((prevState) => {
                   return { ...prevState, confirmPassword: e.target.value };
@@ -318,11 +360,17 @@ const SignUpPage = () => {
             />
             <p className="self-center">Show Password</p>
           </li>
-          <button className="bg-[#063750] text-white p-3 text-sm rounded-md">
+          <button
+            className={`bg-[#063750] text-white p-3 text-sm rounded-md ${
+              Loading
+                ? "cursor-not-allowed opacity-50"
+                : "cursor-pointer opacity-100"
+            }`}
+          >
             Register
           </button>
         </form>
-        <div className="self-center flex gap-1 mt-10">
+        <div className="self-center flex gap-1 mt-10 ">
           <p className="md:text-lg font-semibold text-gray-600">
             Are you an agent ?
           </p>

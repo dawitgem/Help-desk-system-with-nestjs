@@ -16,6 +16,9 @@ import {
   updateUserFaliure,
   updatePasswordSuccess,
   updatePasswordRequest,
+  signupStart,
+  signinStart,
+  getProfileFaliure,
 } from "../Redux/features/userSlice";
 import axios from "axios";
 import { nanoid, customAlphabet } from "nanoid";
@@ -35,7 +38,6 @@ const api =
     ? "https://kns-support-api.onrender.com"
     : "http://localhost:8000";
 
-console.log(process.env.NEXT_PUBLIC_REACT_ENV);
 interface SignInAction {
   type: typeof signinSucess;
   payload: { email: string; password: string };
@@ -216,18 +218,19 @@ function* handleSignin(action: SignInAction): Generator<any, void, any> {
     const AccessToken = yield call(SigninApi, action.payload);
     const user = yield getProfileApi();
     yield put(getProfile(user));
-  } catch (e) {
-    yield put(signInFaliure("something went wrong. please try again  "));
+  } catch (e: any) {
+    yield put(signInFaliure(e.response.data.message));
   }
 }
 function* handleSigUp(action: SignUpAction): Generator<any, void, any> {
   try {
     const response = yield call(SignupApi, action.payload);
-    console.log(response);
     const user = yield getProfileApi();
     yield put(createUser(user));
-  } catch (e) {
-    yield put(signUpFaliure("something went wrong . Please try again !!!"));
+  } catch (e: any) {
+    yield put(
+      signUpFaliure("something went wrong ." + e.response.data.message)
+    );
   }
 }
 
@@ -246,7 +249,9 @@ function* handleSigninWithGoogle(
     const user = yield getProfileApi();
     yield put(getProfile(user));
   } catch (e: any) {
-    yield put(signInWithGoogleFaliuer("something went wrong." + e.message));
+    yield put(
+      signInWithGoogleFaliuer("something went wrong." + e.response.data.message)
+    );
   }
 }
 
@@ -254,9 +259,7 @@ function* handleProfile(action: SignInAction): Generator<any, void, any> {
   try {
     const user = yield getProfileApi();
     yield put(getProfile(user));
-  } catch (e) {
-    console.log(e);
-  }
+  } catch (e: any) {}
 }
 function* handleSignOut() {
   try {
@@ -280,7 +283,6 @@ function* handleUpdateUser(
     yield put(createUser(user));
   } catch (e: any) {
     yield put(updateUserFaliure(e.message));
-    console.log(e);
   }
 }
 function* handleUpdateUserPassword(
@@ -294,8 +296,8 @@ function* handleUpdateUserPassword(
   }
 }
 export function* userSaga() {
-  yield takeLatest(signinSucess.type, handleSignin);
-  yield takeLatest(signupSucess.type, handleSigUp);
+  yield takeLatest(signinStart.type, handleSignin);
+  yield takeLatest(signupStart.type, handleSigUp);
   yield takeLatest(signinWithGoogleStart.type, handleSigninWithGoogle);
   yield takeLatest(getProfileStart.type, handleProfile);
   yield takeLatest(LogoutSucess.type, handleSignOut);

@@ -65,6 +65,15 @@ export class TicketService {
     });
     return Attachment;
   }
+  async updateTicket(Id: string, data: Prisma.TicketsUpdateInput) {
+    const Ticket = await this.prisma.tickets.update({
+      where: {
+        Id,
+      },
+      data,
+    });
+    return Ticket;
+  }
   async deleteTicket(Id: string): Promise<Tickets> {
     const attachment = await this.prisma.attachement.deleteMany({
       where: {
@@ -77,5 +86,11 @@ export class TicketService {
       },
     });
     return ticket;
+  }
+  async deleteAttachment(Id: string): Promise<Attachement> {
+    const attachement = await this.prisma.attachement.delete({
+      where: { Id },
+    });
+    return attachement;
   }
 }

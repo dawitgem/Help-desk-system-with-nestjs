@@ -246,6 +246,7 @@ const EditTicket = ({ open, setOpen, Ticket, Attachment }: EditTicketProps) => {
     checkError();
   }, [isValid, Loading, error]);
   console.log(removedAttachment);
+  console.log(removedAttachment);
   return (
     <Backdrop
       sx={{

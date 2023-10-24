@@ -54,7 +54,7 @@ const TicketIdPage = ({ params }: { params: { ticketid: string } }) => {
         const ticket = await response.data;
         const {
           Id,
-          Type:IssueType,
+          Type: IssueType,
           Email,
           Subject,
           Content,
@@ -71,7 +71,7 @@ const TicketIdPage = ({ params }: { params: { ticketid: string } }) => {
           Priority,
           UserId,
           CreatedAt,
-        } );
+        });
         const attachResponse = await axios.get(
           `${api}/ticket/attachment/${params.ticketid}`
         );
@@ -85,7 +85,6 @@ const TicketIdPage = ({ params }: { params: { ticketid: string } }) => {
     fetchTicket();
   }, [user]);
   useEffect(() => {}, [error, Loading]);
-  if (ticket) sanitaizeContent = DOMPurify.sanitize(ticket?.Content);
   const handleClick = () => {
     dispatch(deleteTicketStart(params.ticketid));
     setIsValid(true);
@@ -104,7 +103,6 @@ const TicketIdPage = ({ params }: { params: { ticketid: string } }) => {
       }, 1000);
     }
   }, [error, Loading, isValid]);
-  
 
   return (
     <>
@@ -164,7 +162,7 @@ const TicketIdPage = ({ params }: { params: { ticketid: string } }) => {
                 {ticket?.Subject}
               </p>
               <div
-                dangerouslySetInnerHTML={{ __html: sanitaizeContent }}
+                dangerouslySetInnerHTML={{ __html: ticket?.Content || " " }}
                 className="w-full break-words"
               ></div>
             </div>

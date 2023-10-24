@@ -1,8 +1,13 @@
-import { Alert, Autocomplete, Snackbar, TextField } from "@mui/material";
+import {
+  Alert,
+  Autocomplete,
+  CircularProgress,
+  Snackbar,
+  TextField,
+} from "@mui/material";
 import Editor from "./Editor";
 import { BsPaperclip } from "react-icons/bs";
-import { modules } from "@/Inputs";
-import { readonlymodules } from "@/Inputs";
+import { modules, readonlymodules } from "@/Inputs";
 import {
   ChangeEvent,
   Dispatch,
@@ -18,11 +23,14 @@ import { selectUser } from "@/app/Redux/features/userSlice";
 import {
   Attachement,
   addAttachementStart,
+  addTicketFaliure,
   addTicketStart,
   selectTicket,
 } from "@/app/Redux/features/ticketSlice";
 import { LiaTimesSolid } from "react-icons/lia";
 import { useRouter } from "next/navigation";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { storage } from "@/firebase/firebaseconfig";
 
 interface AutocompleteOption {
   label: string;
@@ -30,9 +38,89 @@ interface AutocompleteOption {
 const options = ["Ask a question", "Report an issue", "Enquire status"];
 const priorityOptions = ["Low", "Medium", "High", "Urgent"];
 
+const HtmlParser = (html: any) => {
+  console.log(html);
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, "text/html");
+  const imgElements = doc.querySelectorAll("img");
+  const imageInputs: any = [];
+  imgElements.forEach((img) => {
+    const src = img.getAttribute("src");
+    const alt = img.getAttribute("alt");
+    imageInputs.push(src);
+  });
+  console.log(imageInputs);
+  return { imgElements, doc, imageInputs };
+};
+
+const serializer = (doc: any) => {
+  console.log(doc);
+  const serializer = new XMLSerializer();
+  const p = doc.getElementsByTagName("body");
+  const htmlstring = serializer.serializeToString(p[0]);
+  const htmlString1 = htmlstring.replace(
+    '<body xmlns="http://www.w3.org/1999/xhtml">',
+    ""
+  );
+  const htmlString2 = htmlString1.replace("</body>", "");
+  return htmlString2;
+};
+
+const dataURLtoBlob = (dataURI: any) => {
+  const byteString = atob(dataURI.split(",")[1]);
+  const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
+  const ab = new ArrayBuffer(byteString.length);
+  const ia = new Uint8Array(ab);
+
+  for (let i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+
+  return new Blob([ab], { type: mimeString });
+};
+
+export const uploadEditorImageToFirebase = async (base64Data: any) => {
+  return new Promise((resolve, reject) => {
+    const profileRef = ref(
+      storage,
+      `EditorImage/${new Date().getMilliseconds()}`
+    );
+    const file = dataURLtoBlob(base64Data);
+    const uploadTask = uploadBytesResumable(profileRef, file);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          Math.round(
+            ((snapshot.bytesTransferred / snapshot.totalBytes) * 100) / 5
+          ) * 5;
+      },
+      (Error) => {
+        switch (Error.code) {
+          case "storage/unauthorized":
+            break;
+          case "storage/canceled":
+            break;
+          case "storage/unknown":
+            break;
+        }
+      },
+      async () => {
+        try {
+          const url = await getDownloadURL(uploadTask.snapshot.ref);
+          resolve(url);
+        } catch (e: any) {
+          reject(e);
+        }
+      }
+    );
+  });
+};
+
 const TextEditor = () => {
   const { user } = useSelector(selectUser);
   const { error, Loading } = useSelector(selectTicket);
+  const [IsChanged, setIsChanged] = useState(false);
   const [showError, setShowError] = useState(false);
   const [successFullUpdate, setSuccessFullUpdate] = useState(false);
   const [isValid, setIsValid] = useState(false);
@@ -51,6 +139,7 @@ const TextEditor = () => {
     Subject: false,
     Discription: false,
   });
+  const [removedAttachment, setRemovedAttachment] = useState<Attachement[]>();
   const [attachment, setAttachement] = useState<any>([]);
   const [ErrorAttachments, setErrorAttachments] = useState<any>([]);
   const [CumulativeErrorFiles, setCumulativeErrorFiles] = useState<any>([]);
@@ -78,6 +167,7 @@ const TextEditor = () => {
   };
 
   const validateEmail = (Email: string) => {
+    console.log("alskdjflaksjdf");
     let Valid: boolean = true;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (Email && !emailRegex.test(Email)) {
@@ -167,7 +257,7 @@ const TextEditor = () => {
       }
     }
   };
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (validateForm()) {
       setIsValid(true);
@@ -181,6 +271,7 @@ const TextEditor = () => {
         UserId: user?.Id,
       };
       const file = attachment;
+      console.log(ticket);
       dispatch(addAttachementStart({ ticket, file }));
     }
   };
@@ -221,7 +312,6 @@ const TextEditor = () => {
 
     checkError();
   }, [isValid, Loading, error]);
-  console.log(!Loading && isValid && error === null);
   return (
     <>
       <Snackbar
@@ -255,13 +345,25 @@ const TextEditor = () => {
           onSubmit={handleSubmit}
           className="bg-white rounded-lg shadow-lg md:p-10 p-2 flex flex-col gap-5"
         >
+          {Loading && (
+            <CircularProgress
+              color="secondary"
+              size={30}
+              className="self-end"
+            />
+          )}
           <div className="flex flex-col gap-1">
             <h1 className="md:text-xl text-sm text-gray-600 font-bold ">
               What is your issue ?{" "}
               <span className="text-red-500 self-center"> *</span>
             </h1>
             <Autocomplete
-              className="md:w-[70%] w-[full] "
+              className={`md:w-[70%] w-[full] ${
+                Loading
+                  ? "opacity-50 cursor-not-allowed"
+                  : "opacity-100 cursor-pointer"
+              }`}
+              disabled={Loading}
               onChange={(event: any, newValue: any) => {
                 setError((prevState) => {
                   return { ...prevState, issueType: false };
@@ -290,8 +392,13 @@ const TextEditor = () => {
               type="text"
               id="Email"
               name="Email"
-              className="md:w-[70%] w-full h-14 border-2  outline-none focus:outline-2 focus:outline-blue-500 hover:outline-1 hover:outline-black
-          rounded-md"
+              disabled={Loading}
+              className={`md:w-[70%] w-full h-14 border-2  outline-none focus:outline-2 focus:outline-blue-500 hover:outline-1 hover:outline-black
+              rounded-md ${
+                Loading
+                  ? "opacity-50 cursor-not-allowed"
+                  : "opacity-100 cursor-pointer"
+              }`}
               value={formData.Email || ""}
               onChange={handleChange}
               onFocus={() =>
@@ -306,7 +413,12 @@ const TextEditor = () => {
             Priority
           </label>
           <Autocomplete
-            className="md:w-[70%] w-[full] "
+            className={`md:w-[70%] w-[full] ${
+              Loading
+                ? "opacity-50 cursor-not-allowed"
+                : "opacity-100 cursor-pointer"
+            }`}
+            disabled={Loading}
             inputValue={formData.Priority}
             onInputChange={(event, newPriority) => {
               setFormData((prevState) => ({
@@ -328,8 +440,12 @@ const TextEditor = () => {
               type="text"
               id="Subject"
               name="Subject"
-              className="md:w-[70%] w-full h-14 border-2  outline-none focus:outline-2 focus:outline-blue-500 hover:outline-1 hover:outline-black
-          rounded-md"
+              className={`md:w-[70%] w-full h-14 border-2  outline-none focus:outline-2 focus:outline-blue-500 hover:outline-1 hover:outline-black
+              rounded-md ${
+                Loading
+                  ? "opacity-50 cursor-not-allowed"
+                  : "opacity-100 cursor-pointer"
+              }`}
               autoFocus={Error.Subject}
               onChange={handleChange}
               onFocus={() =>
@@ -365,50 +481,66 @@ const TextEditor = () => {
             type="file"
             hidden
             onChange={AttachmentChangeHandle}
+            disabled={Loading}
           />
           {attachment && (
             <AttachmentLists
+              setRemovedAttachment={setRemovedAttachment}
               DeleteAttach={false}
               attachment={attachment}
               setAttachement={setAttachement}
               formatBytes={formatBytes}
+              setChanged={setIsChanged}
             />
           )}
           {CumulativeErrorFiles?.length != 0 && (
             <AttachmentLists
+              setRemovedAttachment={setRemovedAttachment}
               DeleteAttach={false}
               setAttachement={setCumulativeErrorFiles}
               attachment={CumulativeErrorFiles}
               formatBytes={formatBytes}
               message="Cumulative file size can't exceed 20MB"
               error={true}
+              setChanged={setIsChanged}
             />
           )}
           {ErrorAttachments?.length !== 0 && (
             <AttachmentLists
+              setRemovedAttachment={setRemovedAttachment}
               DeleteAttach={false}
               attachment={ErrorAttachments}
               setAttachement={setErrorAttachments}
               formatBytes={formatBytes}
               message="File size can't exceed 20MB"
               error={true}
+              setChanged={setIsChanged}
             />
           )}
           {ErrorDirectoryAttachments?.length !== 0 && (
             <AttachmentLists
+              setRemovedAttachment={setRemovedAttachment}
               DeleteAttach={false}
               attachment={ErrorDirectoryAttachments}
               setAttachement={setErrorDirectoryAttachments}
               formatBytes={formatBytes}
               message="Can't Use Directories . You should use only files with Extension {.jpg,.pdf e.t.c}"
               error={true}
+              setChanged={setIsChanged}
             />
           )}
           <div className="flex gap-2 p-5">
             <button className="p-3  text-sm bg-slate-50 border rounded-md  border-gray-300">
               cancel
-            </button>{" "}
-            <button className="p-3  text-sm text-white bg-[#063750] border rounded-md ">
+            </button>
+            <button
+              className={`p-3  text-sm text-white bg-[#063750] border rounded-md ${
+                Loading
+                  ? "opacity-70 cursor-not-allowed"
+                  : "opacity-100 cursor-pointer"
+              } `}
+              disabled={Loading}
+            >
               submit
             </button>
           </div>

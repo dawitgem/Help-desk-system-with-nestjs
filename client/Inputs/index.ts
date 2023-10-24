@@ -1,3 +1,7 @@
+import { storage } from "@/firebase/firebaseconfig";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { serialize } from "v8";
+
 export const modules = {
   toolbar: [
     [{ font: [] }],

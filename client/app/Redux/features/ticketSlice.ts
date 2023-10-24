@@ -48,7 +48,7 @@ interface ticketStart {
   Email?: string | null;
   UserId?: string;
 }
-
+let count = 0;
 const TicketSlice = createSlice({
   name: "ticket",
   initialState,
@@ -68,7 +68,7 @@ const TicketSlice = createSlice({
       state.error = null;
     },
     addTicketSuccess: (state, action: PayloadAction<Ticket>) => {
-      state.Tickets = [...state.Tickets, action.payload];
+      state.Tickets = [action.payload, ...state.Tickets];
       state.Loading = false;
       state.error = null;
     },
@@ -162,13 +162,18 @@ const TicketSlice = createSlice({
     },
     updateAttachmentStart: (
       state,
-      action: PayloadAction<{ ticket: Ticket; file: Attachement[] | null }>
+      action: PayloadAction<{
+        ticket: Ticket;
+        file: File[];
+        Id: string;
+        Remove: Attachement[] | undefined;
+      }>
     ) => {
+      console.log(action.payload);
       state.Loading = true;
       state.error = null;
     },
-    updateAttachmentSucess: (state, action: PayloadAction<Attachement[]>) => {
-      console.log(action.payload);
+    updateAttachmentSucess: (state, action: PayloadAction<any>) => {
       state.Attachement = action.payload;
       state.error = null;
       state.Loading = false;
@@ -176,12 +181,14 @@ const TicketSlice = createSlice({
     updateAttachmentFaliure: (state, action: PayloadAction<string>) => {
       (state.error = action.payload), (state.Loading = false);
     },
-    deleteAttachmentStart: (state, action: PayloadAction<Attachement>) => {
+    deleteAttachmentStart: (state, action: PayloadAction<any>) => {
+      count++;
+      state.Loading = true;
       state.error = null;
     },
-    deleteAttachmentSuccess: (state, action: PayloadAction<Attachement>) => {
+    deleteAttachmentSuccess: (state, action: PayloadAction<any>) => {
       state.Attachement = state.Attachement.filter(
-        (attach) => attach.Id !== action.payload.Id
+        (attach) => !action.payload.includes(attach)
       );
       state.error = null;
       state.Loading = false;
@@ -192,7 +199,7 @@ const TicketSlice = createSlice({
     },
   },
 });
-
+console.log(count);
 export const {
   fetchTicketFaliure,
   fetchTicketStart,

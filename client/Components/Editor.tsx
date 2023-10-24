@@ -1,14 +1,26 @@
 "use client";
 import { selectTicket } from "@/app/Redux/features/ticketSlice";
+import { storage } from "@/firebase/firebaseconfig";
+import { Backdrop } from "@mui/material";
+import DOMPurify from "dompurify";
+import {
+  StorageReference,
+  UploadTask,
+  getDownloadURL,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
 import dynamic from "next/dynamic";
 import {
   Dispatch,
   SetStateAction,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
+import { LiaTimesSolid } from "react-icons/lia";
 import "react-quill/dist/quill.snow.css";
 import { useSelector } from "react-redux";
 
@@ -32,6 +44,7 @@ interface EditorProps {
   >;
   setError: Dispatch<SetStateAction<ErrorType>>;
 }
+
 const Editor = ({ modules, style, setValue, setError }: EditorProps) => {
   const { Loading } = useSelector(selectTicket);
   const [input, setInput] = useState("");
@@ -40,46 +53,66 @@ const Editor = ({ modules, style, setValue, setError }: EditorProps) => {
     []
   );
   const editorRef = useRef(null);
+  const [ImageInputs, setImageInputs] = useState();
+  const [html, setHtml] = useState(" ");
+  const [uploadRef, setUploadRef] = useState<StorageReference>();
+  const [uploadTask, setUploadTask] = useState<UploadTask | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const [selectedImage, setSelectedImage] = useState<
+    string[] | null | undefined
+  >(null);
 
-  useEffect(() => {
-    const editorContainer = document.getElementById("Description"); // Replace with your actual container ID
+  const [open, setOpen] = useState(false);
 
-    if (editorContainer) {
-      const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-          // Handle mutations if needed
-          console.log("Content changed");
-        });
-      });
-
-      const config = { childList: true, subtree: true };
-      observer.observe(editorContainer, config);
-
-      return () => {
-        observer.disconnect();
-      };
-    } else {
-      console.error("Editor container not found.");
+  const cancelUpload = () => {
+    if (uploadTask) {
+      uploadTask.cancel();
+      setUploadProgress(null);
     }
-  }, []);
+  };
 
-  const onChange = (html: string) => {
+  const onChange = async (html: string) => {
     setError((prevState) => {
       return { ...prevState, Discription: false };
     });
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
-    const imgElements = doc.querySelectorAll("img");
-    const imageInputs: any = [];
-    imgElements.forEach((img) => {
-      const src = img.getAttribute("src");
-      const alt = img.getAttribute("alt");
-      imageInputs.push({ src, alt });
-    });
-    setValue((prevState) => ({ ...prevState, Description: html }));
+
+    console.log("don't give up on medlkfjalsdkfjalskdfjlkasjdfjhgjh");
+
+    setValue((prevState) => ({
+      ...prevState,
+      Description: DOMPurify.sanitize(html),
+    }));
   };
+
   return (
-    <div className={`${style ? style : "w-[70%]"} w-full`}>
+    <div className={`relative  ${style ? style : "w-[70%]"} w-full`}>
+      {uploadProgress && (
+        <div className="w-full  h-[500px] absolute top-0 left-0 md:bg-transparent z-50">
+          <div className="lg:p-5 p-5  lg:w-[300px] border  bg-slate-50 flex flex-col gap-2 rounded-md">
+            <button
+              className="p-2 text-xl rounded-full hover:bg-slate-300 w-[40px] text-gray-800 "
+              type="button"
+              onClick={cancelUpload}
+            >
+              <LiaTimesSolid className="w-full h-full " />
+            </button>
+            <div className="w-full h-2  bg-white border rounded-3xl flex justify-between">
+              <div
+                className={` h-full  bg-blue-500 rounded-3xl border flex justify-between`}
+                style={{ width: `${uploadProgress}%` }}
+              ></div>
+            </div>
+            <div className="flex w-full justify-between">
+              <p className="text-md text-gray-800 font-bold">
+                Image uploading...
+              </p>
+              <p className="text-md text-blue-500 font-bold">
+                {uploadProgress}%
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
       <ReactQuill
         modules={modules}
         readOnly={Loading}
@@ -127,6 +160,7 @@ export const TicketEditor = ({
   setChanged,
   value,
 }: TicketEditorProps) => {
+  console.log(value);
   const { Loading } = useSelector(selectTicket);
   const [input, setInput] = useState("");
   const ReactQuill = useMemo(
@@ -135,27 +169,7 @@ export const TicketEditor = ({
   );
   const editorRef = useRef(null);
 
-  useEffect(() => {
-    const editorContainer = document.getElementById("Description"); // Replace with your actual container ID
-
-    if (editorContainer) {
-      const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-          // Handle mutations if needed
-          console.log("Content changed");
-        });
-      });
-
-      const config = { childList: true, subtree: true };
-      observer.observe(editorContainer, config);
-
-      return () => {
-        observer.disconnect();
-      };
-    } else {
-      console.error("Editor container not found.");
-    }
-  }, []);
+  useEffect(() => {}, []);
 
   const onChange = (html: string) => {
     setChanged(true);
@@ -163,17 +177,12 @@ export const TicketEditor = ({
     setError((prevState) => {
       return { ...prevState, Discription: false };
     });
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
-    const imgElements = doc.querySelectorAll("img");
-    const imageInputs: any = [];
-    imgElements.forEach((img) => {
-      const src = img.getAttribute("src");
-      const alt = img.getAttribute("alt");
-      imageInputs.push({ src, alt });
-    });
-    setValue((prevState) => ({ ...prevState, Description: html }));
+    setValue((prevState) => ({
+      ...prevState,
+      Description: DOMPurify.sanitize(html),
+    }));
   };
+
   return (
     <div className={`${style ? style : "w-[70%]"} w-full`}>
       <ReactQuill

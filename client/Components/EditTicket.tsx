@@ -25,6 +25,7 @@ import { selectUser } from "@/app/Redux/features/userSlice";
 import {
   Attachement,
   Ticket,
+  deleteAttachmentStart,
   selectTicket,
   updateAttachmentStart,
 } from "@/app/Redux/features/ticketSlice";
@@ -203,9 +204,11 @@ const EditTicket = ({ open, setOpen, Ticket, Attachment }: EditTicketProps) => {
         CreatedAt: Ticket.CreatedAt,
       };
       console.log(ticket);
-      const file = attachment;
-      console.log(file);
-      dispatch(updateAttachmentStart({ ticket, file }));
+      const Id = ticket.Id;
+      const file = attachment.filter((attach: any) => "name" in attach);
+      const Remove = removedAttachment;
+      console.log(Remove);
+      dispatch(updateAttachmentStart({ ticket, file, Id, Remove }));
     }
   };
   useEffect(() => {
@@ -226,7 +229,6 @@ const EditTicket = ({ open, setOpen, Ticket, Attachment }: EditTicketProps) => {
   }, [error]);
   useEffect(() => {
     const checkError = () => {
-      const element = document.getElementById("Fullname");
       if (!Loading && isValid && error === null) {
         setFormData({
           IssueType: "",
@@ -247,6 +249,7 @@ const EditTicket = ({ open, setOpen, Ticket, Attachment }: EditTicketProps) => {
   }, [isValid, Loading, error]);
   console.log(removedAttachment);
   console.log(removedAttachment);
+  console.log(formData);
   return (
     <Backdrop
       sx={{
@@ -268,21 +271,6 @@ const EditTicket = ({ open, setOpen, Ticket, Attachment }: EditTicketProps) => {
           Successfully Issued
         </Alert>
       </Snackbar>
-      {error && showError && (
-        <div className="p-3 border bg-red-200 border-red-400 flex justify-between">
-          <Alert severity="error" className="w-[90%]  bg-red-200">
-            {error}
-          </Alert>
-          <button
-            className="text-lg text-gray-800"
-            onClick={() => {
-              setShowError(false);
-            }}
-          >
-            <LiaTimesSolid />
-          </button>
-        </div>
-      )}
       <div className="flex   border-t-2 border-[#102034] md:w-2/3 w-full  justify-self-end self-start h-screen">
         <button
           className="md:block hidden bg-[#102034] text-white text-xl p-[2px] w-[25px] h-[25px]"
@@ -303,6 +291,21 @@ const EditTicket = ({ open, setOpen, Ticket, Attachment }: EditTicketProps) => {
             </div>
             {Loading && <CircularProgress color="secondary" size={30} />}
           </div>
+          {error && showError && (
+            <div className="p-3 border bg-red-200 border-red-400 flex justify-between">
+              <Alert severity="error" className="w-[90%]  bg-red-200">
+                {error}
+              </Alert>
+              <button
+                className="text-lg text-gray-800"
+                onClick={() => {
+                  setShowError(false);
+                }}
+              >
+                <LiaTimesSolid />
+              </button>
+            </div>
+          )}
           <form
             onSubmit={handleSubmit}
             id="Fullname"
@@ -322,6 +325,7 @@ const EditTicket = ({ open, setOpen, Ticket, Attachment }: EditTicketProps) => {
                       : "opacity-100 cursor-pointer"
                   }`}
                   onChange={(event: any, newValue: any) => {
+                    setIsChanged(true);
                     setError((prevState) => {
                       return { ...prevState, issueType: false };
                     });
@@ -335,7 +339,7 @@ const EditTicket = ({ open, setOpen, Ticket, Attachment }: EditTicketProps) => {
                   options={options}
                   value={formData.IssueType}
                   renderInput={(params) => (
-                    <TextField key={params.id} {...params} label="Issue type" />
+                    <TextField {...params} label="Issue type" />
                   )}
                 />
                 {Error.issueType && (
@@ -381,6 +385,7 @@ const EditTicket = ({ open, setOpen, Ticket, Attachment }: EditTicketProps) => {
                 inputValue={formData.Priority}
                 disabled={Loading}
                 onInputChange={(event, newPriority) => {
+                  setIsChanged(true);
                   setFormData((prevState) => ({
                     ...prevState,
                     Priority: newPriority,
@@ -390,7 +395,7 @@ const EditTicket = ({ open, setOpen, Ticket, Attachment }: EditTicketProps) => {
                 options={priorityOptions}
                 value={formData.Priority}
                 renderInput={(params) => (
-                  <TextField key={params.id} {...params} label="Priority" />
+                  <TextField {...params} label="Priority" />
                 )}
               />
               <div className="flex flex-col gap-1">
@@ -502,6 +507,7 @@ const EditTicket = ({ open, setOpen, Ticket, Attachment }: EditTicketProps) => {
               <button
                 className="p-3  text-sm bg-slate-50 border rounded-md  border-gray-300"
                 type="button"
+                disabled={Loading}
                 onClick={() => setOpen(false)}
               >
                 cancel

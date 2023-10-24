@@ -1,4 +1,4 @@
-import { takeLatest, put, call } from "redux-saga/effects";
+import { takeLatest, put, call, takeLeading } from "redux-saga/effects";
 import {
   Attachement,
   Ticket,
@@ -76,9 +76,7 @@ interface DeleteTicketAction {
 }
 interface DeleteAttachAction {
   type: typeof deleteAttachmentStart;
-  payload: {
-    Id: string;
-  };
+  payload: Attachement[] | undefined;
 }
 interface updateAction {
   type: typeof updateAttachmentStart;
@@ -86,6 +84,7 @@ interface updateAction {
     ticket: Ticket;
     file: any;
     Id: string;
+    Remove: Attachement[];
   };
 }
 const api =
@@ -110,17 +109,116 @@ const fetchAttachments = async () => {
   const attachment = await response.data;
   return attachment;
 };
-const addTicketApi = async (Ticket: {
-  IssueType: string | null;
-  Subject: string | null;
-  Description: string | null;
-  Priority: string | null;
-  Email?: string | null;
-  UserId?: string;
-}) => {
-  TicketId = Nanoid();
-  console.log(Ticket);
-  const { IssueType, Subject, Description, Priority, Email, UserId } = Ticket;
+
+const HtmlParser = (html: any) => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, "text/html");
+  const imgElements = doc.querySelectorAll("img");
+  const imageInputs: any = [];
+  imgElements.forEach((img) => {
+    const src = img.getAttribute("src");
+    const alt = img.getAttribute("alt");
+    imageInputs.push(src);
+  });
+  return { imgElements, doc, imageInputs };
+};
+
+const serializer = (doc: any) => {
+  const serializer = new XMLSerializer();
+  const p = doc.getElementsByTagName("body");
+  const htmlstring = serializer.serializeToString(p[0]);
+  const htmlString1 = htmlstring.replace(
+    '<body xmlns="http://www.w3.org/1999/xhtml">',
+    ""
+  );
+  const htmlString2 = htmlString1.replace("</body>", "");
+  return htmlString2;
+};
+
+const dataURLtoBlob = (dataURI: any) => {
+  const byteString = atob(dataURI.split(",")[1]);
+  const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
+  const ab = new ArrayBuffer(byteString.length);
+  const ia = new Uint8Array(ab);
+
+  for (let i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+
+  return new Blob([ab], { type: mimeString });
+};
+
+export const uploadEditorImageToFirebase = async (base64Data: any) => {
+  return new Promise((resolve, reject) => {
+    const profileRef = ref(
+      storage,
+      `EditorImage/${new Date().getMilliseconds()}`
+    );
+    const file = dataURLtoBlob(base64Data);
+    const uploadTask = uploadBytesResumable(profileRef, file);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          Math.round(
+            ((snapshot.bytesTransferred / snapshot.totalBytes) * 100) / 5
+          ) * 5;
+      },
+      (Error) => {
+        switch (Error.code) {
+          case "storage/unauthorized":
+            break;
+          case "storage/canceled":
+            break;
+          case "storage/unknown":
+            break;
+        }
+      },
+      async () => {
+        try {
+          const url = await getDownloadURL(uploadTask.snapshot.ref);
+          resolve(url);
+        } catch (e: any) {
+          reject(e);
+        }
+      }
+    );
+  });
+};
+
+const handleHtmlContent = async (Description: string) => {
+  const { doc, imageInputs, imgElements } = HtmlParser(Description);
+  const url = await imageInputs.map(async (byte: any) => {
+    if (byte.includes("https://firebasestorage.googleapis.com/")) return byte;
+    try {
+      const response = await uploadEditorImageToFirebase(byte);
+      return response;
+    } catch (e) {
+      throw new Error("something wrong please try again");
+    }
+  });
+  const urls = await Promise.all(url);
+  imgElements.forEach(async (img: HTMLImageElement, i: number) => {
+    img.setAttribute("src", urls[i]);
+  });
+  const html = serializer(doc);
+
+  return html;
+};
+
+const addTicket = async (
+  Ticket: {
+    IssueType: string | null;
+    Subject: string | null;
+    Description: string | null;
+    Priority: string | null;
+    Email?: string | null;
+    UserId?: string;
+  },
+  html: string
+) => {
+  const { IssueType, Subject, Priority, Email, UserId } = Ticket;
+
   let date = new Date();
   let resolutionDate = new Date();
   const day = 3600 * 24;
@@ -150,12 +248,37 @@ const addTicketApi = async (Ticket: {
     Email,
     Priority,
     Subject,
-    Content: Description,
+    Content: html,
     FirstResponseDue: date,
     ResolutionDue: resolutionDate,
     CreatedAt: new Date(),
   });
   if (response.data) return response.data;
+};
+
+const addTicketApi = async (Ticket: {
+  IssueType: string | null;
+  Subject: string | null;
+  Description: string | null;
+  Priority: string | null;
+  Email?: string | null;
+  UserId?: string;
+}) => {
+  TicketId = Nanoid();
+  const { IssueType, Subject, Description, Priority, Email, UserId } = Ticket;
+  try {
+    if (Description) {
+      const html = await handleHtmlContent(Description);
+      console.log(html);
+      if (html) {
+        const response = await addTicket(Ticket, html);
+        console.log(response);
+        if (response) return await response;
+      }
+    }
+  } catch (e) {
+    throw new Error("something went wrong...please try again");
+  }
 };
 const uploadFile = async (file: File) => {
   return new Promise((resolve, reject) => {
@@ -172,11 +295,14 @@ const uploadFile = async (file: File) => {
       (Error) => {
         switch (Error.code) {
           case "storage/unauthorized":
+            reject(Error.message);
             break;
           case "storage/canceled":
+            reject(Error.message);
+
             break;
           case "storage/unknown":
-            console.log(Error.message);
+            reject(Error.message);
             break;
         }
       },
@@ -193,24 +319,28 @@ const uploadFile = async (file: File) => {
 };
 
 const addAttachementApi = async (file: File[]) => {
-  const promise = file.map(async (file, i) => await uploadFile(file));
-  const url = await Promise.all(promise);
-  console.log(url);
-  const response = file.map(async (file, i) => {
-    const response = await axios.post(`${api}/ticket/attachment/new`, {
-      Id: Nanoid(),
-      FileName: file.name,
-      FilePath: url[i],
-      TicketId: TicketId,
-      Size: file.size,
-      Mimi_Type: file.type,
-      Createdat: new Date(),
+  try {
+    const promise = file.map(async (file, i) => await uploadFile(file));
+    const url = await Promise.all(promise);
+    const response = file.map(async (file, i) => {
+      const response = await axios.post(`${api}/ticket/attachment/new`, {
+        Id: Nanoid(),
+        FileName: file.name,
+        FilePath: url[i],
+        TicketId: TicketId,
+        Size: file.size,
+        Mimi_Type: file.type,
+        Createdat: new Date(),
+      });
+      if (response.data) return response.data;
     });
-    if (response.data) return response.data;
-  });
-  return await Promise.all(response);
+    return await Promise.all(response);
+  } catch (e: any) {
+    return e;
+  }
 };
-const updateTicketApi = async (ticket: Ticket) => {
+
+const updateTicket = async (ticket: Ticket, html: string) => {
   let date = new Date();
   let resolutionDate = new Date();
   const day = 3600 * 24;
@@ -239,42 +369,80 @@ const updateTicketApi = async (ticket: Ticket) => {
     Email: ticket.Email,
     Priority: ticket.Priority,
     Subject: ticket.Subject,
-    Content: ticket.Content,
+    Content: html,
     FirstResponseDue: date,
     ResolutionDue: resolutionDate,
     CreatedAt: ticket.CreatedAt,
     UpdatedAt: new Date(),
   });
+  return response.data;
 };
+const updateTicketApi = async (ticket: Ticket) => {
+  try {
+    if (ticket.Content) {
+      const html = await handleHtmlContent(ticket.Content);
+      console.log(html);
+      if (html) {
+        const response = await updateTicket(ticket, html);
+        console.log(response);
+        if (response) return await response;
+      }
+    }
+  } catch (e) {
+    throw new Error("something went wrong...please try again");
+  }
+};
+
 const updateAttachmentApi = async (file: any, Id: String) => {
-  console.log(Id);
-  const promise = file.map(
-    async (file: any, i: number) => await uploadFile(file)
-  );
-  const url = await Promise.all(promise);
-  console.log(url);
-  const response = file.map(async (file: any, i: number) => {
-    const response = await axios.post(`${api}/ticket/attachment/new`, {
-      Id: Nanoid(),
-      FileName: file.name,
-      FilePath: url[i],
-      TicketId: Id,
-      Size: file.size,
-      Mimi_Type: file.type,
-      Createdat: new Date(),
+  try {
+    const promise = file.map(async (file: any, i: number) => {
+      try {
+        const response = await uploadFile(file);
+        console.log(response);
+        return response;
+      } catch (e) {
+        console.log(e);
+        throw new Error("Network error. please try again..");
+      }
     });
-    if (response.data) return response.data;
-  });
-  return await Promise.all(response);
+    const url = await Promise.all(promise);
+    console.log(url);
+    const response = file.map(async (file: any, i: number) => {
+      const response = await axios.post(`${api}/ticket/attachment/new`, {
+        Id: Nanoid(),
+        FileName: file.name,
+        FilePath: url[i],
+        TicketId: Id,
+        Size: file.size,
+        Mimi_Type: file.type,
+        Createdat: new Date(),
+      });
+
+      if (response.data) return response.data;
+    });
+    return await Promise.all(response);
+  } catch (e: any) {
+    console.log(e);
+    return e;
+  }
 };
 
 const deleteTicketApi = async (Ticket: { Id: string }) => {
   const response = await axios.delete(`${api}/ticket/${Ticket}`);
   if (response.data) return response.data;
 };
-const deleteAttachmentApi = async (Ticket: { Id: string }) => {
-  const response = await axios.delete(`${api}/ticket/attachment/${Ticket}`);
-  if (response.data) return response.data;
+const deleteAttachmentApi = async (Remove: Attachement[] | undefined) => {
+  console.log(Remove);
+  if (Remove) {
+    const response = Remove.map(async (file: any) => {
+      const response = await axios.delete(
+        `${api}/ticket/attachment/${file.Id}`
+      );
+      return await response.data;
+    });
+    console.log(await Promise.all(response));
+    return await Promise.all(response);
+  }
 };
 function* handleFetchTicket(
   action: FetchTicketAction
@@ -291,6 +459,7 @@ function* handleFetchTicket(
 function* handleAddTicket(action: AddTicketAction): Generator<any, void, any> {
   try {
     const Ticket = yield call(addTicketApi, action.payload);
+    console.log(Ticket);
     yield put(addTicketSuccess(Ticket));
   } catch (e: any) {
     yield put(addTicketFaliure(e.response.data.message));
@@ -320,27 +489,28 @@ function* handleUpdateAttachment(
   action: updateAction
 ): Generator<any, void, any> {
   try {
-    const tickets = yield updateTicketApi(action.payload.ticket);
-    const attachment = action.payload.file.filter(
-      (file: any) => "name" in file
-    );
-    const attach = action.payload.file.filter(
-      (file: any) => "FileName" in file
-    );
-    const response = yield updateAttachmentApi(
-      attachment,
+    console.log(action.payload);
+    console.log("alskdjflaksdjfl;aksjdlfkjasldkjflaksdlfjasldkfjlasjdflkasjdf");
+    const tickets = yield call(updateTicketApi, action.payload.ticket);
+    const removed = yield call(deleteAttachmentApi, action.payload.Remove);
+    const response = yield call(
+      updateAttachmentApi,
+      action.payload.file,
       action.payload.ticket.Id
     );
-    const file = [...attach, ...response];
-    console.log(file);
+    console.log(tickets);
+    console.log(removed);
+    console.log(response);
     yield put(updateTicketSuccess(tickets));
-    yield put(updateAttachmentSucess(file));
+    yield put(deleteAttachmentSuccess(removed));
+    yield put(updateAttachmentSucess(response));
   } catch (e: any) {
-    yield put(updateAgentFaliure(e.response.data.message));
+    console.log(e);
+    yield put(updateAttachmentFaliure(e.response.data.message));
   }
 }
 function* handleDeleteTicket(
-  action: DeleteAttachAction
+  action: DeleteTicketAction
 ): Generator<any, void, any> {
   try {
     const ticket = yield call(deleteTicketApi, action.payload);
@@ -363,9 +533,9 @@ function* handleDeleteAttachment(
 export function* TicketSaga() {
   yield takeLatest(fetchTicketStart.type, handleFetchTicket);
   yield takeLatest(addTicketStart.type, handleAddTicket);
-  yield takeLatest(addAttachementStart.type, handleAddAttachement);
-  yield takeLatest(updateAttachmentStart.type, handleUpdateAttachment);
+  yield takeLeading(addAttachementStart.type, handleAddAttachement);
+  yield takeLeading(updateAttachmentStart.type, handleUpdateAttachment);
   yield takeLatest(fetchAttachmentStart.type, handleFetchAttachments);
   yield takeLatest(deleteTicketStart.type, handleDeleteTicket);
-  yield takeLatest(deleteAttachmentStart.type, handleDeleteAttachment);
+  yield takeLeading(deleteAttachmentStart.type, handleDeleteAttachment);
 }

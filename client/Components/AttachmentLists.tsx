@@ -1,13 +1,15 @@
 import {
   Attachement,
   deleteAttachmentStart,
+  selectTicket,
 } from "@/app/Redux/features/ticketSlice";
 import React, { Dispatch, SetStateAction } from "react";
 import { LiaTimesSolid } from "react-icons/lia";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 interface AttachmentListsProps {
   attachment: any;
+  setRemovedAttachment: Dispatch<SetStateAction<Attachement[] | undefined>>;
   setAttachement: Dispatch<SetStateAction<any>>;
   setChanged: Dispatch<SetStateAction<boolean>>;
   formatBytes: (size: number) => string;
@@ -23,8 +25,9 @@ const AttachmentLists = ({
   error,
   setChanged,
   DeleteAttach,
+  setRemovedAttachment,
 }: AttachmentListsProps) => {
-  const dispatch = useDispatch();
+  const { Loading } = useSelector(selectTicket);
   return (
     <div>
       {attachment && (
@@ -39,12 +42,17 @@ const AttachmentLists = ({
                 } p-2 flex gap-2 w-full`}
               >
                 <button
-                  className="text-sm text-gray-600 hover:bg-slate-100 rounded-full w-[20px] h-[20px]"
+                  className={`text-sm text-gray-600 hover:bg-slate-100 rounded-full w-[20px] h-[20px] ${
+                    Loading ? "cursor-not-allowed" : "cursor-pointer"
+                  }`}
                   type="button"
+                  disabled={Loading}
                   onClick={() => {
                     if (DeleteAttach && "FileName" in attach) {
-                      console.log(attach);
-                      dispatch(deleteAttachmentStart(attach.Id));
+                      setRemovedAttachment((prevState) => {
+                        if (prevState) return [...prevState, attach];
+                        else return [attach];
+                      });
                     }
                     setChanged(true);
                     const filter = attachment.filter(

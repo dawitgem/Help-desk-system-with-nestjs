@@ -12,26 +12,20 @@ import { useEffect, useState } from "react";
 import { PiTicket } from "react-icons/pi";
 import { useDispatch, useSelector } from "react-redux";
 import noResultImage from "@/public/asset/no-results.png";
-import { CircularProgress } from "@mui/material";
 
 const TicketsPage = () => {
   const { Tickets, Loading, error } = useSelector(selectTicket);
   const { user, isAuth } = useSelector(selectUser);
-  const [isLoaded, setIsLoaded] = useState(false);
   const dispatch = useDispatch();
   const [offset, setOffset] = useState(Tickets.length);
 
   useEffect(() => {
     if (user && offset === 0) {
-      console.log(Tickets);
       dispatch(fetchTicketStart({ userId: user.Id, offset: 0, limit: 5 }));
       dispatch(fetchAttachmentStart());
     }
   }, [user]);
-  useEffect(() => {
-    if (Loading) setIsLoaded(false);
-    if (Tickets) setIsLoaded(true);
-  }, [error, Loading]);
+
   const handleClick = () => {
     const offset = Tickets.length;
     setOffset(offset);
@@ -40,7 +34,6 @@ const TicketsPage = () => {
         fetchTicketStart({ userId: user?.Id, offset: offset, limit: 5 })
       );
   };
-  console.log(offset);
   return (
     <>
       <div className="flex flex-col ">

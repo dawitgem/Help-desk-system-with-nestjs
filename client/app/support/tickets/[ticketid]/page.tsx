@@ -158,7 +158,7 @@ const TicketIdPage = ({ params }: { params: { ticketid: string } }) => {
               </button>
             </div>
             <div className="p-3 border w-full">
-              <p className="text-xl text-gray-800 text-center font-bold underline w-[90%] break-words">
+              <p className="text-xl text-gray-800  text-center  font-bold underline w-[90%] break-words">
                 {ticket?.Subject}
               </p>
               <div

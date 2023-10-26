@@ -37,86 +37,6 @@ interface AutocompleteOption {
 }
 const options = ["Ask a question", "Report an issue", "Enquire status"];
 const priorityOptions = ["Low", "Medium", "High", "Urgent"];
-
-const HtmlParser = (html: any) => {
-  console.log(html);
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, "text/html");
-  const imgElements = doc.querySelectorAll("img");
-  const imageInputs: any = [];
-  imgElements.forEach((img) => {
-    const src = img.getAttribute("src");
-    const alt = img.getAttribute("alt");
-    imageInputs.push(src);
-  });
-  console.log(imageInputs);
-  return { imgElements, doc, imageInputs };
-};
-
-const serializer = (doc: any) => {
-  console.log(doc);
-  const serializer = new XMLSerializer();
-  const p = doc.getElementsByTagName("body");
-  const htmlstring = serializer.serializeToString(p[0]);
-  const htmlString1 = htmlstring.replace(
-    '<body xmlns="http://www.w3.org/1999/xhtml">',
-    ""
-  );
-  const htmlString2 = htmlString1.replace("</body>", "");
-  return htmlString2;
-};
-
-const dataURLtoBlob = (dataURI: any) => {
-  const byteString = atob(dataURI.split(",")[1]);
-  const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
-  const ab = new ArrayBuffer(byteString.length);
-  const ia = new Uint8Array(ab);
-
-  for (let i = 0; i < byteString.length; i++) {
-    ia[i] = byteString.charCodeAt(i);
-  }
-
-  return new Blob([ab], { type: mimeString });
-};
-
-export const uploadEditorImageToFirebase = async (base64Data: any) => {
-  return new Promise((resolve, reject) => {
-    const profileRef = ref(
-      storage,
-      `EditorImage/${new Date().getMilliseconds()}`
-    );
-    const file = dataURLtoBlob(base64Data);
-    const uploadTask = uploadBytesResumable(profileRef, file);
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress =
-          Math.round(
-            ((snapshot.bytesTransferred / snapshot.totalBytes) * 100) / 5
-          ) * 5;
-      },
-      (Error) => {
-        switch (Error.code) {
-          case "storage/unauthorized":
-            break;
-          case "storage/canceled":
-            break;
-          case "storage/unknown":
-            break;
-        }
-      },
-      async () => {
-        try {
-          const url = await getDownloadURL(uploadTask.snapshot.ref);
-          resolve(url);
-        } catch (e: any) {
-          reject(e);
-        }
-      }
-    );
-  });
-};
-
 const TextEditor = () => {
   const { user } = useSelector(selectUser);
   const { error, Loading } = useSelector(selectTicket);
@@ -167,7 +87,6 @@ const TextEditor = () => {
   };
 
   const validateEmail = (Email: string) => {
-    console.log("alskdjflaksjdf");
     let Valid: boolean = true;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (Email && !emailRegex.test(Email)) {
@@ -271,7 +190,6 @@ const TextEditor = () => {
         UserId: user?.Id,
       };
       const file = attachment;
-      console.log(ticket);
       dispatch(addAttachementStart({ ticket, file }));
     }
   };

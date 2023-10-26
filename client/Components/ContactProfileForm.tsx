@@ -3,7 +3,7 @@ import {
   updateUserFaliure,
   updateUserSuccess,
 } from "@/app/Redux/features/userSlice";
-import { Alert, Avatar, Snackbar } from "@mui/material";
+import { Alert, Avatar, CircularProgress, Snackbar } from "@mui/material";
 import Link from "next/link";
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -238,6 +238,13 @@ const ContactProfileForm = () => {
         <form action="" className="md:p-10 p-3  w-full" onSubmit={handleSubmit}>
           <div className="flex lg:flex-row flex-col gap-5 md:justify-between w-full">
             <ul className="flex flex-col gap-8 w-full">
+              {Loading && (
+                <CircularProgress
+                  color="secondary"
+                  size={30}
+                  className="self-end"
+                />
+              )}
               <li className="flex flex-col gap-1 text-gray-700 text-sm font-semibold ">
                 <p>
                   Full name <span className="text-red-600 font-bold"> *</span>
@@ -245,12 +252,17 @@ const ContactProfileForm = () => {
                 <input
                   type="text"
                   name="fullname"
+                  disabled={Loading}
                   value={formData.fullname || ""}
                   className={`md:w-3/4 w-full p-3 placeholder:text-sm  border rounded-lg ${
                     Error.Fullname
                       ? "border-red-500 outline-none"
                       : "border-gray-300 hover:border-black outline-blue-500"
-                  }  `}
+                  }  ${
+                    Loading
+                      ? "opacity-50 cursor-not-allowed"
+                      : "opacity-100 cursor-pointer"
+                  }`}
                   autoFocus
                   onFocus={() => {
                     setError((prevState) => {
@@ -276,12 +288,17 @@ const ContactProfileForm = () => {
                   type="text"
                   name="workphone"
                   maxLength={13}
+                  disabled={Loading}
                   value={formData.workphone || ""}
                   className={`md:w-3/4 w-full p-3 placeholder:text-sm  border rounded-lg ${
                     Error.workPhone
                       ? "border-red-500 outline-none"
                       : "border-gray-300 hover:border-black outline-blue-500"
-                  }  `}
+                  }  ${
+                    Loading
+                      ? "opacity-50 cursor-not-allowed"
+                      : "opacity-100 cursor-pointer"
+                  }`}
                   placeholder="Enter your work Phone"
                   onFocus={() => {
                     setError((prevState) => {
@@ -304,11 +321,16 @@ const ContactProfileForm = () => {
                   name="mobilephone"
                   value={formData.mobilephone || ""}
                   maxLength={13}
+                  disabled={Loading}
                   className={`md:w-3/4 w-full p-3 placeholder:text-sm  border rounded-lg ${
                     Error.mobilePhone
                       ? "border-red-500 outline-none"
                       : "border-gray-300 hover:border-black outline-blue-500"
-                  }  `}
+                  }  ${
+                    Loading
+                      ? "opacity-50 cursor-not-allowed"
+                      : "opacity-100 cursor-pointer"
+                  }`}
                   placeholder="Enter your Mobile Phone"
                   onFocus={() => {
                     setError((prevState) => {
@@ -325,7 +347,7 @@ const ContactProfileForm = () => {
                 )}
               </li>{" "}
             </ul>
-            <div className="flex flex-col gap-5 md:px-20 md:border-l-2 px-5 border-none">
+            <div className="flex w-full  flex-col gap-5 md:px-20 md:border-l-2 px-5 border-none">
               <h3 className="text-gray-700 text-sm font-semibold self-center">
                 Profile Picture
               </h3>
@@ -338,7 +360,7 @@ const ContactProfileForm = () => {
               </Avatar>
               {selectedImage ? (
                 <>
-                  {!uploadProgress && (
+                  {!uploadProgress && !Loading && (
                     <div className="flex gap-3 self-center">
                       <label
                         htmlFor="Image"
@@ -370,7 +392,7 @@ const ContactProfileForm = () => {
                 </>
               ) : (
                 <>
-                  {!uploadProgress && (
+                  {!uploadProgress && !Loading && (
                     <label
                       htmlFor="Image"
                       className="p-3 border border-gray-300 rounded-md text-gray-600 text-sm bg-slate-50 text-center self-center shadow-sm cursor-pointer"
@@ -422,9 +444,9 @@ const ContactProfileForm = () => {
               cancel
             </Link>
             <button
-              disabled={disabled}
+              disabled={disabled || Loading || uploadProgress !== null}
               className={`p-3 bg-[#063750] ${
-                disabled
+                disabled || Loading || uploadProgress !== null
                   ? "opacity-60 cursor-not-allowed"
                   : "opacity-100 cursor-pointer"
               }  text-white text-sm font-semibold border rounded-md shadow-sm`}

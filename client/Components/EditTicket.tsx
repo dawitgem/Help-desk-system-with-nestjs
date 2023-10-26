@@ -203,11 +203,9 @@ const EditTicket = ({ open, setOpen, Ticket, Attachment }: EditTicketProps) => {
         UserId: user?.Id,
         CreatedAt: Ticket.CreatedAt,
       };
-      console.log(ticket);
       const Id = ticket.Id;
       const file = attachment.filter((attach: any) => "name" in attach);
       const Remove = removedAttachment;
-      console.log(Remove);
       dispatch(updateAttachmentStart({ ticket, file, Id, Remove }));
     }
   };
@@ -247,9 +245,7 @@ const EditTicket = ({ open, setOpen, Ticket, Attachment }: EditTicketProps) => {
 
     checkError();
   }, [isValid, Loading, error]);
-  console.log(removedAttachment);
-  console.log(removedAttachment);
-  console.log(formData);
+  console.log("edit ticket");
   return (
     <Backdrop
       sx={{

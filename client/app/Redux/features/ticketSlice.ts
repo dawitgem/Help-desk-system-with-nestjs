@@ -152,12 +152,11 @@ const TicketSlice = createSlice({
       state.error = null;
     },
     addAttachementSuccess: (state, action: PayloadAction<Attachement[]>) => {
-      state.Attachement = [...state.Attachement, ...action.payload];
+      state.Attachement = [...action.payload, ...state.Attachement];
       state.Loading = true;
       state.error = null;
     },
     addAttachementFaliure: (state, action: PayloadAction<string>) => {
-      console.log(action.payload);
       state.error = action.payload;
     },
     updateAttachmentStart: (
@@ -169,7 +168,6 @@ const TicketSlice = createSlice({
         Remove: Attachement[] | undefined;
       }>
     ) => {
-      console.log(action.payload);
       state.Loading = true;
       state.error = null;
     },
@@ -179,7 +177,9 @@ const TicketSlice = createSlice({
       state.Loading = false;
     },
     updateAttachmentFaliure: (state, action: PayloadAction<string>) => {
-      (state.error = action.payload), (state.Loading = false);
+      console.log(action.payload);
+      state.error = action.payload;
+      state.Loading = false;
     },
     deleteAttachmentStart: (state, action: PayloadAction<any>) => {
       count++;
@@ -197,9 +197,9 @@ const TicketSlice = createSlice({
       state.error = action.payload;
       state.Loading = false;
     },
+    cancelProcess: () => {},
   },
 });
-console.log(count);
 export const {
   fetchTicketFaliure,
   fetchTicketStart,
@@ -225,6 +225,7 @@ export const {
   deleteAttachmentFaliure,
   deleteAttachmentStart,
   deleteAttachmentSuccess,
+  cancelProcess,
 } = TicketSlice.actions;
 export const selectTicket = (state: TicketType) => state.Ticket;
 export default TicketSlice.reducer;

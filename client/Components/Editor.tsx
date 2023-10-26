@@ -76,8 +76,6 @@ const Editor = ({ modules, style, setValue, setError }: EditorProps) => {
       return { ...prevState, Discription: false };
     });
 
-    console.log("don't give up on medlkfjalsdkfjalskdfjlkasjdfjhgjh");
-
     setValue((prevState) => ({
       ...prevState,
       Description: DOMPurify.sanitize(html),
@@ -160,7 +158,6 @@ export const TicketEditor = ({
   setChanged,
   value,
 }: TicketEditorProps) => {
-  console.log(value);
   const { Loading } = useSelector(selectTicket);
   const [input, setInput] = useState("");
   const ReactQuill = useMemo(

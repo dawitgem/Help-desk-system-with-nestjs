@@ -1,4 +1,10 @@
-import { takeLatest, put, call, takeLeading } from "redux-saga/effects";
+import {
+  takeLatest,
+  put,
+  call,
+  takeLeading,
+  takeEvery,
+} from "redux-saga/effects";
 import {
   Attachement,
   Ticket,
@@ -269,10 +275,8 @@ const addTicketApi = async (Ticket: {
   try {
     if (Description) {
       const html = await handleHtmlContent(Description);
-      console.log(html);
       if (html) {
         const response = await addTicket(Ticket, html);
-        console.log(response);
         if (response) return await response;
       }
     }
@@ -381,10 +385,8 @@ const updateTicketApi = async (ticket: Ticket) => {
   try {
     if (ticket.Content) {
       const html = await handleHtmlContent(ticket.Content);
-      console.log(html);
       if (html) {
         const response = await updateTicket(ticket, html);
-        console.log(response);
         if (response) return await response;
       }
     }
@@ -398,15 +400,12 @@ const updateAttachmentApi = async (file: any, Id: String) => {
     const promise = file.map(async (file: any, i: number) => {
       try {
         const response = await uploadFile(file);
-        console.log(response);
         return response;
       } catch (e) {
-        console.log(e);
         throw new Error("Network error. please try again..");
       }
     });
     const url = await Promise.all(promise);
-    console.log(url);
     const response = file.map(async (file: any, i: number) => {
       const response = await axios.post(`${api}/ticket/attachment/new`, {
         Id: Nanoid(),
@@ -422,7 +421,6 @@ const updateAttachmentApi = async (file: any, Id: String) => {
     });
     return await Promise.all(response);
   } catch (e: any) {
-    console.log(e);
     return e;
   }
 };
@@ -432,7 +430,6 @@ const deleteTicketApi = async (Ticket: { Id: string }) => {
   if (response.data) return response.data;
 };
 const deleteAttachmentApi = async (Remove: Attachement[] | undefined) => {
-  console.log(Remove);
   if (Remove) {
     const response = Remove.map(async (file: any) => {
       const response = await axios.delete(
@@ -440,7 +437,6 @@ const deleteAttachmentApi = async (Remove: Attachement[] | undefined) => {
       );
       return await response.data;
     });
-    console.log(await Promise.all(response));
     return await Promise.all(response);
   }
 };
@@ -451,7 +447,6 @@ function* handleFetchTicket(
     const { Ticket, count } = yield call(fetchTickets, action.payload);
     yield put(fetchTicketSuccess({ Ticket: Ticket, count: count }));
   } catch (e: any) {
-    console.log(e);
     yield put(fetchTicketFaliure(e.response.data.message));
   }
 }
@@ -459,7 +454,6 @@ function* handleFetchTicket(
 function* handleAddTicket(action: AddTicketAction): Generator<any, void, any> {
   try {
     const Ticket = yield call(addTicketApi, action.payload);
-    console.log(Ticket);
     yield put(addTicketSuccess(Ticket));
   } catch (e: any) {
     yield put(addTicketFaliure(e.response.data.message));
@@ -489,8 +483,6 @@ function* handleUpdateAttachment(
   action: updateAction
 ): Generator<any, void, any> {
   try {
-    console.log(action.payload);
-    console.log("alskdjflaksdjfl;aksjdlfkjasldkjflaksdlfjasldkfjlasjdflkasjdf");
     const tickets = yield call(updateTicketApi, action.payload.ticket);
     const removed = yield call(deleteAttachmentApi, action.payload.Remove);
     const response = yield call(
@@ -498,15 +490,12 @@ function* handleUpdateAttachment(
       action.payload.file,
       action.payload.ticket.Id
     );
-    console.log(tickets);
-    console.log(removed);
-    console.log(response);
-    yield put(updateTicketSuccess(tickets));
-    yield put(deleteAttachmentSuccess(removed));
-    yield put(updateAttachmentSucess(response));
+    if (tickets) yield put(updateTicketSuccess(tickets));
+    if (removed) yield put(deleteAttachmentSuccess(removed));
+    if (response) yield put(updateAttachmentSucess(response));
   } catch (e: any) {
     console.log(e);
-    yield put(updateAttachmentFaliure(e.response.data.message));
+    yield put(updateAttachmentFaliure(e));
   }
 }
 function* handleDeleteTicket(
@@ -516,7 +505,7 @@ function* handleDeleteTicket(
     const ticket = yield call(deleteTicketApi, action.payload);
     yield put(deleteTicketSuccess(ticket));
   } catch (e: any) {
-    yield put(deleteTicketFaliure(e.response.data.message));
+    yield put(deleteTicketFaliure(e));
   }
 }
 function* handleDeleteAttachment(
@@ -524,18 +513,17 @@ function* handleDeleteAttachment(
 ): Generator<any, void, any> {
   try {
     const attach = yield call(deleteAttachmentApi, action.payload);
-    console.log(attach);
     yield put(deleteAttachmentSuccess(attach));
   } catch (e: any) {
-    yield put(deleteAttachmentFaliure(e.response.data.message));
+    yield put(deleteAttachmentFaliure(e));
   }
 }
 export function* TicketSaga() {
   yield takeLatest(fetchTicketStart.type, handleFetchTicket);
   yield takeLatest(addTicketStart.type, handleAddTicket);
-  yield takeLeading(addAttachementStart.type, handleAddAttachement);
-  yield takeLeading(updateAttachmentStart.type, handleUpdateAttachment);
+  yield takeEvery(addAttachementStart.type, handleAddAttachement);
+  yield takeEvery(updateAttachmentStart.type, handleUpdateAttachment);
   yield takeLatest(fetchAttachmentStart.type, handleFetchAttachments);
   yield takeLatest(deleteTicketStart.type, handleDeleteTicket);
-  yield takeLeading(deleteAttachmentStart.type, handleDeleteAttachment);
+  yield takeEvery(deleteAttachmentStart.type, handleDeleteAttachment);
 }

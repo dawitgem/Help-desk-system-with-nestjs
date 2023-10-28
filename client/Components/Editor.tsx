@@ -143,6 +143,7 @@ interface TicketEditorProps {
       Email: string;
       Subject: string;
       Description: string;
+      Status: string;
       Priority: string;
     }>
   >;

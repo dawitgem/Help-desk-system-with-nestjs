@@ -59,6 +59,7 @@ const EditTicket = ({ open, setOpen, Ticket, Attachment }: EditTicketProps) => {
     Email: user?.Email || " ",
     Subject: Ticket?.Subject || " ",
     Description: Ticket?.Content || " ",
+    Status: Ticket.Status || "Open",
     Priority: priorityOptions[0],
   });
   const [ErrorMessage, setErrorMessage] = useState("");
@@ -192,6 +193,7 @@ const EditTicket = ({ open, setOpen, Ticket, Attachment }: EditTicketProps) => {
         Description: Content,
         Email,
         Priority,
+        Status,
       } = formData;
       const ticket = {
         Id: Ticket.Id,
@@ -200,6 +202,7 @@ const EditTicket = ({ open, setOpen, Ticket, Attachment }: EditTicketProps) => {
         Content,
         Email,
         Priority,
+        Status,
         UserId: user?.Id,
         CreatedAt: Ticket.CreatedAt,
       };
@@ -233,6 +236,7 @@ const EditTicket = ({ open, setOpen, Ticket, Attachment }: EditTicketProps) => {
           Email: user?.Email || " ",
           Subject: "",
           Description: "",
+          Status: " ",
           Priority: priorityOptions[0],
         });
         setSuccessFullUpdate(true);

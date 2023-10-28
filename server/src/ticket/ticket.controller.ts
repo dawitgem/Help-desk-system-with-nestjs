@@ -25,6 +25,7 @@ export class TicketController {
         Subject,
         Content,
         UserId,
+        Status,
         CreatedAt,
         UpdatedAt,
       } = Ticket;
@@ -35,6 +36,7 @@ export class TicketController {
         Subject,
         Content,
         UserId,
+        Status,
         CreatedAt,
         UpdatedAt,
       };

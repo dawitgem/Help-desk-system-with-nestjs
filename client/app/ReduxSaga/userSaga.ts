@@ -249,9 +249,8 @@ function* handleSigninWithGoogle(
     const user = yield getProfileApi();
     yield put(getProfile(user));
   } catch (e: any) {
-    yield put(
-      signInWithGoogleFaliuer("something went wrong." + e.response.data.message)
-    );
+    console.log(e);
+    yield put(signInWithGoogleFaliuer(e.message + " please try again ..!!"));
   }
 }
 

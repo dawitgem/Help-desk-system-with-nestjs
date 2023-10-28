@@ -15,6 +15,7 @@ import {
   selectAgent,
 } from "../Redux/features/agentSlice";
 import { useRouter } from "next/navigation";
+import { CircularProgress } from "@mui/material";
 
 const AgentLogin = () => {
   const dispatch = useDispatch();
@@ -118,9 +119,21 @@ const AgentLogin = () => {
       )}
       <div className="w-2/5 bg-white shadow-md p-10 self-center flex flex-col rounded-lg">
         <form action="" onSubmit={handleSubmit} className="self-center w-full">
+          {Loading && (
+            <CircularProgress
+              size={20}
+              color="secondary"
+              className="self-end"
+            />
+          )}
           <div className="flex flex-col gap-10">
             <button
-              className=" w-full self-center bg-[#2260b7fa] p-3 px-5 flex gap-3 rounded-md "
+              className={` w-full self-center bg-[#2260b7fa] p-3 px-5 flex gap-3 rounded-md ${
+                Loading
+                  ? "opacity-50 cursor-not-allowed"
+                  : "cursor-pointer opacity-100 "
+              }`}
+              disabled={Loading}
               type="button"
               onClick={() => {
                 console.log("come onman");
@@ -145,11 +158,16 @@ const AgentLogin = () => {
               </label>
               <input
                 type="text"
+                disabled={Loading}
                 className={`p-3 text-gray-600 border w-full rounded-md ${
                   Error.email
                     ? "border-red-500 outline-none"
                     : "outline-blue-500 hover:border-black "
-                }  placeholder:text-sm `}
+                }  placeholder:text-sm  ${
+                  Loading
+                    ? "opacity-50 cursor-not-allowed"
+                    : "cursor-pointer opacity-100 "
+                }`}
                 onChange={(e) => {
                   setFormData((prevState) => {
                     return { ...prevState, ["email"]: e.target.value };
@@ -171,11 +189,16 @@ const AgentLogin = () => {
               </label>
               <input
                 type="password"
+                disabled={Loading}
                 className={`p-3 text-gray-600 border w-full rounded-md ${
                   Error.password
                     ? "border-red-500 outline-none"
                     : "outline-gray-200 "
-                }  placeholder:text-sm `}
+                }  placeholder:text-sm   ${
+                  Loading
+                    ? "opacity-50 cursor-not-allowed"
+                    : "cursor-pointer opacity-100 "
+                }`}
                 onChange={(e) => {
                   setFormData((prevState) => {
                     return { ...prevState, ["password"]: e.target.value };
@@ -209,7 +232,14 @@ const AgentLogin = () => {
                 forget password?
               </Link>
             </li>
-            <button className="bg-[#063750] text-white p-3 text-sm rounded-md">
+            <button
+              disabled={Loading}
+              className={`bg-[#063750] text-white p-3 text-sm rounded-md ${
+                Loading
+                  ? "opacity-50 cursor-not-allowed"
+                  : "cursor-pointer opacity-100 "
+              }`}
+            >
               sign in
             </button>
           </ul>

@@ -258,6 +258,7 @@ const addTicket = async (
     FirstResponseDue: date,
     ResolutionDue: resolutionDate,
     CreatedAt: new Date(),
+    Status: "Resolved",
   });
   if (response.data) return response.data;
 };
@@ -445,6 +446,7 @@ function* handleFetchTicket(
 ): Generator<any, void, any> {
   try {
     const { Ticket, count } = yield call(fetchTickets, action.payload);
+    console.log(Ticket);
     yield put(fetchTicketSuccess({ Ticket: Ticket, count: count }));
   } catch (e: any) {
     yield put(fetchTicketFaliure(e.response.data.message));
@@ -454,6 +456,7 @@ function* handleFetchTicket(
 function* handleAddTicket(action: AddTicketAction): Generator<any, void, any> {
   try {
     const Ticket = yield call(addTicketApi, action.payload);
+    console.log(Ticket);
     yield put(addTicketSuccess(Ticket));
   } catch (e: any) {
     yield put(addTicketFaliure(e.response.data.message));

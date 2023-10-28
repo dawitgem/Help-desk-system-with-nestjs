@@ -1,18 +1,19 @@
 "use client";
+import {
+  clearSearch,
+  clearSearchStart,
+  searchStart,
+  selectSearch,
+} from "@/app/Redux/features/searchSlice";
 import { CircularProgress, Input } from "@mui/material";
 import { FaSearch } from "react-icons/fa";
 import React, {
   Dispatch,
   FormEvent,
   SetStateAction,
-  Suspense,
   useEffect,
   useRef,
 } from "react";
-const SuspenseComponent = dynamic(() => import("@/Components/LinerProgress"), {
-  suspense: true,
-});
-
 interface SearchboxProps {
   width?: string;
   height?: string;
@@ -38,14 +39,16 @@ const Searchbox = ({
   const [SearchQuery, setSearchQuery] = useState("");
   const [SelecetedSearchType, setSelecetedSearchType] = useState("all");
   const SearchResultRef = useRef<HTMLDivElement>(null);
+  const dispatch = useDispatch();
   const router = useRouter();
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
         SearchResultRef.current &&
         !SearchResultRef.current.contains(e.target as Node)
-      )
+      ) {
         setOpenSearchResult(false);
+      }
     };
     document.addEventListener("mousedown", (e: MouseEvent) => {
       handleClickOutside(e);
@@ -56,7 +59,8 @@ const Searchbox = ({
 
   const handleSearch = (e: FormEvent) => {
     e.preventDefault();
-    router.push(`/support/search/${SelecetedSearchType}?term=${SearchQuery}`);
+    if (SearchQuery)
+      router.push(`/support/search/${SelecetedSearchType}?term=${SearchQuery}`);
   };
   return (
     <div
@@ -108,8 +112,8 @@ import { set } from "firebase/database";
 import axios from "axios";
 import LinearDeterminate from "./LinerProgress";
 import dynamic from "next/dynamic";
-
-const RecentlySearched: string[] = ["my self", "her ", "come on"];
+import { useDispatch, useSelector } from "react-redux";
+import SearchList from "./searchList";
 
 interface SearchModalProps {
   searchType: string;
@@ -117,28 +121,18 @@ interface SearchModalProps {
   searchQuery: string;
 }
 function SearchModal({ searchType, setAction, searchQuery }: SearchModalProps) {
-  const [RecentlySearched, setRecentlySearched]: any = useState([]);
+  const { search, recentlySearched, error, Loading } =
+    useSelector(selectSearch);
+  console.log(search);
+  const dispatch = useDispatch();
   const router = useRouter();
   const [data, setData] = useState([]);
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`http://localhost:4000/${searchType}`);
-        const data = await response.data;
-        setData(data);
-        // setRecentlySearched([searchQuery, ...RecentlySearched]);
-        localStorage.setItem(
-          "searchHistory",
-          JSON.stringify([searchQuery, ...RecentlySearched])
-        );
-        const searchHistory = localStorage.getItem("searchHistory");
-        console.log(searchHistory);
-        if (searchHistory) setRecentlySearched(JSON.parse(searchHistory));
-      } catch (e) {
-        console.log("error" + e);
-      }
-    };
-    fetchData();
+    console.log(searchQuery);
+    if (searchQuery) {
+      console.log("searchquery");
+      dispatch(searchStart({ type: searchType, query: searchQuery }));
+    }
   }, [searchQuery]);
 
   return (
@@ -160,33 +154,34 @@ function SearchModal({ searchType, setAction, searchQuery }: SearchModalProps) {
             </button>
           ))}
         </div>
-        {RecentlySearched.length != 0 && (
-          <>
-            <div className="flex justify-between px-5">
-              <p className="text-sm text-gray-500">Recently searched</p>
-              <button
-                className="text-blue-600 hover:underline text-sm"
-                onClick={() => {
-                  localStorage.removeItem("searchHistory");
-                  setRecentlySearched([]);
-                }}
-              >
-                Clear
-              </button>
-            </div>
 
-            <div className="flex flex-col gap-1">
-              {RecentlySearched.map((search: string, i: number) => (
-                <div key={i} className="flex gap-1 hover:bg-slate-100 p-3">
-                  <BsSearch className="self-center" />
-                  <Link href={""} className="text-sm text-gray-700">
-                    {search}
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
+        <>
+          <div className="flex flex-col gap-1">
+            {Loading ? (
+              <CircularProgress size={30} className="self-center" />
+            ) : (
+              <>
+                {search ? (
+                  <SearchList searchType={searchType} />
+                ) : (
+                  <>
+                    {recentlySearched.map((search: string, i: number) => (
+                      <div
+                        key={i}
+                        className="flex gap-1 hover:bg-slate-100 p-3"
+                      >
+                        <BsSearch className="self-center" />
+                        <Link href={""} className="text-sm text-gray-700">
+                          {search}
+                        </Link>
+                      </div>
+                    ))}
+                  </>
+                )}
+              </>
+            )}
+          </div>
+        </>
         {/* <Suspense fallback={<CircularProgress />}>come on man</Suspense> */}
       </div>
     </div>

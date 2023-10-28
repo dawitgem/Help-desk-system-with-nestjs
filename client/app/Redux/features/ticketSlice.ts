@@ -10,9 +10,9 @@ export interface Ticket {
   Email?: string;
   Content: string;
   UserId?: string;
-  status?: string;
   CreatedAt: Date;
   UpdatedAt?: Date;
+  Status: string;
 }
 export interface Attachement {
   Id: string;

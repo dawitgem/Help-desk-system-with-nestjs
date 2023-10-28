@@ -9,11 +9,20 @@ import {
   subDays,
 } from "date-fns";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 const TicketList = () => {
   const { Tickets } = useSelector(selectTicket);
+  const handleBackground = (Status: string) => {
+    let background: string = "";
+    if (Status === "Open") background = "bg-green-600";
+    else if (Status === "Pending") background = "bg-gray-600";
+    else if (Status === "Closed") background = "bg-red-600";
+    else if (Status === "Resolved") background = "bg-blue-400";
+    return background;
+  };
+
   return (
     <>
       {Tickets.map((ticket: Ticket, i) => (
@@ -27,9 +36,13 @@ const TicketList = () => {
               {ticket.Subject}
             </h1>
             <div className="flex gap-1">
-              <span className="self-center m-1 md:w-[15px] md:h-[15px] w-[10px] h-[10px] text-blue border-inherit border bg-green-600 md:rounded-md rounded-sm"></span>
+              <span
+                className={`self-center m-1 md:w-[15px] md:h-[15px] w-[10px] h-[10px] text-blue border-inherit border  md:rounded-md rounded-sm ${handleBackground(
+                  ticket.Status
+                )}`}
+              ></span>
               <h1 className="md:text-lg text-sm text-gray-600 self-center font-medium">
-                Open
+                {ticket.Status}
               </h1>
             </div>
           </div>

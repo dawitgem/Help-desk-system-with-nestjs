@@ -11,6 +11,7 @@ export class newTicketDto {
   ResolutionDue: Date;
   CreatedAt: Date;
   UpdatedAt?: Date;
+  Status: string;
 }
 export class AttachmentDto {
   Id: string;

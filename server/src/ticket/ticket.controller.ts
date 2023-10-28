@@ -62,6 +62,7 @@ export class TicketController {
         UserId,
         CreatedAt,
         UpdatedAt,
+        Status,
       } = ticket;
       const tickets = {
         Id,
@@ -72,6 +73,7 @@ export class TicketController {
         UserId,
         CreatedAt,
         UpdatedAt,
+        Status,
       };
       return tickets;
     });
@@ -89,6 +91,7 @@ export class TicketController {
       UserId,
       CreatedAt,
       UpdatedAt,
+      Status,
     } = Ticket;
     return {
       Id,
@@ -99,8 +102,10 @@ export class TicketController {
       UserId,
       CreatedAt,
       UpdatedAt,
+      Status,
     };
   }
+
   @Get('attachment/:Id')
   async fetchAttachment(@Param('Id') attachId: string) {
     const attachement = await this.TicketService.fetchSingleAttachment(

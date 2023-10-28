@@ -11,24 +11,24 @@ datasource db {
 }
 
 model Users {
-  Id            String                 @id
-  FullName      String?
-  UserName      String
-  Email         String                 @unique
-  Password      String
-  Image         String?                @db.LongText
-  UserType      String
-  About         String?                @db.LongText
-  CreatedDate   DateTime
-  WorkingPhone  String?
-  MobilePhone   String?
-  Sessions      UserSession[]
-  Tickets       Tickets[]
-  TicketHistory TicketHistory[]
-  Article       KnowledgeBaseArticle[]
-  Shift         ShiftAgent[]
-  Reply         Reply[]
-  Department    DepartmentAgent[]
+  Id           String                 @id
+  FullName     String?
+  UserName     String
+  Email        String                 @unique
+  Password     String
+  Image        String?                @db.LongText
+  UserType     String
+  About        String?                @db.LongText
+  CreatedDate  DateTime
+  WorkingPhone String?
+  MobilePhone  String?
+  Sessions     UserSession[]
+  Tickets      Tickets[]
+  TicketAgent  TicketAgent[]
+  Article      KnowledgeBaseArticle[]
+  Shift        ShiftAgent[]
+  Reply        Reply[]
+  Department   DepartmentAgent[]
 }
 
 model UserSession {
@@ -42,38 +42,38 @@ model UserSession {
 }
 
 model Tickets {
-  Id               String          @id
+  Id               String        @id
   UserId           String?
   Type             String
   ReportedVia      String
   Email            String
   Priority         String
-  Subject          String          @db.LongText
-  Content          String          @db.LongText
+  Subject          String        @db.LongText
+  Content          String        @db.LongText
+  Status           String
+  Note             String?       @db.LongText
   DepartmentId     String?
   FirstResponseDue DateTime
   ResolutionDue    DateTime
   CreatedAt        DateTime
   UpdatedAt        DateTime?
-  TicketHistory    TicketHistory[]
+  TicketAgent      TicketAgent[]
   Reply            Reply[]
   Attachement      Attachement[]
   Images           Images[]
-  User             Users?          @relation(fields: [UserId], references: [Id])
-  Department       Department?     @relation(fields: [DepartmentId], references: [Id])
+  User             Users?        @relation(fields: [UserId], references: [Id])
+  Department       Department?   @relation(fields: [DepartmentId], references: [Id])
 
   @@index([UserId])
   @@index([DepartmentId])
 }
 
-model TicketHistory {
+model TicketAgent {
   Id         String  @id
   TicketId   String
-  AssignedTo String
-  Status     String
-  Note       String? @db.LongText
+  AssignedTo String?
   Ticket     Tickets @relation(fields: [TicketId], references: [Id])
-  Agent      Users   @relation(fields: [AssignedTo], references: [Id])
+  Agent      Users?  @relation(fields: [AssignedTo], references: [Id])
 
   @@index([AssignedTo])
   @@index([TicketId])

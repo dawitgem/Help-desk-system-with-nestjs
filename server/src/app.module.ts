@@ -10,11 +10,15 @@ import { AuthModule } from './auth/auth.module';
 import { UserService } from './user/user.service';
 import { PassportModule } from '@nestjs/passport';
 import { TicketModule } from './ticket/ticket.module';
+import { SearchService } from './search/search.service';
+import { SearchModule } from './search/search.module';
+import { EmailService } from './email/email.service';
+import { EmailModule } from './email/email.module';
 
 @Module({
-  imports: [UserModule, AuthModule, PassportModule, TicketModule],
+  imports: [UserModule, AuthModule, PassportModule, TicketModule, SearchModule, EmailModule],
   controllers: [AppController, UserController, AuthController],
-  providers: [AppService, PrismaService, AuthService, UserService],
+  providers: [AppService, PrismaService, AuthService, UserService, SearchService, EmailService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {}

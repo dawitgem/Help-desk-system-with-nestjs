@@ -258,7 +258,7 @@ const addTicket = async (
     FirstResponseDue: date,
     ResolutionDue: resolutionDate,
     CreatedAt: new Date(),
-    Status: "Resolved",
+    Status: "Open",
   });
   if (response.data) return response.data;
 };
@@ -375,6 +375,7 @@ const updateTicket = async (ticket: Ticket, html: string) => {
     Priority: ticket.Priority,
     Subject: ticket.Subject,
     Content: html,
+    Status: ticket.Status,
     FirstResponseDue: date,
     ResolutionDue: resolutionDate,
     CreatedAt: ticket.CreatedAt,

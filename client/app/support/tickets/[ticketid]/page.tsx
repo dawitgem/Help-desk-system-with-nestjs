@@ -40,6 +40,7 @@ const TicketIdPage = ({ params }: { params: { ticketid: string } }) => {
     Subject: "",
     Content: "",
     Priority: "",
+    Status: "",
     UserId: user?.Id,
     CreatedAt: new Date(),
   });
@@ -70,6 +71,7 @@ const TicketIdPage = ({ params }: { params: { ticketid: string } }) => {
           Content,
           Priority,
           UserId,
+          Status,
           CreatedAt,
         });
         const attachResponse = await axios.get(

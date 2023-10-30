@@ -29,6 +29,7 @@ export class TicketController {
         CreatedAt,
         UpdatedAt,
       } = Ticket;
+      console.log(Ticket);
       return {
         Id,
         Type,
@@ -54,6 +55,7 @@ export class TicketController {
       parseInt(offset),
       parseInt(limit),
     );
+    console.log(Tickets);
     const Ticket = Tickets.map((ticket) => {
       const {
         Id,
@@ -225,6 +227,7 @@ export class TicketController {
       Content: Description,
       UserId,
       CreatedAt,
+      Status,
       UpdatedAt,
     } = Ticket;
     return {
@@ -235,6 +238,7 @@ export class TicketController {
       Description,
       UserId,
       CreatedAt,
+      Status,
       UpdatedAt,
     };
   }

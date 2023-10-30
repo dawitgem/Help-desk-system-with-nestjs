@@ -346,6 +346,7 @@ const addAttachementApi = async (file: File[]) => {
 };
 
 const updateTicket = async (ticket: Ticket, html: string) => {
+  console.log(ticket);
   let date = new Date();
   let resolutionDate = new Date();
   const day = 3600 * 24;

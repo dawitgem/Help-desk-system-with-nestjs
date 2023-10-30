@@ -62,7 +62,9 @@ const TicketIdPage = ({ params }: { params: { ticketid: string } }) => {
           Priority,
           UserId,
           CreatedAt,
+          Status,
         } = ticket;
+        console.log(ticket);
         setTicket({
           Id,
           IssueType,
@@ -105,6 +107,14 @@ const TicketIdPage = ({ params }: { params: { ticketid: string } }) => {
       }, 1000);
     }
   }, [error, Loading, isValid]);
+  const handleBackground = (Status?: string) => {
+    let background: string = "";
+    if (Status === "Open") background = "bg-green-600";
+    else if (Status === "Pending") background = "bg-gray-600";
+    else if (Status === "Closed") background = "bg-red-600";
+    else if (Status === "Resolved") background = "bg-blue-400";
+    return background;
+  };
 
   return (
     <>
@@ -143,21 +153,33 @@ const TicketIdPage = ({ params }: { params: { ticketid: string } }) => {
                 </button>
               </div>
             )}
-            <div className="flex  self-end">
-              <button
-                className=" md:flex gap-2 border-blue-300 border hover:shadow-sm hover:shadow-blue-400 bg-slate-50 p-2 rounded-l-lg "
-                onClick={() => {
-                  setOpen(true);
-                }}
-              >
-                <BsPencil className="md:text-xl text-sm text-gray-500" />
-              </button>
-              <button
-                className=" md:flex gap-2 border-blue-300 border hover:shadow-sm hover:shadow-blue-400 bg-slate-50 p-2 rounded-r-lg "
-                onClick={handleClick}
-              >
-                <BsTrash className="md:text-xl text-sm text-gray-500" />
-              </button>
+            <div className="flex justify-between">
+              <div className="flex gap-1">
+                <span
+                  className={`self-center m-1 md:w-[15px] md:h-[15px] w-[10px] h-[10px] text-blue border-inherit border  md:rounded-md rounded-sm ${handleBackground(
+                    ticket?.Status
+                  )}`}
+                ></span>
+                <h1 className="md:text-lg text-sm text-gray-600 self-center font-medium">
+                  {ticket?.Status}
+                </h1>
+              </div>
+              <div className="flex  self-end">
+                <button
+                  className=" md:flex gap-2 border-blue-300 border hover:shadow-sm hover:shadow-blue-400 bg-slate-50 p-2 rounded-l-lg "
+                  onClick={() => {
+                    setOpen(true);
+                  }}
+                >
+                  <BsPencil className="md:text-xl text-sm text-gray-500" />
+                </button>
+                <button
+                  className=" md:flex gap-2 border-blue-300 border hover:shadow-sm hover:shadow-blue-400 bg-slate-50 p-2 rounded-r-lg "
+                  onClick={handleClick}
+                >
+                  <BsTrash className="md:text-xl text-sm text-gray-500" />
+                </button>
+              </div>
             </div>
             <div className="p-3 border w-full">
               <p className="text-xl text-gray-800  text-center  font-bold underline w-[90%] break-words">

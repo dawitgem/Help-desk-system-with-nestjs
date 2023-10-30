@@ -22,7 +22,7 @@ const TicketList = () => {
     else if (Status === "Resolved") background = "bg-blue-400";
     return background;
   };
-
+  console.log(Tickets);
   return (
     <>
       {Tickets.map((ticket: Ticket, i) => (

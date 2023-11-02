@@ -54,7 +54,7 @@ const Home = () => {
               className="self-center p-4 flex flex-col  md:w-[300px] w-[95%] bg-white shadow-lg gap-5 rounded-lg"
             >
               <PiStackBold className=" xsm:self-center sm:text-5xl text-3xl text-gray-700 " />
-              <h1 className="self-center text-lg font-bold text-gray-700 xsm:w-auto w-[90%] break-words">
+              <h1 className="self-center text-lg font-bold text-gray-700 xsm:w-auto w-[90%]  break-words">
                 Category name
               </h1>
               <p className="self-center text-md xsm:w-auto w-[90%] break-words ">

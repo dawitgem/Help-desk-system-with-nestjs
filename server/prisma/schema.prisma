@@ -22,6 +22,7 @@ model Users {
   CreatedDate  DateTime
   WorkingPhone String?
   MobilePhone  String?
+  Verified     Boolean
   Sessions     UserSession[]
   Tickets      Tickets[]
   TicketAgent  TicketAgent[]

@@ -14,11 +14,29 @@ import { SearchService } from './search/search.service';
 import { SearchModule } from './search/search.module';
 import { EmailService } from './email/email.service';
 import { EmailModule } from './email/email.module';
+import { SocketGateway } from './socket/socket.gateway';
+import { SocketModule } from './socket/socket.module';
 
 @Module({
-  imports: [UserModule, AuthModule, PassportModule, TicketModule, SearchModule, EmailModule],
+  imports: [
+    UserModule,
+    AuthModule,
+    PassportModule,
+    TicketModule,
+    SearchModule,
+    EmailModule,
+    SocketModule,
+  ],
   controllers: [AppController, UserController, AuthController],
-  providers: [AppService, PrismaService, AuthService, UserService, SearchService, EmailService],
+  providers: [
+    AppService,
+    PrismaService,
+    AuthService,
+    UserService,
+    SearchService,
+    EmailService,
+    SocketGateway,
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {}

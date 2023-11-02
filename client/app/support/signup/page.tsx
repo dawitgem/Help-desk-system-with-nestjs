@@ -149,10 +149,14 @@ const SignUpPage = () => {
       if (error) {
         setShowError(true);
       }
-      if (isAuth && user) router.push("/support");
+      if (isAuth && user && user.Verified === false)
+        router.push("/verifyEmail");
+
+      if (isAuth && user && user.Verified === true) router.push("/support");
     };
     CheckUser();
   }, [user, error]);
+  console.log(user);
   return (
     <div className="py-10 w-full border-t flex flex-col gap-2 justify-center align-middle  ">
       {error && showError && (

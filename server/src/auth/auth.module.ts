@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { UserModule } from 'src/user/user.module';
 import { AuthService } from './auth.service';
 import { LocalStrategy } from './local.strategy';
@@ -9,6 +9,10 @@ import { AuthController } from './auth.controller';
 import { UserController } from 'src/user/user.controller';
 import { UserService } from 'src/user/user.service';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { EmailService } from 'src/email/email.service';
+import { EmailModule } from 'src/email/email.module';
+import { SocketModule } from 'src/socket/socket.module';
+import { SocketGateway } from 'src/socket/socket.gateway';
 
 @Module({
   imports: [
@@ -17,8 +21,10 @@ import { PrismaService } from 'src/prisma/prisma.service';
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET_KEY,
-      signOptions: { expiresIn: '24h' },
+      signOptions: { expiresIn: '15m' },
     }),
+    EmailModule,
+    SocketModule,
   ],
   providers: [
     AuthService,
@@ -26,6 +32,9 @@ import { PrismaService } from 'src/prisma/prisma.service';
     JwtStrategy,
     UserService,
     PrismaService,
+    EmailService,
+    JwtService,
+    SocketGateway,
   ],
   controllers: [AuthController, UserController],
 })

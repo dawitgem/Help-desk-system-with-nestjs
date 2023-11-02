@@ -98,14 +98,29 @@ const SigninApi = async (credentials: { email: string; password: string }) => {
 };
 
 const getProfileApi = async () => {
-  const response = await axios.get(`${api}/auth/profile`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
+  try {
+    const response = await axios.get(`${api}/auth/profile`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
 
-    withCredentials: true,
-  });
-  return response.data;
+      withCredentials: true,
+    });
+    console.log(response);
+    return response.data;
+  } catch (e) {
+    console.log(e);
+  }
+};
+const refreshAccessToken = async () => {
+  axios.defaults.withCredentials = true;
+  try {
+    const response = await axios.post(`${api}/auth/refresh`);
+    console.log(response);
+    return response.data;
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 const SignupApi = async (credentials: {
@@ -225,8 +240,7 @@ function* handleSignin(action: SignInAction): Generator<any, void, any> {
 function* handleSigUp(action: SignUpAction): Generator<any, void, any> {
   try {
     const response = yield call(SignupApi, action.payload);
-    const user = yield getProfileApi();
-    yield put(createUser(user));
+    yield put(createUser(response));
   } catch (e: any) {
     yield put(
       signUpFaliure("something went wrong ." + e.response.data.message)
@@ -256,7 +270,9 @@ function* handleSigninWithGoogle(
 
 function* handleProfile(action: SignInAction): Generator<any, void, any> {
   try {
-    const user = yield getProfileApi();
+    let user: any;
+    user = yield getProfileApi();
+    if (!user) user = yield refreshAccessToken();
     yield put(getProfile(user));
   } catch (e: any) {}
 }

@@ -213,6 +213,18 @@ const EditTicket = ({ open, setOpen, Ticket, Attachment }: EditTicketProps) => {
     }
   };
   useEffect(() => {
+    if (Loading) {
+      const element = document.getElementById("Fullname");
+      if (element) {
+        const offset = 300;
+        const elementPosition =
+          element.getBoundingClientRect().top + window.scrollY;
+        window.scrollTo({
+          top: elementPosition - offset,
+          behavior: "smooth",
+        });
+      }
+    }
     if (error !== null) {
       const element = document.getElementById("Fullname");
       if (element) {

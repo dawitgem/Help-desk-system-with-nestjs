@@ -85,10 +85,13 @@ const LoginPage = () => {
       if (error) {
         setShowError(true);
       }
-      if (isAuth && user) router.push("/support");
+      if (isAuth && user && user.Verified === false)
+        router.push("/verifyEmail");
+      if (isAuth && user && user?.Verified === true) router.push("/support");
     };
     CheckUser();
   }, [user, error]);
+  console.log(user?.Verified);
   return (
     <div className="py-10  w-full border-t flex flex-col gap-3 justify-center align-middle  ">
       {error && showError && (
@@ -120,7 +123,12 @@ const LoginPage = () => {
             </Link>
           </div>
         </div>
-        <form action="" className="flex flex-col gap-3" onSubmit={handleSubmit} id="loginForm">
+        <form
+          action=""
+          className="flex flex-col gap-3"
+          onSubmit={handleSubmit}
+          id="loginForm"
+        >
           <div className="flex flex-col gap-2">
             <label
               htmlFor="Email"

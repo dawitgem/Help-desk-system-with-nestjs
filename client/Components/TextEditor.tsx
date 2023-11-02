@@ -212,6 +212,17 @@ const TextEditor = () => {
   useEffect(() => {
     const checkError = () => {
       const element = document.getElementById("Fullname");
+      if (Loading) {
+        if (element) {
+          const offset = 300;
+          const elementPosition =
+            element.getBoundingClientRect().top + window.scrollY;
+          window.scrollTo({
+            top: elementPosition - offset,
+            behavior: "smooth",
+          });
+        }
+      }
       if (!Loading && isValid && error === null) {
         setFormData({
           IssueType: "",

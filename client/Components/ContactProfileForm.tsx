@@ -173,6 +173,17 @@ const ContactProfileForm = () => {
     };
     const checkError = () => {
       const element = document.getElementById("fullname");
+      if (Loading) {
+        if (element) {
+          const offset = 300;
+          const elementPosition =
+            element.getBoundingClientRect().top + window.scrollY;
+          window.scrollTo({
+            top: elementPosition - offset,
+            behavior: "smooth",
+          });
+        }
+      }
       if (!Loading && isValid && error !== null) {
         if (element) {
           const offset = 300;

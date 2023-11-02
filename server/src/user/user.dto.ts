@@ -10,6 +10,7 @@ export class SignUpDto {
   WorkingPhone: string | null;
   MobilePhone: string | null;
   CreatedDate: Date | null;
+  Verified: boolean;
 }
 
 export class SignInDto {

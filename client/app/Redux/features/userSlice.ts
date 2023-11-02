@@ -11,6 +11,7 @@ interface user {
   UserType: string;
   WorkingPhone?: string | null;
   MobilePhone?: string | null;
+  Verified: boolean | null;
 }
 interface userState {
   user: user | null;

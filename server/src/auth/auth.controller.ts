@@ -115,8 +115,7 @@ export class AuthController {
         RefreshToken,
       ]);
 
-      this.setAccessTokenCookie(res, AccessToken, RefreshToken);
-      res.redirect(api);
+      res.redirect(`${api}`);
     } catch (e) {
       throw new PasswordUpdateException(e.message);
     }

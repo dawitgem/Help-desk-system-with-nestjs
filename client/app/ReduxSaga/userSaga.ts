@@ -242,9 +242,7 @@ function* handleSigUp(action: SignUpAction): Generator<any, void, any> {
     const response = yield call(SignupApi, action.payload);
     yield put(createUser(response));
   } catch (e: any) {
-    yield put(
-      signUpFaliure("something went wrong ." + e.response.data.message)
-    );
+    yield put(signUpFaliure("something went wrong ." + e));
   }
 }
 

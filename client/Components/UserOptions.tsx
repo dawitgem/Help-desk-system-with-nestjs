@@ -53,7 +53,7 @@ const UserOptions = () => {
           </p>
         </div>
       </Link>
-      {user && isAuth && (
+      {user && user?.Verified === true && isAuth && (
         <Link
           href="/support/tickets"
           className="md:w-[300px] w-[95%] p-5 bg-white rounded-md border md:flex gap-2 justify-center shadow-lg "

@@ -22,7 +22,7 @@ import { SocketGateway } from 'src/socket/socket.gateway';
 
 const api =
   process.env.NEXT_PUBLIC_REACT_ENV === 'PRODUCTION'
-    ? 'https://kns-support.verce.app'
+    ? 'https://kns-support.vercel.app'
     : 'http://localhost:3000';
 
 @Controller('auth')
@@ -62,7 +62,6 @@ export class AuthController {
       sub: req.body.Id,
       username: req.body.UserName,
     });
-    console.log(EmailToken);
     try {
       const user = await this.authService.SignUp(req.body);
 
@@ -90,7 +89,7 @@ export class AuthController {
         Verified,
       });
     } catch (e) {
-      throw new PasswordUpdateException('something went wrong...');
+      throw new PasswordUpdateException(e.message);
     }
   }
   @Get('confirm/:token')
@@ -99,10 +98,10 @@ export class AuthController {
     @Req() req: request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    console.log(token);
     try {
+      res.clearCookie('access_token');
+      res.clearCookie('refresh_token');
       const decodedToken = await this.authService.verifyEmailtoken(token);
-      console.log(decodedToken);
       if (!decodedToken) throw new PasswordUpdateException('Invalid token...');
       const isTokenExpired = this.isTokenExpired(decodedToken.exp);
       if (isTokenExpired) throw new PasswordUpdateException('Token expired...');
@@ -115,9 +114,12 @@ export class AuthController {
         AccessToken,
         RefreshToken,
       ]);
+
       this.setAccessTokenCookie(res, AccessToken, RefreshToken);
-      res.redirect(`${api}`);
-    } catch (e) {}
+      res.redirect(api);
+    } catch (e) {
+      throw new PasswordUpdateException(e.message);
+    }
   }
   @Post('login')
   async signin(@Req() req: request, @Res({ passthrough: true }) res: Response) {
@@ -137,16 +139,13 @@ export class AuthController {
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
     if (!(await this.authService.signInWithGoogle(req.body))) {
-      console.log(req.body);
       const EmailToken = await this.authService.generateEmailToken({
         sub: req.body.Id,
         username: req.body.UserName,
       });
-      console.log(EmailToken);
       try {
         await this.authService.SignUp(req.body);
         await this.emailService.sendVerificationEmail(req.body, EmailToken);
-        return;
       } catch (e) {}
     }
     const { AccessToken, RefreshToken } =
@@ -225,7 +224,6 @@ export class AuthController {
       if (!user) throw new UnauthorizedException('User not authorized...');
       const payload = { sub: user.Id, username: user.UserName };
       const AccessToken = await this.authService.generateToken(payload);
-      console.log(AccessToken);
       res.cookie('access_token', AccessToken, {
         httpOnly: true,
         secure: true,

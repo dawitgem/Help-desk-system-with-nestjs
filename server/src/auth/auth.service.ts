@@ -102,11 +102,12 @@ export class AuthService {
   async signInWithGoogle(signupDto: SignUpDto) {
     const { Email } = signupDto;
     let user = await this.UserService.Login({ Email });
-    if (!user) return null;
-    const payload = { sub: user.Id, userName: user.UserName };
-    const AccessToken = await this.generateToken(payload);
-    const RefreshToken = await this.generateRefreshToken(payload);
-    return { AccessToken, RefreshToken };
+    if (user) {
+      const payload = { sub: user.Id, userName: user.UserName };
+      const AccessToken = await this.generateToken(payload);
+      const RefreshToken = await this.generateRefreshToken(payload);
+      return { AccessToken, RefreshToken };
+    } else return null;
   }
   async signInWithGoogleAgent(signupDto: SignUpDto) {
     const { Email, UserType } = signupDto;

@@ -1,6 +1,7 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
+import { PasswordUpdateException } from 'src/exception/unauthorized.exception';
 
 const api =
   process.env.NEXT_PUBLIC_REACT_ENV === 'PRODUCTION'
@@ -15,11 +16,9 @@ export class EmailService {
     private readonly authservice: AuthService,
   ) {}
   async sendVerificationEmail(user: any, verificationToken: string) {
-    console.log(verificationToken);
     const decodedToken = await this.authservice.verifyEmailtoken(
       verificationToken,
     );
-    console.log(decodedToken);
     const url = `${api}/auth/confirm/${verificationToken}`;
     try {
       await this.mailerService.sendMail({
@@ -32,7 +31,7 @@ export class EmailService {
         },
       });
     } catch (e) {
-      console.log(e);
+      throw new PasswordUpdateException(e.message);
     }
   }
 }

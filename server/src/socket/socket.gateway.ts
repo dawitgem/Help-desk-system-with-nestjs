@@ -16,6 +16,7 @@ import { CookieSerializeOptions, serialize } from 'cookie';
 })
 export class SocketGateway {
   @WebSocketServer() server: Server;
+  private client: Socket;
   @SubscribeMessage('emailConfirmed')
   async emailConfirmed(
     client: Socket,
@@ -23,6 +24,7 @@ export class SocketGateway {
     AccessToken: string,
     RefreshToken: string,
   ) {
+    console.log(client, userId);
     // console.log(client);
     // console.log(userId);
     // const cookieOptions: CookieSerializeOptions = {

@@ -21,7 +21,7 @@ import { PasswordUpdateException } from 'src/exception/unauthorized.exception';
 import { SocketGateway } from 'src/socket/socket.gateway';
 
 const api =
-  process.env.NEXT_PUBLIC_REACT_ENV === 'PRODUCTION'
+  process.env.NEST_ENV === 'PRODUCTION'
     ? 'https://kns-support.vercel.app'
     : 'http://localhost:3000';
 
@@ -146,12 +146,15 @@ export class AuthController {
       try {
         await this.authService.SignUp(req.body);
         await this.emailService.sendVerificationEmail(req.body, EmailToken);
-      } catch (e) {}
+      } catch (e) {
+        throw new PasswordUpdateException(e.message);
+      }
+    } else {
+      const { AccessToken, RefreshToken } =
+        await this.authService.signInWithGoogle(req.body);
+      this.setAccessTokenCookie(res, AccessToken, RefreshToken);
+      res.send({ status: 'ok' });
     }
-    const { AccessToken, RefreshToken } =
-      await this.authService.signInWithGoogle(req.body);
-    this.setAccessTokenCookie(res, AccessToken, RefreshToken);
-    res.send({ status: 'ok' });
   }
 
   @Post('googleAuth/agent')
@@ -159,10 +162,10 @@ export class AuthController {
     @Req() req: request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { AccessToken, RefreshToken } =
-      await this.authService.signInWithGoogleAgent(req.body);
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
+    const { AccessToken, RefreshToken } =
+      await this.authService.signInWithGoogleAgent(req.body);
     this.setAccessTokenCookie(res, AccessToken, RefreshToken);
     res.send({ status: 'ok' });
   }

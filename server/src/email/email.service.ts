@@ -4,7 +4,7 @@ import { AuthService } from 'src/auth/auth.service';
 import { PasswordUpdateException } from 'src/exception/unauthorized.exception';
 
 const api =
-  process.env.NEXT_PUBLIC_REACT_ENV === 'PRODUCTION'
+  process.env.NEST_ENV === 'PRODUCTION'
     ? 'https://kns-support-api.onrender.com'
     : 'http://localhost:8000';
 console.log(api);

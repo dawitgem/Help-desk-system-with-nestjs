@@ -252,6 +252,10 @@ export function UserProfileModal({
                   setOpenMenu(false);
                 }
                 router.push("/support/");
+                const cookieString = `access_token= ; expires= ; path= ; sameSite=None ; secure=true`;
+                const cookieString2 = `refresh_token=; expires= ; path= ; sameSite=None ; secure=true`;
+                document.cookie = cookieString;
+                document.cookie = cookieString2;
                 dispatch(LogoutSucess());
               }}
             >

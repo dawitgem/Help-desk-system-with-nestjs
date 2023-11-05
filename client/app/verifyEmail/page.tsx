@@ -47,8 +47,10 @@ const page = () => {
         expires: new Date(Date.now() + 2 * 30 * 24 * 60 * 60 * 1000),
         path: "/",
       };
+      Cookies.remove("access_token", cookieOptions);
+      Cookies.remove("refresh_token", cookieOptions);
       Cookies.set("access_token", AccessToken, cookieOptions);
-      Cookies.set("refresh_token", AccessToken, cookieOptions2);
+      Cookies.set("refresh_token", RefreshToken, cookieOptions2);
       console.log("AccessToken:" + Cookies.get("access_token"));
 
       dispatch(getProfileStart());

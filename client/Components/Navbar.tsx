@@ -252,8 +252,22 @@ export function UserProfileModal({
                 if (setOpenMenu) {
                   setOpenMenu(false);
                 }
-                Cookies.remove("access_token");
-                Cookies.remove("refresh_token");
+                const cookieOptions = {
+                  httpOnly: true,
+                  secure: true,
+                  SameSite: "None",
+                  expires: new Date(Date.now() + 15 * 60 * 1000),
+                  path: "/",
+                };
+                const cookieOptions2 = {
+                  httpOnly: true,
+                  secure: true,
+                  SameSite: "None",
+                  expires: new Date(Date.now() + 2 * 30 * 24 * 60 * 60 * 1000),
+                  path: "/",
+                };
+                Cookies.remove("access_token", cookieOptions);
+                Cookies.remove("refresh_token", cookieOptions);
                 router.push("/support/");
                 dispatch(LogoutSucess());
               }}

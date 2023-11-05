@@ -53,6 +53,22 @@ export class AuthController {
       path: '/',
     });
   };
+  private removeAccessToken = (res: Response) => {
+    res.cookie('access_token', '', {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      expires: new Date(Date.now() + 15 * 60 * 1000),
+      path: '/',
+    });
+    res.cookie('refresh_token', '', {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      expires: new Date(Date.now() + 2 * 30 * 24 * 60 * 60 * 1000),
+      path: '/',
+    });
+  };
 
   @Post('signup')
   async signup(@Req() req: request, @Res({ passthrough: true }) res: Response) {
@@ -274,6 +290,7 @@ export class AuthController {
 
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
+    this.removeAccessToken(res);
     res.send('user logged out');
   }
 

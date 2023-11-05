@@ -16,8 +16,8 @@ dotenv.config();
 
 const api =
   process.env.NEXT_PUBLIC_REACT_ENV === "PRODUCTION"
-    ? "https://kns-support.vercel.app"
-    : "http://localhost:3000";
+    ? "https://kns-support-api.onrender.com"
+    : "http://localhost:8000";
 const page = () => {
   const { user, error, isAuth, Loading } = useSelector(selectUser);
   const dispatch = useDispatch();
@@ -36,21 +36,26 @@ const page = () => {
       const cookieOptions = {
         httpOnly: true,
         secure: true,
-        SameSite: "None",
+        sameSite: "None",
         expires: new Date(Date.now() + 15 * 60 * 1000),
         path: "/",
       };
       const cookieOptions2 = {
         httpOnly: true,
         secure: true,
-        SameSite: "None",
+        sameSite: "None",
         expires: new Date(Date.now() + 2 * 30 * 24 * 60 * 60 * 1000),
         path: "/",
       };
-      Cookies.remove("access_token", cookieOptions);
-      Cookies.remove("refresh_token", cookieOptions);
-      Cookies.set("access_token", AccessToken, cookieOptions);
-      Cookies.set("refresh_token", RefreshToken, cookieOptions2);
+
+      const cookieString = `access_token=${AccessToken}; expires=${cookieOptions.expires.toUTCString()}; path=${
+        cookieOptions.path
+      }; SameSite=None ; secure=true`;
+      const cookieString2 = `refresh_token=${RefreshToken}; expires=${cookieOptions.expires.toUTCString()}; path=${
+        cookieOptions.path
+      }; SameSite=None ; secure=true`;
+      document.cookie = cookieString;
+      document.cookie = cookieString2;
       console.log("AccessToken:" + Cookies.get("access_token"));
 
       dispatch(getProfileStart());

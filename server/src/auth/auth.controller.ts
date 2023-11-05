@@ -42,6 +42,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'none',
+      domain: api,
       expires: new Date(Date.now() + 15 * 60 * 1000),
       path: '/',
     });
@@ -49,6 +50,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'none',
+      domain: api,
       expires: new Date(Date.now() + 2 * 30 * 24 * 60 * 60 * 1000),
       path: '/',
     });
@@ -247,7 +249,6 @@ export class AuthController {
         throw new PasswordUpdateException(e.message);
       }
     } else {
-      console.log(AccessToken, RefreshToken);
       this.setAccessTokenCookie(res, AccessToken, RefreshToken);
       res.send({ status: 'ok' });
     }
@@ -267,7 +268,12 @@ export class AuthController {
   }
 
   @Get('signout')
-  async signout(@Res({ passthrough: true }) res: Response) {
+  async signout(
+    @Req() req: request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    console.log(req.cookies['access_token']);
+
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
     res.send('user logged out');

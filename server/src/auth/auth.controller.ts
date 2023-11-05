@@ -122,13 +122,25 @@ export class AuthController {
   }
   @Post('login')
   async signin(@Req() req: request, @Res({ passthrough: true }) res: Response) {
-    const { AccessToken, RefreshToken } = await this.authService.SignIn(
-      req.body,
-    );
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
-    this.setAccessTokenCookie(res, AccessToken, RefreshToken);
-    res.send('successfully loggedin');
+    if (!(await this.authService.SignIn(req.body))) {
+      const EmailToken = await this.authService.generateEmailToken({
+        sub: req.body.Id,
+        username: req.body.UserName,
+      });
+      try {
+        await this.emailService.sendVerificationEmail(req.body, EmailToken);
+      } catch (e) {
+        throw new PasswordUpdateException(e.message);
+      }
+    } else {
+      const { AccessToken, RefreshToken } = await this.authService.SignIn(
+        req.body,
+      );
+      this.setAccessTokenCookie(res, AccessToken, RefreshToken);
+      res.send('successfully loggedin');
+    }
   }
   @Post('googleAuth')
   async signinwithGoogle(

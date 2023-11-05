@@ -132,7 +132,8 @@ const userSlice = createSlice({
       state.Loading = true;
       state.error = null;
     },
-    signinSucess: (state) => {
+    signinSucess: (state, action: PayloadAction<user>) => {
+      state.user = action.payload;
       state.Loading = false;
 
       state.error = null;

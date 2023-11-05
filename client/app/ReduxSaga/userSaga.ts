@@ -230,7 +230,9 @@ const updateUserPasswordApi = async (Passwords: {
 
 function* handleSignin(action: SignInAction): Generator<any, void, any> {
   try {
-    const AccessToken = yield call(SigninApi, action.payload);
+    const response = yield call(SigninApi, action.payload);
+    console.log(response);
+
     const user = yield getProfileApi();
     yield put(getProfile(user));
   } catch (e: any) {
@@ -242,7 +244,9 @@ function* handleSigUp(action: SignUpAction): Generator<any, void, any> {
     const response = yield call(SignupApi, action.payload);
     yield put(createUser(response));
   } catch (e: any) {
-    yield put(signUpFaliure("something went wrong ." + e));
+    yield put(
+      signUpFaliure("something went wrong ." + e.response.data.message)
+    );
   }
 }
 

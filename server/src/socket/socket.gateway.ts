@@ -24,36 +24,6 @@ export class SocketGateway {
     AccessToken: string,
     RefreshToken: string,
   ) {
-    console.log(client, userId);
-    // console.log(client);
-    // console.log(userId);
-    // const cookieOptions: CookieSerializeOptions = {
-    //   httpOnly: true,
-    //   secure: true,
-    //   sameSite: 'none',
-    //   expires: new Date(Date.now() + 15 * 60 * 1000),
-    //   path: '/',
-    // };
-    // const cookieOptions2: CookieSerializeOptions = {
-    //   httpOnly: true,
-    //   secure: true,
-    //   sameSite: 'none',
-    //   expires: new Date(Date.now() + 2 * 30 * 24 * 60 * 60 * 1000),
-    //   path: '/',
-    // };
-    // const accessCookie = serialize('access_token', AccessToken, cookieOptions);
-    // const refreshCookie = serialize(
-    //   'refresh_token',
-    //   RefreshToken,
-    //   cookieOptions,
-    // );
-
-    // client.handshake.headers.cookie = `${accessCookie}; ${refreshCookie}`;
-
-    // this.server
-    //   .to(client.id)
-    //   .emit('emailConfirmed', 'Your email is successfully confirmed');
-    // client.emit('setCookies', [accessCookie, refreshCookie]);
     client.disconnect(true);
   }
 }

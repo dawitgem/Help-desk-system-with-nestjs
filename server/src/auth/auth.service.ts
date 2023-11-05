@@ -32,16 +32,6 @@ export class AuthService {
     });
   }
 
-  private refreshAccessToken = (res: Response, AccessToken: string) => {
-    res.cookie('access_token', AccessToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'none',
-      expires: new Date(Date.now() + 15 * 60 * 1000),
-      path: '/',
-    });
-  };
-
   validateToken(token: string) {
     try {
       return this.JWTService.verify(token, {
@@ -68,6 +58,7 @@ export class AuthService {
         'Email not found.Please enter your valid email !!!',
       );
     }
+    if (user.Verified === false) return null;
 
     if (!this.validatePassword(Password, user.Password))
       throw new UnauthorizedException('Invalid Password');

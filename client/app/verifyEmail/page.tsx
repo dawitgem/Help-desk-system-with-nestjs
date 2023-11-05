@@ -47,6 +47,8 @@ const page = () => {
         expires: new Date(Date.now() + 2 * 30 * 24 * 60 * 60 * 1000),
         path: "/",
       };
+      Cookies.remove("access_token");
+      Cookies.remove("refresh_token");
       const cookieString = `access_token=${AccessToken}; expires=${cookieOptions.expires.toUTCString()}; path=${
         cookieOptions.path
       }; sameSite=None ; secure=true`;

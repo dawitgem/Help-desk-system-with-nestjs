@@ -12,6 +12,34 @@
       "name": "helpdesk",
       "database": "HelpDeskDb",
       "username": "root"
+    },
+    {
+      "mysqlOptions": {
+        "authProtocol": "default",
+        "enableSsl": "Enabled",
+        "ssl": {}
+      },
+      "previewLimit": 50,
+      "server": "kns-helpdeskdb-abebedawit2001-ee2f.aivencloud.com",
+      "port": 10799,
+      "driver": "MySQL",
+      "name": "helpDesk",
+      "database": "defaultdb",
+      "username": "avnadmin",
+      "askForPassword": true
+    },
+    {
+      "mysqlOptions": {
+        "authProtocol": "default",
+        "enableSsl": "Disabled"
+      },
+      "previewLimit": 50,
+      "server": "kns-helpdeskdb-abebedawit2001-ee2f.aivencloud.com",
+      "port": 10799,
+      "driver": "MySQL",
+      "username": "avnadmin",
+      "database": "defaultdb",
+      "name": "helpdesk"
     }
   ]
 }

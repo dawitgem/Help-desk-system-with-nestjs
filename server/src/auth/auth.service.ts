@@ -52,20 +52,23 @@ export class AuthService {
   }
 
   async SignIn({ Email, Password }: SignInDto) {
-    const user = await this.UserService.Login({ Email });
+    let user = await this.UserService.Login({ Email });
+    let AccessToken: string = null;
+    let RefreshToken: string = null;
     if (!user) {
       throw new UnauthorizedException(
         'Email not found.Please enter your valid email !!!',
       );
     }
-    if (user.Verified === false) return null;
+    if (user.Verified === false) return { user, AccessToken, RefreshToken };
 
     if (!this.validatePassword(Password, user.Password))
       throw new UnauthorizedException('Invalid Password');
     const payload = { sub: user.Id, userName: user.UserName };
-    const AccessToken = await this.generateToken(payload);
-    const RefreshToken = await this.generateRefreshToken(payload);
-    return { AccessToken, RefreshToken };
+    AccessToken = await this.generateToken(payload);
+    RefreshToken = await this.generateRefreshToken(payload);
+    user = null;
+    return { user, AccessToken, RefreshToken };
   }
   private async validatePassword(
     Password: string,
@@ -93,12 +96,15 @@ export class AuthService {
   async signInWithGoogle(signupDto: SignUpDto) {
     const { Email } = signupDto;
     let user = await this.UserService.Login({ Email });
+    let AccessToken: string = null;
+    let RefreshToken: string = null;
+    console.log(user);
     if (user) {
       const payload = { sub: user.Id, userName: user.UserName };
-      const AccessToken = await this.generateToken(payload);
-      const RefreshToken = await this.generateRefreshToken(payload);
-      return { AccessToken, RefreshToken };
-    } else return null;
+      AccessToken = await this.generateToken(payload);
+      RefreshToken = await this.generateRefreshToken(payload);
+    }
+    return { user, AccessToken, RefreshToken };
   }
   async signInWithGoogleAgent(signupDto: SignUpDto) {
     const { Email, UserType } = signupDto;

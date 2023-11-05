@@ -230,11 +230,18 @@ const updateUserPasswordApi = async (Passwords: {
 
 function* handleSignin(action: SignInAction): Generator<any, void, any> {
   try {
-    const response = yield call(SigninApi, action.payload);
-    console.log(response);
-
-    const user = yield getProfileApi();
-    yield put(getProfile(user));
+    const { User, AccessToken, RefreshToken } = yield call(
+      SigninApi,
+      action.payload
+    );
+    if (!User) {
+      const user = yield getProfileApi();
+      yield put(getProfile(user));
+    }
+    if (User) {
+      console.log(User);
+      yield put(signinSucess(User));
+    }
   } catch (e: any) {
     yield put(signInFaliure(e.response.data.message));
   }
@@ -260,10 +267,16 @@ function* handleSigninWithGoogle(
       photoURL: Image,
       email: Email,
     } = yield GoogleAuthWithFirebase();
-    const User = { FullName, Email, Image, MobilePhone };
-    yield SigninWithGoogleApi(User);
-    const user = yield getProfileApi();
-    yield put(getProfile(user));
+    const input = { FullName, Email, Image, MobilePhone };
+    const { User } = yield SigninWithGoogleApi(input);
+    if (!User) {
+      console.log(User);
+      const user = yield getProfileApi();
+      yield put(getProfile(user));
+    } else {
+      console.log(User);
+      yield put(signInWithGoogleSucess(User));
+    }
   } catch (e: any) {
     console.log(e);
     yield put(signInWithGoogleFaliuer(e.message + " please try again ..!!"));

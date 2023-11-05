@@ -105,6 +105,7 @@ export class AuthController {
       if (!decodedToken) throw new PasswordUpdateException('Invalid token...');
       const isTokenExpired = this.isTokenExpired(decodedToken.exp);
       if (isTokenExpired) throw new PasswordUpdateException('Token expired...');
+      console.log(decodedToken);
       const user = await this.authService.verifyedUser(decodedToken.sub);
       const payload = { sub: user.Id, userName: user.UserName };
       const AccessToken = await this.authService.generateToken(payload);
@@ -114,7 +115,7 @@ export class AuthController {
         AccessToken,
         RefreshToken,
       ]);
-
+      this.setAccessTokenCookie(res, AccessToken, RefreshToken);
       res.redirect(`${api}`);
     } catch (e) {
       throw new PasswordUpdateException(e.message);
@@ -124,20 +125,43 @@ export class AuthController {
   async signin(@Req() req: request, @Res({ passthrough: true }) res: Response) {
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
-    if (!(await this.authService.SignIn(req.body))) {
+    const { user, AccessToken, RefreshToken } = await this.authService.SignIn(
+      req.body,
+    );
+    if (user) {
       const EmailToken = await this.authService.generateEmailToken({
-        sub: req.body.Id,
-        username: req.body.UserName,
+        sub: user.Id,
+        username: user.UserName,
       });
       try {
         await this.emailService.sendVerificationEmail(req.body, EmailToken);
+        const {
+          Id,
+          FullName,
+          Email,
+          UserName,
+          UserType,
+          Image,
+          WorkingPhone,
+          MobilePhone,
+          Verified,
+        } = user;
+        const User = {
+          Id,
+          FullName,
+          Email,
+          UserName,
+          UserType,
+          Image,
+          WorkingPhone,
+          MobilePhone,
+          Verified,
+        };
+        return { User, AccessToken, RefreshToken };
       } catch (e) {
         throw new PasswordUpdateException(e.message);
       }
     } else {
-      const { AccessToken, RefreshToken } = await this.authService.SignIn(
-        req.body,
-      );
       this.setAccessTokenCookie(res, AccessToken, RefreshToken);
       res.send('successfully loggedin');
     }
@@ -149,20 +173,81 @@ export class AuthController {
   ) {
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
-    if (!(await this.authService.signInWithGoogle(req.body))) {
+    const { user, AccessToken, RefreshToken } =
+      await this.authService.signInWithGoogle(req.body);
+    console.log(user);
+    if (!user) {
+      console.log('user not found');
       const EmailToken = await this.authService.generateEmailToken({
         sub: req.body.Id,
         username: req.body.UserName,
       });
       try {
-        await this.authService.SignUp(req.body);
+        const user = await this.authService.SignUp(req.body);
         await this.emailService.sendVerificationEmail(req.body, EmailToken);
+        const {
+          Id,
+          FullName,
+          Email,
+          UserName,
+          UserType,
+          Image,
+          WorkingPhone,
+          MobilePhone,
+          Verified,
+        } = user;
+        const User = {
+          Id,
+          FullName,
+          Email,
+          UserName,
+          UserType,
+          Image,
+          WorkingPhone,
+          MobilePhone,
+          Verified,
+        };
+        return { User };
+      } catch (e) {
+        throw new PasswordUpdateException(e.message);
+      }
+    }
+    if (user && !user.Verified) {
+      console.log(user);
+      const EmailToken = await this.authService.generateEmailToken({
+        sub: user.Id,
+        username: user.UserName,
+      });
+      try {
+        await this.emailService.sendVerificationEmail(user, EmailToken);
+        const {
+          Id,
+          FullName,
+          Email,
+          UserName,
+          UserType,
+          Image,
+          WorkingPhone,
+          MobilePhone,
+          Verified,
+        } = user;
+        const User = {
+          Id,
+          FullName,
+          Email,
+          UserName,
+          UserType,
+          Image,
+          WorkingPhone,
+          MobilePhone,
+          Verified,
+        };
+        return { User };
       } catch (e) {
         throw new PasswordUpdateException(e.message);
       }
     } else {
-      const { AccessToken, RefreshToken } =
-        await this.authService.signInWithGoogle(req.body);
+      console.log(AccessToken, RefreshToken);
       this.setAccessTokenCookie(res, AccessToken, RefreshToken);
       res.send({ status: 'ok' });
     }

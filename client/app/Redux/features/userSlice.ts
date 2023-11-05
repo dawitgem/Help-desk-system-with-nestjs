@@ -114,7 +114,9 @@ const userSlice = createSlice({
       state.error = null;
     },
 
-    signInWithGoogleSucess: (state) => {
+    signInWithGoogleSucess: (state, action: PayloadAction<user>) => {
+      console.log(action.payload);
+      state.user = action.payload;
       state.Loading = false;
 
       state.isAuth = true;
@@ -133,9 +135,9 @@ const userSlice = createSlice({
       state.error = null;
     },
     signinSucess: (state, action: PayloadAction<user>) => {
+      console.log(action.payload);
       state.user = action.payload;
       state.Loading = false;
-
       state.error = null;
       state.isAuth = true;
     },

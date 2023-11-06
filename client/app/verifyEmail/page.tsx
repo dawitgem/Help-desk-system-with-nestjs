@@ -47,8 +47,8 @@ const page = () => {
         path: "/",
       };
 
-      const cookieString = `access_token=${AccessToken}; expires=${cookieOptions.expires.toUTCString()}; path=/; HttpOnly; Secure; SameSite=None`;
-      const cookieString2 = `refresh_token=${RefreshToken}; expires=${cookieOptions2.expires.toUTCString()}; path=/; HttpOnly; Secure; SameSite=None`;
+      const cookieString = `access_token=${AccessToken}; expires=${cookieOptions.expires.toUTCString()}; path=/; HttpOnly=true; Secure=true; SameSite=None`;
+      const cookieString2 = `refresh_token=${RefreshToken}; expires=${cookieOptions2.expires.toUTCString()}; path=/; HttpOnly=true; Secure=true; SameSite=None`;
       document.cookie = cookieString;
       document.cookie = cookieString2;
       console.log("AccessToken:" + Cookies.get("access_token"));

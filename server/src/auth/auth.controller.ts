@@ -14,7 +14,7 @@ import {
 import { AuthService } from './auth.service';
 import { SignInDto, SignUpDto } from 'src/user/user.dto';
 import { JWTGuard } from './auth.guard';
-import { Request as request, Response } from 'express';
+import { Request as request, response, Response } from 'express';
 import { EmailService } from 'src/email/email.service';
 import { Timestamp } from 'rxjs';
 import { PasswordUpdateException } from 'src/exception/unauthorized.exception';
@@ -72,8 +72,7 @@ export class AuthController {
 
   @Post('signup')
   async signup(@Req() req: request, @Res({ passthrough: true }) res: Response) {
-    res.clearCookie('access_token');
-    res.clearCookie('refresh_token');
+    this.removeAccessToken(res);
     const EmailToken = await this.authService.generateEmailToken({
       sub: req.body.Id,
       username: req.body.UserName,
@@ -115,22 +114,19 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     try {
-      res.clearCookie('access_token');
-      res.clearCookie('refresh_token');
+      this.removeAccessToken(res);
       const decodedToken = await this.authService.verifyEmailtoken(token);
       if (!decodedToken) throw new PasswordUpdateException('Invalid token...');
       const isTokenExpired = this.isTokenExpired(decodedToken.exp);
       if (isTokenExpired) throw new PasswordUpdateException('Token expired...');
       const user = await this.authService.verifyedUser(decodedToken.sub);
-      console.log(user);
       const payload = { sub: user.Id, userName: user.UserName };
       const AccessToken = await this.authService.generateToken(payload);
       const RefreshToken = await this.authService.generateRefreshToken(payload);
-      this.socketGateway.server.emit('emailConfirmed', [
-        user.Id,
+      this.socketGateway.server.emit('setCookie', {
         AccessToken,
         RefreshToken,
-      ]);
+      });
       this.setAccessTokenCookie(res, AccessToken, RefreshToken);
       res.redirect(`${api}`);
     } catch (e) {
@@ -139,8 +135,7 @@ export class AuthController {
   }
   @Post('login')
   async signin(@Req() req: request, @Res({ passthrough: true }) res: Response) {
-    res.clearCookie('access_token');
-    res.clearCookie('refresh_token');
+    this.removeAccessToken(res);
     const { user, AccessToken, RefreshToken } = await this.authService.SignIn(
       req.body,
     );
@@ -187,8 +182,7 @@ export class AuthController {
     @Req() req: request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    res.clearCookie('access_token');
-    res.clearCookie('refresh_token');
+    this.removeAccessToken(res);
     const { user, AccessToken, RefreshToken } =
       await this.authService.signInWithGoogle(req.body);
     if (!user) {
@@ -270,8 +264,7 @@ export class AuthController {
     @Req() req: request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    res.clearCookie('access_token');
-    res.clearCookie('refresh_token');
+    this.removeAccessToken(res);
     const { AccessToken, RefreshToken } =
       await this.authService.signInWithGoogleAgent(req.body);
     this.setAccessTokenCookie(res, AccessToken, RefreshToken);
@@ -283,8 +276,6 @@ export class AuthController {
     @Req() req: request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    res.clearCookie('access_token');
-    res.clearCookie('refresh_token');
     this.removeAccessToken(res);
     res.send('user logged out');
   }
@@ -321,6 +312,16 @@ export class AuthController {
     const now = Date.now() / 1000;
     return now >= expirationTimestamp;
   }
+  @Post('setCookie')
+  async setCookie(
+    @Req() req: request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { AccessToken, RefreshToken } = req.body;
+    console.log(req.body);
+    this.setAccessTokenCookie(res, AccessToken, RefreshToken);
+    res.status(200).send('email confirmed');
+  }
   @Post('refresh')
   async refreshAccessToken(
     @Req() req: request,
@@ -336,8 +337,6 @@ export class AuthController {
         throw new UnauthorizedException('User not authorized...');
       const userId = decodedToken.sub;
       const user = await this.authService.UserProfile(userId);
-      console.log(userId);
-      console.log(user);
       if (!user) throw new UnauthorizedException('User not authorized...');
       const payload = { sub: user.Id, username: user.UserName };
       const AccessToken = await this.authService.generateToken(payload);

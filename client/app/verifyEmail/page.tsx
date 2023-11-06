@@ -12,6 +12,7 @@ import { io } from "socket.io-client";
 import dotenv from "dotenv";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 dotenv.config();
 
 const api =
@@ -29,31 +30,34 @@ const page = () => {
     socket.on("connect", () => {
       console.log("connected");
     });
-    socket.on("emailConfirmed", (message: any) => {
-      const [userId, AccessToken, RefreshToken] = message;
-      console.log(AccessToken, RefreshToken);
-      const cookieOptions = {
-        httpOnly: true,
-        secure: true,
-        sameSite: "None",
-        expires: new Date(Date.now() + 15 * 60 * 1000),
-        path: "/",
-      };
-      const cookieOptions2 = {
-        httpOnly: true,
-        secure: true,
-        sameSite: "None",
-        expires: new Date(Date.now() + 2 * 30 * 24 * 60 * 60 * 1000),
-        path: "/",
-      };
+    socket.on("setCookie", async (message: any) => {
+      const { AccessToken, RefreshToken } = message;
+      if (AccessToken && RefreshToken) {
+        try {
+          const response = await axios.post(
+            `${api}/auth/setCookie`,
+            {
+              AccessToken,
+              RefreshToken,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
 
-      const cookieString = `access_token=${AccessToken}; expires=${cookieOptions.expires.toUTCString()}; path=/; HttpOnly=true; Secure=true; SameSite=None`;
-      const cookieString2 = `refresh_token=${RefreshToken}; expires=${cookieOptions2.expires.toUTCString()}; path=/; HttpOnly=true; Secure=true; SameSite=None`;
-      document.cookie = cookieString;
-      document.cookie = cookieString2;
-      console.log("AccessToken:" + Cookies.get("access_token"));
-
-      dispatch(getProfileStart());
+              withCredentials: true,
+            }
+          );
+          console.log(response.data);
+          console.log(response.status);
+          if (response.status === 200) {
+            console.log(response.status);
+            dispatch(getProfileStart());
+          }
+        } catch (e) {
+          console.log(e);
+        }
+      }
     });
 
     return () => {

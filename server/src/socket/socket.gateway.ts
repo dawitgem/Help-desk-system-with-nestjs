@@ -1,4 +1,6 @@
 import {
+  OnGatewayConnection,
+  OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -14,16 +16,28 @@ import { CookieSerializeOptions, serialize } from 'cookie';
     credentials: true,
   },
 })
-export class SocketGateway {
+export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
-  private client: Socket;
+  public client: Socket;
+  handleConnection(client: any, ...args: any[]) {
+    this.client = client;
+  }
+  handleDisconnect(client: any) {}
   @SubscribeMessage('emailConfirmed')
-  async emailConfirmed(
+  async emailConfirmed(client: Socket) {
+    client.emit('emailConfirmed', 'email confirmed');
+    console.log(client.connected);
+    client.disconnect(true);
+  }
+  @SubscribeMessage('setCookie')
+  async setCookie(
     client: Socket,
-    userId: string,
-    AccessToken: string,
-    RefreshToken: string,
+
+    data: { AccessToken: string; RefreshToken: string },
   ) {
+    console.log(client.connected);
+    console.log(data);
+    client.handshake.headers.cookie = ``;
     client.disconnect(true);
   }
 }

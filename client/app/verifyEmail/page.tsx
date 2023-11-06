@@ -32,7 +32,6 @@ const page = () => {
     socket.on("emailConfirmed", (message: any) => {
       const [userId, AccessToken, RefreshToken] = message;
       console.log(AccessToken, RefreshToken);
-
       const cookieOptions = {
         httpOnly: true,
         secure: true,
@@ -48,11 +47,11 @@ const page = () => {
         path: "/",
       };
 
-      const cookieString = `access_token=${AccessToken}; expires=${cookieOptions.expires.toUTCString()}; path=${
+      const cookieString = `access_token=${AccessToken};htttpOnly=true; expires=${cookieOptions.expires.toUTCString()}; path=${
         cookieOptions.path
       }; SameSite=None ; secure=true`;
-      const cookieString2 = `refresh_token=${RefreshToken}; expires=${cookieOptions.expires.toUTCString()}; path=${
-        cookieOptions.path
+      const cookieString2 = `refresh_token=${RefreshToken};htttpOnly=true; expires=${cookieOptions2.expires.toUTCString()}; path=${
+        cookieOptions2.path
       }; SameSite=None ; secure=true`;
       document.cookie = cookieString;
       document.cookie = cookieString2;

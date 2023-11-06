@@ -47,12 +47,8 @@ const page = () => {
         path: "/",
       };
 
-      const cookieString = `access_token=${AccessToken};htttpOnly=true; expires=${cookieOptions.expires.toUTCString()}; path=${
-        cookieOptions.path
-      }; SameSite=None ; secure=true`;
-      const cookieString2 = `refresh_token=${RefreshToken};htttpOnly=true; expires=${cookieOptions2.expires.toUTCString()}; path=${
-        cookieOptions2.path
-      }; SameSite=None ; secure=true`;
+      const cookieString = `access_token=${AccessToken}; expires=${cookieOptions.expires.toUTCString()}; path=/; HttpOnly; Secure; SameSite=None`;
+      const cookieString2 = `refresh_token=${RefreshToken}; expires=${cookieOptions2.expires.toUTCString()}; path=/; HttpOnly; Secure; SameSite=None`;
       document.cookie = cookieString;
       document.cookie = cookieString2;
       console.log("AccessToken:" + Cookies.get("access_token"));

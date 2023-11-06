@@ -122,6 +122,7 @@ export class AuthController {
       const isTokenExpired = this.isTokenExpired(decodedToken.exp);
       if (isTokenExpired) throw new PasswordUpdateException('Token expired...');
       const user = await this.authService.verifyedUser(decodedToken.sub);
+      console.log(user);
       const payload = { sub: user.Id, userName: user.UserName };
       const AccessToken = await this.authService.generateToken(payload);
       const RefreshToken = await this.authService.generateRefreshToken(payload);

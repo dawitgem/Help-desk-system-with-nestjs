@@ -2,7 +2,7 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { User } from "../reducers";
 import { error } from "console";
 
-interface user {
+export interface user {
   Id: string;
   FullName?: string | null;
   Email: string;
@@ -36,12 +36,13 @@ const userSlice = createSlice({
       state.error = null;
     },
     getProfileStart: (state) => {
-      // state.Loading = true;
+      state.Loading = true;
       state.isAuth = false;
     },
     getProfile: (state, action: PayloadAction<user>) => {
-      state.Loading = false;
       state.user = action.payload;
+      console.log(action.payload);
+      state.Loading = false;
       state.isAuth = true;
       state.error = null;
     },
@@ -118,7 +119,6 @@ const userSlice = createSlice({
       console.log(action.payload);
       state.user = action.payload;
       state.Loading = false;
-
       state.isAuth = true;
       state.error = null;
     },

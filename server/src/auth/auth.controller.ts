@@ -133,6 +133,7 @@ export class AuthController {
       throw new PasswordUpdateException(e.message);
     }
   }
+
   @Post('login')
   async signin(@Req() req: request, @Res({ passthrough: true }) res: Response) {
     this.removeAccessToken(res);
@@ -177,6 +178,22 @@ export class AuthController {
       res.send('successfully loggedin');
     }
   }
+  @Post('agent/signin')
+  async agentSignin(
+    @Req() req: request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    console.log(req.body);
+    this.removeAccessToken(res);
+    const { AccessToken, RefreshToken } = await this.authService.agentSignin(
+      req.body,
+    );
+    if (AccessToken && RefreshToken) {
+      this.setAccessTokenCookie(res, AccessToken, RefreshToken);
+      res.send({ AccessToken, RefreshToken });
+    }
+  }
+
   @Post('googleAuth')
   async signinwithGoogle(
     @Req() req: request,
@@ -356,6 +373,7 @@ export class AuthController {
         Image,
         WorkingPhone,
         MobilePhone,
+        Verified,
       } = user;
       res.send({
         Id,
@@ -366,6 +384,7 @@ export class AuthController {
         Image,
         WorkingPhone,
         MobilePhone,
+        Verified,
       });
     } catch (e) {
       throw new UnauthorizedException('User is not authorized .....');

@@ -18,7 +18,19 @@ export class UserService {
     });
     return user;
   }
+  async contact(Id: string): Promise<Users | null> {
+    const user = await this.Prisma.users.findUnique({
+      where: {
+        Id,
+      },
+    });
 
+    return user;
+  }
+  async EmailUser(data: Prisma.UsersCreateInput): Promise<Users | null> {
+    const user = await this.Prisma.users.create({ data });
+    return user;
+  }
   async LoginAgent(where: Prisma.UsersWhereUniqueInput): Promise<Users | null> {
     const user = await this.Prisma.users.findUnique({
       where: where,
@@ -27,6 +39,7 @@ export class UserService {
   }
 
   async Login({ Email }: Prisma.UsersWhereUniqueInput): Promise<Users | null> {
+    console.log(Email);
     const user = await this.Prisma.users.findUnique({
       where: {
         Email,

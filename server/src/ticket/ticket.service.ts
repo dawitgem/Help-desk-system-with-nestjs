@@ -7,7 +7,13 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class TicketService {
   constructor(private readonly prisma: PrismaService) {}
-
+  async getAllTickets(): Promise<Tickets[] | null> {
+    return await this.prisma.tickets.findMany({
+      orderBy: {
+        CreatedAt: 'desc',
+      },
+    });
+  }
   async getTicket(Id: string): Promise<Tickets | null> {
     return await this.prisma.tickets.findUnique({
       where: {
@@ -46,6 +52,10 @@ export class TicketService {
     });
     return Ticket;
   }
+  async newEmailTicket(data: Prisma.TicketsCreateInput): Promise<Tickets> {
+    console.log(data);
+    return;
+  }
   async fetchSingleAttachment(Id: string): Promise<Attachement[] | null> {
     return await this.prisma.attachement.findMany({
       where: {
@@ -60,6 +70,7 @@ export class TicketService {
   async newAttachment(
     data: Prisma.AttachementCreateInput,
   ): Promise<Attachement> {
+    console.log(data);
     const Attachment = await this.prisma.attachement.create({
       data,
     });

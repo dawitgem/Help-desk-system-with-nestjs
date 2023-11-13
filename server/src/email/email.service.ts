@@ -1,5 +1,6 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { AuthService } from 'src/auth/auth.service';
 import { PasswordUpdateException } from 'src/exception/unauthorized.exception';
 

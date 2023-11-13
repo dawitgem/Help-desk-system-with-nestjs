@@ -10,12 +10,28 @@ import {
 } from '@nestjs/common';
 import { TicketService } from './ticket.service';
 import { AttachmentDto, newTicketDto } from './Ticket.dto';
+import { UserService } from 'src/user/user.service';
 
 @Controller('ticket')
 export class TicketController {
-  constructor(private readonly TicketService: TicketService) {}
+  constructor(
+    private readonly TicketService: TicketService,
+    private readonly UserService: UserService,
+  ) {}
+  @Get()
+  async getAllTickets() {
+    const Tickets = await this.TicketService.getAllTickets();
+    const Ticket = Tickets.map(async (ticket) => {
+      const user =
+        ticket.UserId && (await this.UserService.contact(ticket.UserId));
+      if (user) return { Ticket: ticket, Contact: user };
+      else return { Ticket: ticket, Contact: ticket.Email };
+    });
+    console.log(await Promise.all(Ticket));
+    return await Promise.all(Ticket);
+  }
   @Get(':Id')
-  async getTicket(@Param('Id') TicketId: string) {
+  async getUserTicket(@Param('Id') TicketId: string) {
     const Ticket = await this.TicketService.getTicket(TicketId);
     if (Ticket) {
       const {
@@ -55,7 +71,6 @@ export class TicketController {
       parseInt(offset),
       parseInt(limit),
     );
-    console.log(Tickets);
     const Ticket = Tickets.map((ticket) => {
       const {
         Id,

@@ -287,7 +287,7 @@ const addTicketApi = async (Ticket: {
 };
 const uploadFile = async (file: File) => {
   return new Promise((resolve, reject) => {
-    const profileRef = ref(storage, `attachement/${file.name}`);
+    const profileRef = ref(storage, `attachment/${file.name}`);
     const uploadTask = uploadBytesResumable(profileRef, file);
     uploadTask.on(
       "state_changed",
@@ -349,7 +349,7 @@ const updateTicket = async (ticket: Ticket, html: string) => {
   console.log(ticket);
   let date = new Date();
   let resolutionDate = new Date();
-  const day = 3600 * 24;
+  const day = 60 * 60 * 1000 * 24;
   if (ticket.Priority === "Low") {
     date = new Date(Date.now() + 14 * day);
     resolutionDate = new Date(Date.now() + 30 * day);

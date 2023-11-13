@@ -3,7 +3,7 @@ import { actionChannel } from "redux-saga/effects";
 import { TicketType } from "../reducers";
 
 export interface Ticket {
-  Id: String;
+  Id: string;
   IssueType: string;
   Priority: string;
   Subject: string;

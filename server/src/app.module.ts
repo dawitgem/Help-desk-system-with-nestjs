@@ -16,6 +16,12 @@ import { EmailService } from './email/email.service';
 import { EmailModule } from './email/email.module';
 import { SocketGateway } from './socket/socket.gateway';
 import { SocketModule } from './socket/socket.module';
+import { FirebaseModule } from './firebase/firebase.module';
+import { FirebaseService } from './firebase/firebase.service';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ImapService } from './imap/imap.service';
+import { ImapModule } from './imap/imap.module';
+import { TicketService } from './ticket/ticket.service';
 
 @Module({
   imports: [
@@ -26,6 +32,14 @@ import { SocketModule } from './socket/socket.module';
     SearchModule,
     EmailModule,
     SocketModule,
+    FirebaseModule,
+    ImapModule,
+    TicketModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [() => require('./imap/email.config')],
+    }),
+    ImapModule,
   ],
   controllers: [AppController, UserController, AuthController],
   providers: [
@@ -36,6 +50,10 @@ import { SocketModule } from './socket/socket.module';
     SearchService,
     EmailService,
     SocketGateway,
+    FirebaseService,
+    ConfigService,
+    ImapService,
+    TicketService,
   ],
 })
 export class AppModule implements NestModule {

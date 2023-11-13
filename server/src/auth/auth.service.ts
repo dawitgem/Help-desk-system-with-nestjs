@@ -70,6 +70,22 @@ export class AuthService {
     user = null;
     return { user, AccessToken, RefreshToken };
   }
+  async agentSignin({ Email, Password }: SignInDto) {
+    let user = await this.UserService.Login({ Email });
+    let AccessToken: string = null;
+    let RefreshToken: string = null;
+    if (!user) {
+      throw new UnauthorizedException(
+        'Email not found.Please enter your valid email !!!',
+      );
+    }
+    if (!this.validatePassword(Password, user.Password))
+      throw new UnauthorizedException('Invalid Password');
+    const payload = { sub: user.Id, userName: user.UserName };
+    AccessToken = await this.generateToken(payload);
+    RefreshToken = await this.generateRefreshToken(payload);
+    return { AccessToken, RefreshToken };
+  }
   private async validatePassword(
     Password: string,
     HashPassword: string,

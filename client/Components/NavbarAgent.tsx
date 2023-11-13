@@ -20,6 +20,7 @@ import {
   AgentgetProfileStart,
   selectAgent,
 } from "@/app/Redux/features/agentSlice";
+import { getProfileStart, selectUser } from "@/app/Redux/features/userSlice";
 
 interface NavbarAgentProps {
   currentPage: string;
@@ -31,7 +32,7 @@ interface NavbarAgentProps {
 
 const notifcation1 = false;
 const NavbarAgent = ({ currentPage, link, setAction }: NavbarAgentProps) => {
-  const { agent, error, isAuth, Loading } = useSelector(selectAgent);
+  const { user, error, isAuth, Loading } = useSelector(selectUser);
   const [IsNewModalOpen, setIsNewModalOpen] = useState(false);
   const [IsSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [IsProfileModalOpen, setIsProfileModalOpen] = useState(false);
@@ -46,7 +47,7 @@ const NavbarAgent = ({ currentPage, link, setAction }: NavbarAgentProps) => {
 
   useEffect(() => {
     const getProfile = () => {
-      dispatch(AgentgetProfileStart());
+      dispatch(getProfileStart());
     };
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -158,15 +159,18 @@ const NavbarAgent = ({ currentPage, link, setAction }: NavbarAgentProps) => {
               }}
             >
               <Avatar
-                src={agent?.Image || " "}
+                src={user?.Image || " "}
                 variant="circular"
                 alt="image"
-                className=" bg-slate-400 rounded-full "
+                className="w-full h-full bg-slate-400 rounded-full "
               >
-                {agent?.FullName?.slice(0, 1)}
+                {user?.FullName?.slice(0, 1)}
               </Avatar>
             </button>
-            {IsProfileModalOpen && <AgentProfileModal />}
+            {IsProfileModalOpen &&
+              (user?.UserType === "Agent" || user?.UserType === "Admin") && (
+                <AgentProfileModal />
+              )}
           </div>
         </div>
       </div>
@@ -175,4 +179,3 @@ const NavbarAgent = ({ currentPage, link, setAction }: NavbarAgentProps) => {
 };
 
 export default NavbarAgent;
-const emails = ["username@gmail.com", "user02@gmail.com"];

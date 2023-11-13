@@ -287,6 +287,7 @@ function* handleProfile(action: SignInAction): Generator<any, void, any> {
   try {
     let user: any;
     user = yield getProfileApi();
+    console.log(user);
     if (!user) user = yield refreshAccessToken();
     yield put(getProfile(user));
   } catch (e: any) {}

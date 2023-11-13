@@ -13,6 +13,7 @@ import { EmailService } from 'src/email/email.service';
 import { EmailModule } from 'src/email/email.module';
 import { SocketModule } from 'src/socket/socket.module';
 import { SocketGateway } from 'src/socket/socket.gateway';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { SocketGateway } from 'src/socket/socket.gateway';
     EmailService,
     JwtService,
     SocketGateway,
+    ConfigService,
   ],
   controllers: [AuthController, UserController],
 })

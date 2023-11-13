@@ -26,6 +26,7 @@ import {
   AgentLogoutSucess,
   AgentgetProfile,
   AgentgetProfileStart,
+  AgentsignInFaliure,
   AgentsignInWithGoogleFaliuer,
   AgentsigninSucess,
   AgentsigninWithGoogleStart,
@@ -84,8 +85,9 @@ interface updatePasswordACtion {
 }
 const Nanoid = customAlphabet("0123456789", 18);
 const SigninApi = async (credentials: { email: string; password: string }) => {
+  console.log(credentials);
   const response = await axios.post(
-    `${api}/auth/login`,
+    `${api}/auth/agent/signin`,
     {
       Email: credentials.email,
       Password: credentials.password,
@@ -98,6 +100,7 @@ const SigninApi = async (credentials: { email: string; password: string }) => {
       withCredentials: true,
     }
   );
+  console.log(response);
   return response.data;
 };
 
@@ -190,7 +193,7 @@ function* handleAgentSignin(action: SignInAction): Generator<any, void, any> {
     const user = yield getProfileApi();
     yield put(AgentgetProfile(user));
   } catch (e: any) {
-    yield put(signInFaliure("something went wrong." + e.response.data.message));
+    yield put(AgentsignInFaliure(e.response.data.message));
   }
 }
 function* handleAgentSignUp(action: SignUpAction): Generator<any, void, any> {

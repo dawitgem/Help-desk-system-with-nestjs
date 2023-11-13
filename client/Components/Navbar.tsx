@@ -53,7 +53,6 @@ const Navbar = () => {
   const [openProfileModal, setOpenProfileModal] = useState(false);
   const ProfilemodalRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
-
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -188,7 +187,7 @@ export function UserProfileModal({
       className="bg-white   absolute  border rounded-md flex flex-col gap-3 z-20 "
       style={{ width: `${width}px`, top: `${top}px`, right: `${right}px` }}
     >
-      {user && user?.Verified === true && (
+      {user && user.Verified && (
         <>
           {avatar && (
             <div className="flex gap-4 p-2 border-b">
@@ -205,7 +204,7 @@ export function UserProfileModal({
             </div>
           )}
           <div className="flex flex-col gap-2">
-            {user && user?.Verified === true && user.UserType !== "Customer" ? (
+            {user && user.Verified && user.UserType !== "Customer" ? (
               <>
                 <Link
                   href={"/a/dashboard/default"}
@@ -216,16 +215,6 @@ export function UserProfileModal({
                   }}
                 >
                   Dashboard
-                </Link>
-                <Link
-                  href={"/support/profile/edit"}
-                  className="p-2 text-gray-700 hover:bg-slate-100 text-sm font-semibold"
-                  onClick={() => {
-                    if (setOpenMenu) setOpenMenu(false);
-                    setOpen(false);
-                  }}
-                >
-                  MyProfile
                 </Link>
               </>
             ) : (

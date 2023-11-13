@@ -57,7 +57,10 @@ const SolutionPage = () => {
                 </Link>
               </div>
               <div className="p-3 text-slate-600 flex flex-col gap-4 ">
-                <Link href={""} className="p-3 hover:bg-slate-100 rounded-md">
+                <Link
+                  href={"/a/solutions/categories/124123/folder/123423"}
+                  className="p-3 hover:bg-slate-100 rounded-md"
+                >
                   <p>Folder name</p>
                 </Link>
               </div>

@@ -11,24 +11,26 @@ import { LuAlertOctagon } from "react-icons/lu";
 const Page = () => {
   const dispatch = useDispatch();
   const { user, isAuth, Loading, error } = useSelector(selectUser);
-
+  const router = useRouter();
   useEffect(() => {
     const getProfile = () => {
-      dispatch(getProfileStart());
+      try {
+        dispatch(getProfileStart());
+      } catch (e) {}
     };
-
     getProfile();
   }, []);
 
   useEffect(() => {
-    if (user === null) redirect("/support/");
-    if (user && isAuth && user.UserType === "Customer") redirect("/support/");
+    if (!Loading && !error && user === null) router.push("/support/");
+    if (user && isAuth && user.UserType === "Customer")
+      router.push("/support/");
     if (
       user &&
       isAuth &&
       (user.UserType === "Agent" || user.UserType === "Admin")
     )
-      redirect("/a/dashboard/default");
+      router.push("/a/dashboard/default");
   }, [user]);
   return (
     <>

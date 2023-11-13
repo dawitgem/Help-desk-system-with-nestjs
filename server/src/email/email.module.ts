@@ -8,13 +8,12 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { join } from 'path';
+import { ConfigService } from '@nestjs/config';
 console.log(process.env.NEST_ENV);
 
 @Module({
   imports: [
     MailerModule.forRoot({
-      // transport: 'smtps://user@example.com:topsecret@smtp.example.com',
-      // or
       transport: {
         host: 'smtp.gmail.com',
         secure: false,
@@ -28,7 +27,7 @@ console.log(process.env.NEST_ENV);
       },
       template: {
         dir: join(__dirname, 'template'),
-        adapter: new HandlebarsAdapter(), // or new PugAdapter() or new EjsAdapter()
+        adapter: new HandlebarsAdapter(),
         options: {
           strict: true,
         },
@@ -41,6 +40,7 @@ console.log(process.env.NEST_ENV);
     EmailService,
     UserService,
     PrismaService,
+    ConfigService,
   ],
 
   controllers: [EmailController],

@@ -15,7 +15,35 @@ import { Response } from 'express';
 @Controller('user')
 export class UserController {
   constructor(private readonly UserService: UserService) {}
-
+  @Get(':id')
+  async getUser(@Param('id') userId: string) {
+    const user = await this.UserService.contact(userId);
+    console.log(user);
+    if (user) {
+      const {
+        Id,
+        FullName,
+        Email,
+        UserName,
+        Image,
+        UserType,
+        WorkingPhone,
+        MobilePhone,
+        Verified,
+      } = user;
+      return {
+        Id,
+        FullName,
+        Email,
+        UserName,
+        Image,
+        UserType,
+        WorkingPhone,
+        MobilePhone,
+        Verified,
+      };
+    }
+  }
   @Put('update/:id')
   async updateProfile(
     @Param('id') userId: string,
@@ -32,6 +60,7 @@ export class UserController {
         UserType,
         WorkingPhone,
         MobilePhone,
+        Verified,
       } = user;
       return {
         Id,
@@ -42,6 +71,7 @@ export class UserController {
         UserType,
         WorkingPhone,
         MobilePhone,
+        Verified,
       };
     }
   }

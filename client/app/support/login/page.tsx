@@ -192,7 +192,7 @@ const LoginPage = () => {
                   : "cursor-pointer opacity-100"
               }`}
               placeholder="password"
-              onChange={(e) => {
+              onChange={(e: any) => {
                 setFormData((prevState) => {
                   return { ...prevState, ["password"]: e.target.value };
                 });

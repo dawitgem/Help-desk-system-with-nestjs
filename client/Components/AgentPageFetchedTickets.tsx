@@ -2,7 +2,7 @@
 import { Avatar, Checkbox, FormControlLabel } from "@mui/material";
 import Link from "next/link";
 import React, { ChangeEvent } from "react";
-import {  BsGlobe, BsPhone } from "react-icons/bs";
+import { BsGlobe, BsPhone } from "react-icons/bs";
 import { MdOutlineMail } from "react-icons/md";
 import AgentPageTicketsFilterForm from "./AgentPageTicketsFilterForm";
 import {
@@ -69,7 +69,7 @@ const AgentPageFetchedTickets = ({
                 </Avatar>
                 <div className="flex flex-col gap-2">
                   <Link
-                    href={"/a/tickets/122"}
+                    href={`/a/tickets/${ticket.Id}`}
                     className=" text-gray-900 font-bold text-sm hover:text-blue-700"
                   >
                     {ticket.Subject}

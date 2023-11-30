@@ -30,9 +30,10 @@ import {
   updateAttachmentStart,
 } from "@/app/Redux/features/ticketSlice";
 import { useRouter } from "next/navigation";
-import Editor, { TicketEditor } from "./Editor";
-import { modules } from "@/Inputs";
 import { BsPaperclip } from "react-icons/bs";
+import DOMPurify from "dompurify";
+// import MyTinyMCEEditor, { TicketEditor } from "./NewEditor";
+import MyEditor from "./NewEditor";
 interface AutocompleteOption {
   label: string;
 }
@@ -261,7 +262,7 @@ const EditTicket = ({ open, setOpen, Ticket, Attachment }: EditTicketProps) => {
 
     checkError();
   }, [isValid, Loading, error]);
-  console.log("edit ticket");
+  console.log(formData.Description);
   return (
     <Backdrop
       sx={{
@@ -290,7 +291,7 @@ const EditTicket = ({ open, setOpen, Ticket, Attachment }: EditTicketProps) => {
         >
           <LiaTimesSolid />
         </button>
-        <div className="bg-white w-full h-full   md:px-10 px-2 flex flex-col gap-5">
+        <div className="bg-white w-full h-full   md:px-10 px-2 flex flex-col gap-5 animate-reveal">
           <div className="flex justify-between">
             <div className="flex gap-5">
               <div className="flex">
@@ -442,13 +443,7 @@ const EditTicket = ({ open, setOpen, Ticket, Attachment }: EditTicketProps) => {
                 Description <span className="text-red-700">*</span>
               </label>
               <div className="flex flex-col gap-1">
-                <TicketEditor
-                  modules={modules}
-                  setValue={setFormData}
-                  setError={setError}
-                  value={formData.Description}
-                  setChanged={setIsChanged}
-                />
+                <MyEditor value={formData.Description} setValue={setFormData} />
                 {Error.Discription && (
                   <p className="text-[12px] text-red-500">
                     This field is required

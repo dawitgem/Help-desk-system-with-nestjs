@@ -27,8 +27,14 @@ export class TicketController {
       if (user) return { Ticket: ticket, Contact: user };
       else return { Ticket: ticket, Contact: ticket.Email };
     });
-    console.log(await Promise.all(Ticket));
     return await Promise.all(Ticket);
+  }
+  @Get('agent/:Id')
+  async getTicket(@Param('Id') TicketId: string) {
+    const Ticket = await this.TicketService.getTicket(TicketId);
+    const Contact = await this.UserService.contact(Ticket.UserId);
+    console.log(Ticket);
+    return { Ticket, Contact };
   }
   @Get(':Id')
   async getUserTicket(@Param('Id') TicketId: string) {

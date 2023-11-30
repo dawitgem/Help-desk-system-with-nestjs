@@ -16,8 +16,33 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      keyframes: {
+        reveal: {
+          "0%": {
+            transform: "scaleX(0)",
+            transformOrigin: "100% 50%",
+            opacity: "0",
+          },
+          "100%": {
+            transform: "scaleX(1)",
+            transformOrigin: "100% 50%",
+            opacity: "1",
+          },
+        },
+        topToPlace: {
+          "0%": {
+            transform: "translateY(-100%)",
+            opacity: "0",
+          },
+          "100%": {
+            transform: "translateY(0)",
+            opacity: "1",
+          },
+        },
+      },
       animation: {
-        reveal: "opacity-1 duration-150 transition-opacity ease-in-out",
+        reveal: "reveal 0.2s ease-out",
+        toptoplace: "topToPlace 0.1s ease-in",
       },
     },
   },

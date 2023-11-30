@@ -106,9 +106,7 @@ export class ImapService {
   private async addEmailTickets(emails: any) {
     const lastEmail = emails.length - 1;
     const email = emails[lastEmail];
-    const content = email.content
-      .replace('<div dir="ltr">', '<p>')
-      .replace('</div>', '</p>');
+    const content = email.content;
     const emailRegex = /<([^>]+)>/;
     const nameRegex = /^([^<]*)/;
     const date = new Date(Date.parse(email.date));
@@ -151,17 +149,17 @@ export class ImapService {
     const TicketData = {
       Id: TicketId,
       UserId: userId,
-      Type: 'Ask Question',
+      Type: 'Question',
       ReportedVia: 'Email',
       Email: Email,
-      Priority: 'Medium',
+      Priority: 'Low',
       Subject: email.subject,
       Content: content,
       FirstResponseDue: new Date(
-        Date.parse(date.toISOString()) + 7 * 24 * 60 * 60 * 1000,
+        Date.parse(date.toISOString()) + 14 * 24 * 60 * 60 * 1000,
       ),
       ResolutionDue: new Date(
-        Date.parse(date.toISOString()) + 14 * 24 * 60 * 60 * 1000,
+        Date.parse(date.toISOString()) + 30 * 24 * 60 * 60 * 1000,
       ),
       CreatedAt: date,
       UpdatedAt: null,

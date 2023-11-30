@@ -227,7 +227,7 @@ const addTicket = async (
 
   let date = new Date();
   let resolutionDate = new Date();
-  const day = 3600 * 24;
+  const day = 24 * 60 * 60 * 1000;
 
   if (Priority === "Low") {
     date = new Date(Date.now() + 14 * day);

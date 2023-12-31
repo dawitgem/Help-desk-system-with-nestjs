@@ -5,9 +5,7 @@ import {
   Snackbar,
   TextField,
 } from "@mui/material";
-import Editor from "./Editor";
 import { BsPaperclip } from "react-icons/bs";
-import { modules, readonlymodules } from "@/Inputs";
 import {
   ChangeEvent,
   Dispatch,
@@ -31,6 +29,7 @@ import { LiaTimesSolid } from "react-icons/lia";
 import { useRouter } from "next/navigation";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { storage } from "@/firebase/firebaseconfig";
+import MyEditor from "./NewEditor";
 
 interface AutocompleteOption {
   label: string;
@@ -389,11 +388,7 @@ const TextEditor = () => {
             Description <span className="text-red-700">*</span>
           </label>
           <div className="flex flex-col gap-1">
-            <Editor
-              modules={modules}
-              setValue={setFormData}
-              setError={setError}
-            />
+            <MyEditor value={formData.Description} setValue={setFormData} />
             {Error.Discription && (
               <p className="text-[12px] text-red-500">This field is required</p>
             )}

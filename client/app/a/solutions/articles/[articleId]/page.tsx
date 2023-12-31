@@ -5,7 +5,6 @@ import { Tooltip, TooltipProps, styled, tooltipClasses } from "@mui/material";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { CgShortcut } from "react-icons/cg";
-import Editor from "@/Components/Editor";
 import { BsEye, BsInfoCircle } from "react-icons/bs";
 import { BiDislike, BiLike } from "react-icons/bi";
 import {
@@ -70,10 +69,6 @@ const modules = {
 };
 
 const Article = () => {
-  const ReactQuill = useMemo(
-    () => dynamic(() => import("react-quill"), { ssr: false }),
-    []
-  );
   return (
     <div className="p-4 flex-1 flex flex-col gap-5">
       <div className="bg-white p-10  border-t-4 border-green-800 flex-1 flex flex-col gap-5">

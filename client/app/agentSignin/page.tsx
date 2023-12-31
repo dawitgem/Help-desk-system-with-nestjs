@@ -16,6 +16,8 @@ import {
 } from "../Redux/features/agentSlice";
 import { useRouter } from "next/navigation";
 import { CircularProgress } from "@mui/material";
+import { useMutation } from "@tanstack/react-query";
+import { agentSigninApi, getProfileApi } from "@/utils/QueryActions";
 
 const AgentLogin = () => {
   const dispatch = useDispatch();
@@ -25,6 +27,15 @@ const AgentLogin = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [Error, setError] = useState({ email: false, password: false });
   const [ErrorMessage, setErrorMessage] = useState({ email: "", password: "" });
+
+  const mutation = useMutation({
+    mutationKey: ["Signin Agent"],
+    mutationFn: ({ formData }: any) => agentSigninApi(formData),
+    onSuccess: async (data) => {
+      data = await getProfileApi();
+      console.log(data);
+    },
+  });
 
   const validateForm = () => {
     let valid = true;
@@ -80,19 +91,15 @@ const AgentLogin = () => {
   };
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (validateForm() && validateEmail())
-      dispatch(AgentsigninSucess(formData));
+    if (validateForm() && validateEmail()) mutation.mutate({ formData });
   };
   useEffect(() => {
-    const CheckUser = () => {
-      if (error) {
-        setShowError(true);
-      }
-      if (isAuth && agent) router.push("/a/dashboard/default");
-    };
-    CheckUser();
-  }, [agent, error]);
-  console.log(agent, error);
+    if (mutation.isSuccess && mutation.data)
+      router.push("/a/dashboard/default");
+    if (mutation.isError) {
+      setShowError(true);
+    }
+  }, [mutation.data, mutation.error]);
 
   return (
     <div className="flex flex-col gap-8 justify-center align-middle bg-slate-100 pt-8">
@@ -109,9 +116,11 @@ const AgentLogin = () => {
       <div className="self-center text-gray-700 font-bold text-xl">
         <h1 className="">Sign in </h1>
       </div>
-      {error && showError && (
+      {mutation.error && showError && (
         <div className="px-2 py-3 flex justify-between bg-red-100 border border-red-400 self-center rounded-md md:w-1/3">
-          <p className="text-red-600 text-sm font-medium">{error}</p>
+          <p className="text-red-600 text-sm font-medium">
+            {mutation.error?.message}
+          </p>
           <button onClick={() => setShowError(false)}>
             <FaTimes className="text-xl self-center text-gray-500" />
           </button>
@@ -119,7 +128,7 @@ const AgentLogin = () => {
       )}
       <div className="w-2/5 bg-white shadow-md p-10 self-center flex flex-col rounded-lg">
         <form action="" onSubmit={handleSubmit} className="self-center w-full">
-          {Loading && (
+          {mutation.isPending && (
             <CircularProgress
               size={20}
               color="secondary"
@@ -129,11 +138,11 @@ const AgentLogin = () => {
           <div className="flex flex-col gap-10">
             <button
               className={` w-full self-center bg-[#2260b7fa] p-3 px-5 flex gap-3 rounded-md ${
-                Loading
+                mutation.isPending
                   ? "opacity-50 cursor-not-allowed"
                   : "cursor-pointer opacity-100 "
               }`}
-              disabled={Loading}
+              disabled={mutation.isPending}
               type="button"
               onClick={() => {
                 console.log("come onman");
@@ -158,13 +167,13 @@ const AgentLogin = () => {
               </label>
               <input
                 type="text"
-                disabled={Loading}
+                disabled={mutation.isPending}
                 className={`p-3 text-gray-600 border w-full rounded-md ${
                   Error.email
                     ? "border-red-500 outline-none"
                     : "outline-blue-500 hover:border-black "
                 }  placeholder:text-sm  ${
-                  Loading
+                  mutation.isPending
                     ? "opacity-50 cursor-not-allowed"
                     : "cursor-pointer opacity-100 "
                 }`}
@@ -189,13 +198,13 @@ const AgentLogin = () => {
               </label>
               <input
                 type="password"
-                disabled={Loading}
+                disabled={mutation.isPending}
                 className={`p-3 text-gray-600 border w-full rounded-md ${
                   Error.password
                     ? "border-red-500 outline-none"
                     : "outline-gray-200 "
                 }  placeholder:text-sm   ${
-                  Loading
+                  mutation.isPending
                     ? "opacity-50 cursor-not-allowed"
                     : "cursor-pointer opacity-100 "
                 }`}
@@ -233,9 +242,9 @@ const AgentLogin = () => {
               </Link>
             </li>
             <button
-              disabled={Loading}
+              disabled={mutation.isPending}
               className={`bg-[#063750] text-white p-3 text-sm rounded-md ${
-                Loading
+                mutation.isPending
                   ? "opacity-50 cursor-not-allowed"
                   : "cursor-pointer opacity-100 "
               }`}

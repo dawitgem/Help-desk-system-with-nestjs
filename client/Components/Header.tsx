@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import { selectUser } from "@/app/Redux/features/userSlice";
 const Header = () => {
   const { user, isAuth, Loading } = useSelector(selectUser);
+  console.log(user);
 
   return (
     <>

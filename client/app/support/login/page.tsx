@@ -15,10 +15,19 @@ import {
 import { FaTimes } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { CircularProgress } from "@mui/material";
+import { useMutation } from "@tanstack/react-query";
+import { SigninApi, getProfileApi } from "@/utils/QueryActions";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
-  const { user, isAuth, error, Loading } = useSelector(selectUser);
+  const mutation = useMutation({
+    mutationKey: ["Signin user"],
+    mutationFn: ({ formData }: any) => SigninApi(formData),
+    onSuccess: async (data) => {
+      data = await getProfileApi();
+      console.log(data);
+    },
+  });
   const [showError, setShowError] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [Error, setError] = useState({ email: false, password: false });
@@ -77,26 +86,23 @@ const LoginPage = () => {
   };
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (validateForm() && validateEmail()) dispatch(signinStart(formData));
+    if (validateForm() && validateEmail()) mutation.mutate({ formData });
   };
   const router = useRouter();
   useEffect(() => {
-    const CheckUser = () => {
-      if (error) {
-        setShowError(true);
-      }
-      if (isAuth && user && user.Verified === false)
-        router.push("/verifyEmail");
-      if (isAuth && user && user?.Verified === true) router.push("/support");
-    };
-    CheckUser();
-  }, [user, error]);
-  console.log(user?.Verified);
+    if (mutation.isSuccess && mutation.data) router.push("/support");
+    if (mutation.isError) {
+      setShowError(true);
+    }
+  }, [mutation.data, mutation.error]);
+
   return (
     <div className="py-10  w-full border-t flex flex-col gap-3 justify-center align-middle  ">
-      {error && showError && (
+      {mutation.isError && showError && (
         <div className="px-2 py-3 flex justify-between bg-red-100 border border-red-400 self-center rounded-md md:w-1/3">
-          <p className="text-red-600 text-sm font-medium">{error}</p>
+          <p className="text-red-600 text-sm font-medium">
+            {mutation.error?.message}
+          </p>
           <button onClick={() => setShowError(false)}>
             <FaTimes className="text-xl self-center text-gray-500" />
           </button>
@@ -109,7 +115,7 @@ const LoginPage = () => {
               {" "}
               Log in to Kns support portal
             </h1>
-            {Loading && (
+            {mutation.isPending && (
               <CircularProgress size={20} thickness={4} color="secondary" />
             )}
           </div>
@@ -142,13 +148,13 @@ const LoginPage = () => {
             <input
               type="text"
               id="Email"
-              disabled={Loading}
+              disabled={mutation.isPending}
               className={`p-3 text-gray-600 border w-full rounded-md ${
                 Error.email
                   ? "border-red-500 outline-none"
                   : "outline-gray-200 "
               }  placeholder:text-sm   ${
-                Loading
+                mutation.isPending
                   ? "cursor-not-allowed opacity-50"
                   : "cursor-pointer opacity-100"
               }`}
@@ -181,13 +187,13 @@ const LoginPage = () => {
             <input
               type="password"
               id="signinPassword"
-              disabled={Loading}
+              disabled={mutation.isPending}
               className={`p-3 text-gray-600 border w-full rounded-md ${
                 Error.password
                   ? "border-red-500 outline-none"
                   : "outline-gray-200 "
               }  placeholder:text-sm     ${
-                Loading
+                mutation.isPending
                   ? "cursor-not-allowed opacity-50"
                   : "cursor-pointer opacity-100"
               }`}
@@ -209,11 +215,11 @@ const LoginPage = () => {
           </div>
           <button
             className={`bg-[#063750] text-white p-3 text-sm rounded-md ${
-              Loading
+              mutation.isPending
                 ? "cursor-not-allowed opacity-50"
                 : "cursor-pointer opacity-100"
             }`}
-            disabled={Loading}
+            disabled={mutation.isPending}
           >
             Log in
           </button>
@@ -223,7 +229,7 @@ const LoginPage = () => {
         </p>
         <button
           className={` w-[75%] self-center bg-[#2260b7fa] p-3 px-5 flex gap-3 rounded-md ${
-            Loading
+            mutation.isPending
               ? "cursor-not-allowed opacity-50"
               : "cursor-pointer opacity-100"
           }`}

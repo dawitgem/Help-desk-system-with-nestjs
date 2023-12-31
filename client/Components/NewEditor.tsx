@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { EditorPlugins, EditorToolBar, ImageUploadHandler } from "@/Inputs";
 import dotenv from "dotenv";
@@ -11,9 +11,11 @@ interface MyEditorProps {
 }
 
 export default function MyEditor({ value, setValue }: MyEditorProps) {
+  console.log(value);
+  const [initialValue, setIntialValue] = useState<string | undefined>(value);
   const handleChange = (content: any) => {
     console.log(content);
-    setValue((prevState: any) => ({ ...prevState, description: content }));
+    setValue((prevState: any) => ({ ...prevState, Description: content }));
   };
   return (
     <Editor
@@ -30,7 +32,8 @@ export default function MyEditor({ value, setValue }: MyEditorProps) {
         tinycomments_mode: "embedded",
         images_upload_handler: ImageUploadHandler,
       }}
-      initialValue={value}
+      initialValue={initialValue}
+      value={value}
       onChange={handleChange}
       onEditorChange={handleChange}
     />

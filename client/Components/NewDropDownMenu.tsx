@@ -17,7 +17,7 @@ const NewDropDownMenu = () => {
   const [openNewContact, setOpenNewContact] = useState(false);
   return (
     <>
-      <ul className="p-4 bg-white w-[180px] h-[150px] border border-gray-400 rounded-[5px] opacity-100 z-[40] shadow-md  absolute top-8 right-0">
+      <ul className="p-4 bg-white w-[180px] h-[150px] border border-gray-400 rounded-[5px] opacity-100 z-[60] shadow-md  absolute top-8 right-0">
         <li className="p-1 hover:bg-slate-100">
           <Link
             href={"/a/tickets/new"}

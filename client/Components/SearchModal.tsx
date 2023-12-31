@@ -14,7 +14,7 @@ export default function SearchModal() {
   const [SelectedSearchValue, setSelectedSearchValue] = useState("all");
 
   return (
-    <div className="w-[500px] max-h-[400px]  bg-slate-50  rounded-[5px] opacity-100 z-[40] shadow-md  absolute top-0 right-0 flex flex-col gap-2">
+    <div className="w-[500px] max-h-[400px]  bg-slate-50  rounded-[5px] opacity-100 z-[60] shadow-md  absolute top-0 right-0 flex flex-col gap-2">
       <form className="relative w-full h-10 bg-white ">
         <BsSearch className="absolute top-3 left-2 rounded-md" />
         <input

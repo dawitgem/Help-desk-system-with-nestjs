@@ -59,9 +59,7 @@ const ReplyBody = ({
     Emails.filter((email) => email.name === user?.Email)
   );
 
-  const [EditorValue, setEditorValue] = useState(
-    `<p>Hi ${contact?.UserName}, </br></p>`
-  );
+  const [EditorValue, setEditorValue] = useState("");
   console.log("testing infinity2");
   const handleOptionListChange = () => {
     console.log(ButtonOption);

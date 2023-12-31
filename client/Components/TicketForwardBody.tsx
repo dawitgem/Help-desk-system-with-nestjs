@@ -22,9 +22,7 @@ interface TicketForwardBodyProps {
 const TicketForwardBody = ({ setOpenForward }: TicketForwardBodyProps) => {
   const [sendEmail, setSendEmail] = useState([Emails[0]]);
   const [addToolBar, setAddToolBar] = useState(false);
-  const [value, setValue] = useState(
-    "<p>Hi ther mother fucker would u look this ticket</p>"
-  );
+  const [value, setValue] = useState("");
   return (
     <div className=" animate-reveal border-2  w-[500px] h-[calc(100vh-56px-56px-3px)] overflow-auto sticky top-[112px] flex-1 flex flex-col gap-3 px-3 ">
       <div className="md:justify-self-end self-end flex gap-1 p-2">

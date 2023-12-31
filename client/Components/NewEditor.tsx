@@ -13,7 +13,7 @@ interface MyEditorProps {
 export default function MyEditor({ value, setValue }: MyEditorProps) {
   const handleChange = (content: any) => {
     console.log(content);
-    setValue((prevState: any) => ({ ...prevState, description: content }));
+    setValue((prevState: any) => ({ ...prevState, Description: content }));
   };
   return (
     <Editor

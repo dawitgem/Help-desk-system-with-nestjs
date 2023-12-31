@@ -19,18 +19,16 @@ export default function MyEditor({ value, setValue }: MyEditorProps) {
     <Editor
       apiKey={process.env.NEXT_PUBLIC_EDITOR_API}
       init={{
-        plugins: EditorPlugins,
-        toolbar: EditorToolBar,
+        plugins:
+          "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount",
+        toolbar:
+          "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat",
+
         toolbar_location: "bottom",
         statusbar: false,
         menubar: false,
         tinycomments_mode: "embedded",
         images_upload_handler: ImageUploadHandler,
-
-        ai_request: (request: any, respondWith: any) =>
-          respondWith.string(() =>
-            Promise.reject("See docs to implement AI Assistant")
-          ),
       }}
       initialValue={value}
       onChange={handleChange}

@@ -182,7 +182,7 @@ export function MyCombobox() {
   );
 
   return (
-    <Combobox value={selectedPeople} onChange={setSelectedPeople} multiple>
+    <Combobox value={selectedPeople} onChange={setSelectedPeople}>
       {({ open }) => (
         <>
           <Combobox.Button

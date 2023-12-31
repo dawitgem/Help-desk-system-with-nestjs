@@ -73,6 +73,7 @@ const TicketContentBody = ({
   useEffect(() => {
     scrollToComponent();
   }, []);
+  console.log("testing infinity loop");
   return (
     <>
       <div className="flex flex-col flex-1 h-full   relative">

@@ -204,7 +204,9 @@ export function UserProfileModal({
             </div>
           )}
           <div className="flex flex-col gap-2">
-            {user && user.Verified && user.UserType !== "Customer" ? (
+            {user &&
+            user.Verified &&
+            (user.UserType === "Agent" || user.UserType === "Admin") ? (
               <>
                 <Link
                   href={"/a/dashboard/default"}

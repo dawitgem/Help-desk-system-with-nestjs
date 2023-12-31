@@ -62,6 +62,7 @@ const ReplyBody = ({
   const [EditorValue, setEditorValue] = useState(
     `<p>Hi ${contact?.UserName}, </br></p>`
   );
+  console.log("testing infinity2");
   const handleOptionListChange = () => {
     console.log(ButtonOption);
     if (ButtonOption.name === "Forward") setOpenForward(true);

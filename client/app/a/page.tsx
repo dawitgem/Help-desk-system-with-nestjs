@@ -27,8 +27,7 @@ const AgentPage = () => {
 
   useEffect(() => {
     if (!Loading && !error && user === null) router.push("/support/");
-    if (user && isAuth && user.UserType === "Customer")
-      router.push("/support/");
+    if (user && isAuth && user.UserType === "Customer") router.push("/support");
     if (
       user &&
       isAuth &&

@@ -22,6 +22,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ImapService } from './imap/imap.service';
 import { ImapModule } from './imap/imap.module';
 import { TicketService } from './ticket/ticket.service';
+import { SolutionsController } from './solutions/solutions.controller';
+import { SolutionsService } from './solutions/solutions.service';
+import { SolutionsModule } from './solutions/solutions.module';
 
 @Module({
   imports: [
@@ -40,8 +43,9 @@ import { TicketService } from './ticket/ticket.service';
       load: [() => require('./imap/email.config')],
     }),
     ImapModule,
+    SolutionsModule,
   ],
-  controllers: [AppController, UserController, AuthController],
+  controllers: [AppController, UserController, AuthController, SolutionsController],
   providers: [
     AppService,
     PrismaService,
@@ -54,6 +58,7 @@ import { TicketService } from './ticket/ticket.service';
     ConfigService,
     ImapService,
     TicketService,
+    SolutionsService,
   ],
 })
 export class AppModule implements NestModule {

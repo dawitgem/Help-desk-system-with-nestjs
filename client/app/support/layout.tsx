@@ -1,30 +1,20 @@
-"use client";
-import Footer from "@/Components/Footer";
-import Header from "@/Components/Header";
-import LinearDeterminate from "@/Components/LinerProgress";
-import { CircularProgress } from "@mui/material";
-import { Suspense, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { getProfileStart, selectUser } from "../Redux/features/userSlice";
+import type { Metadata } from "next";
+import Provider from "@/utils/Provider";
+import SupportProvider from "@/utils/SupportProvider";
+
+export const metadata: Metadata = {
+  title: "KNS Support Service",
+  description: "Reliable Support Service Software",
+};
+
 export default function SupportLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { user, isAuth, error, Loading } = useSelector(selectUser);
-  const dispatch = useDispatch();
-  useEffect(() => {
-    const getProfile = () => {
-      dispatch(getProfileStart());
-    };
-
-    getProfile();
-  }, []);
   return (
     <>
-      <Header />
-      {children}
-      <Footer />
+      <SupportProvider>{children}</SupportProvider>
     </>
   );
 }

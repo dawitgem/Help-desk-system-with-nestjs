@@ -64,10 +64,6 @@ const ArticlePage = () => {
 
 export default ArticlePage;
 
-const modules = {
-  toolbar: [],
-};
-
 const Article = () => {
   return (
     <div className="p-4 flex-1 flex flex-col gap-5">

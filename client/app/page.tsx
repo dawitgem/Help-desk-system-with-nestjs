@@ -8,35 +8,9 @@ import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { useDispatch } from "react-redux";
 import { getProfile } from "./Redux/features/userSlice";
+import { getProfileApi } from "@/utils/QueryActions";
 
-const getProfileApi = async () => {
-  try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/auth/profile`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
 
-        withCredentials: true,
-      }
-    );
-    return response.data;
-  } catch (e: any) {
-    console.log(e);
-    if (e.response.status === 401) {
-      try {
-        const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`
-        );
-        console.log(response);
-        return response.data;
-      } catch (e) {
-        return null;
-      }
-    }
-  }
-};
 
 const Page = () => {
   const {
@@ -45,11 +19,11 @@ const Page = () => {
     isLoading,
     isSuccess,
     isError,
-  } = useQuery({ queryKey: ["getUser"], queryFn: getProfileApi });
+  } = useQuery({ queryKey: ["getUser"], queryFn: ()=> {}});
   const router = useRouter();
   const dispatch = useDispatch();
 
-  console.log(user);
+  console.log("request from main");
   if (user && isSuccess) dispatch(getProfile(user));
   if (!user) router.push("/support");
   if (user && isSuccess)

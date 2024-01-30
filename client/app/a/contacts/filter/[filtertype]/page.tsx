@@ -3,8 +3,10 @@ import NavbarAgent from "@/Components/NavbarAgent";
 import React, { useMemo, useState } from "react";
 import Checkbox from "@mui/material/Checkbox";
 import { BsSearch, BsTrash } from "react-icons/bs";
-import { FormControlLabel } from "@mui/material";
+import { CircularProgress, FormControlLabel } from "@mui/material";
 import dynamic from "next/dynamic";
+import { getContacts } from "@/utils/QueryActions";
+import { useQuery } from "@tanstack/react-query";
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
@@ -17,10 +19,23 @@ const ContactsFilterPage = () => {
     () => dynamic(() => import("@/Components/FetchedContacts"), { ssr: false }),
     []
   );
+  const {data,isLoading,isError,isSuccess}=useQuery({
+    queryKey:["getcontacts"],queryFn:getContacts
+  })
+
   return (
     <div>
       <NavbarAgent currentPage="All contacts" />
-      <div className="sticky z-[1] top-14 p-4 h-14 bg-slate-50 border flex justify-between">
+      {isLoading &&  <div className="w-full flex flex-col justify-center">
+        < CircularProgress className="self-center" />
+      </div> 
+        }{isError &&  <div className="w-full flex flex-col justify-center">
+        < CircularProgress className="self-center" />
+      </div> 
+        }
+      {isSuccess&&data.length>0 &&
+      <>
+      <div className="sticky z-[1] top-14 p-4 h-14 bg-slate-50 border border-gray-300 flex justify-between">
         <div className="flex justify-between">
           <div className="flex gap-3 justify-center align-middle">
             <FormControlLabel
@@ -49,7 +64,7 @@ const ContactsFilterPage = () => {
                 <p className="self-center text-sm ">Delete</p>
               </button>
             ) : (
-              <form className="self-center flex border h-10 bg-white  gap-1 focus:outline-blue-500 rounded-md hover:border-gray-900 relative">
+              <form className="self-center flex border border-gray-300 h-10 bg-white  gap-1 focus:outline-blue-500 rounded-md hover:border-gray-900 relative">
                 <BsSearch className="text-[13px] absolute left-1 top-3 text-gray-500" />
                 <input
                   type="text"
@@ -64,8 +79,10 @@ const ContactsFilterPage = () => {
       <FetchedContacts
         setChecked={setChecked}
         checked={checked}
-        contacts={contacts}
-      />
+        contacts={data}
+        />
+        </>
+      }
     </div>
   );
 };

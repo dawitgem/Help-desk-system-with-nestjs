@@ -18,6 +18,9 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import { useQuery } from "@tanstack/react-query";
+import { getContacts } from "@/utils/QueryActions";
+import { user } from "@/app/Redux/features/userSlice";
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
 const BootstrapTooltip = styled(({ className, ...props }: TooltipProps) => (
@@ -44,18 +47,22 @@ const rows = [1, 2, 3, 4, 5, 6];
 interface FetchedContactsProps {
   setChecked: Dispatch<SetStateAction<boolean[]>>;
   checked: boolean[];
-  contacts: number[];
+  contacts: user[];
 }
 const FetchedContacts = ({
   setChecked,
   checked,
   contacts,
 }: FetchedContactsProps) => {
+  
+    
   return (
-    <TableContainer className="p-3 bg-slate-100">
+    <>
+    {contacts && contacts.length>0 &&
+      <TableContainer className="p-3 bg-slate-100 ">
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead className="p-10">
-          <TableRow className="bg-slate-50 pl-5 text-gray-800 ">
+          <TableRow className="bg-slate-100 border border-gray-300 pl-5 text-gray-800 ">
             <StyledTableCell className="pl-20">Contacts</StyledTableCell>
             <StyledTableCell align="left">Email address</StyledTableCell>
             <StyledTableCell align="left">Phone number</StyledTableCell>
@@ -63,8 +70,8 @@ const FetchedContacts = ({
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row, i) => (
-            <StyledTableRow key={i} className="bg-white hover:bg-slate-50 ">
+          {contacts.map((contact, i) => (
+            <StyledTableRow key={contact.Id} className="bg-white hover:bg-slate-50 ">
               <StyledTableCell component="th" scope="row">
                 <div className="flex gap-2 align-middle">
                   <FormControlLabel
@@ -95,20 +102,28 @@ const FetchedContacts = ({
                     alt="image"
                     className="w-[40px] h-[40px] bg-slate-400 rounded-md shadow-md"
                   >
-                    N
+                    {contact?.FullName?.slice(0, 1)}
                   </Avatar>
                   <Link
-                    href={"/a/contacts/123"}
+                    href={`/a/contacts/${contact.Id}`}
                     className="self-center text-gray-900 font-semibold text-sm hover:text-blue-700"
                   >
-                    contact name
+                   {contact.FullName}
                   </Link>
                 </div>
               </StyledTableCell>
               <StyledTableCell align="left">
-                Emaila;lskdfj;alskdjfla;skdfj
+               {contact?.Email}
               </StyledTableCell>
-              <StyledTableCell align="left">091317123019823</StyledTableCell>
+              
+              {!contact.MobilePhone ?
+              <StyledTableCell align="left" className="text-gray-600 font-bold">__</StyledTableCell>
+              :
+              <StyledTableCell align="left">{contact.MobilePhone}</StyledTableCell>
+              }
+
+
+              
 
               <StyledTableCell align="right">
                 <button>
@@ -120,6 +135,8 @@ const FetchedContacts = ({
         </TableBody>
       </Table>
     </TableContainer>
+  }
+  </>
   );
 };
 

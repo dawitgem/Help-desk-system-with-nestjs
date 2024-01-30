@@ -1,47 +1,41 @@
-import { getTickets } from "@/utils/QueryActions";
+import { countTickets, getTickets } from "@/utils/QueryActions";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import React from "react";
 
 const DashboardTicketReportCard = () => {
   const {
-    data: AgentTickets,
+    data,
     isError,
     isLoading: Loading,
     isSuccess,
     error,
-  } = useQuery({ queryKey: ["agentTickets"], queryFn: getTickets });
+  } = useQuery({ queryKey: ["count tickets"], queryFn: countTickets });
 
   const TicketStatus = [
     {
       status: "unresolved",
-      amount: AgentTickets?.reduce(
-        (count: any, current: any, i: number, array: any[]) => {
-          if ((current.Status = "unresolved")) count++;
-          return count;
-        },
-        [0]
-      ),
+      amount: data?.unresolved,
     },
     {
       status: "overDue",
-      amount: 1,
+      amount: data?.overdue,
     },
     {
       status: "Due today",
-      amount: 1,
+      amount: data?.duedate,
     },
     {
       status: "Open",
-      amount: 1,
+      amount: data?.open,
     },
     {
       status: "On hold",
-      amount: 1,
+      amount: data?.onhold,
     },
     {
       status: "Unassigned",
-      amount: 1,
+      amount: data?.unassigned,
     },
   ];
 
@@ -51,10 +45,10 @@ const DashboardTicketReportCard = () => {
         <Link
           key={i}
           href={"/a"}
-          className="p-4 bg-white  shadow-sm w-[195px] h-[110px] rounded-md flex flex-col gap-5 hover:text-blue-600 text-gray-800"
+          className="p-4 bg-white  shadow-md w-[195px] h-[110px] rounded-md flex flex-col gap-5 hover:text-blue-600 text-gray-800 border border-gray-300 "
         >
           <p className="text-sm">{ticket.status}</p>
-          <p className=" font-bold text-2xl">{ticket.amount}</p>
+          <p className={` font-bold text-2xl ${ticket.amount===0?"text-gray-400":""}`}>{ticket.amount}</p>
         </Link>
       ))}
     </div>

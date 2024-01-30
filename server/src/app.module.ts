@@ -25,6 +25,9 @@ import { TicketService } from './ticket/ticket.service';
 import { SolutionsController } from './solutions/solutions.controller';
 import { SolutionsService } from './solutions/solutions.service';
 import { SolutionsModule } from './solutions/solutions.module';
+import { ContactController } from './contact/contact.controller';
+import { ContactModule } from './contact/contact.module';
+import { ContactService } from './contact/contact.service';
 
 @Module({
   imports: [
@@ -44,8 +47,9 @@ import { SolutionsModule } from './solutions/solutions.module';
     }),
     ImapModule,
     SolutionsModule,
+    ContactModule,
   ],
-  controllers: [AppController, UserController, AuthController, SolutionsController],
+  controllers: [AppController, UserController, AuthController, SolutionsController, ContactController],
   providers: [
     AppService,
     PrismaService,
@@ -59,6 +63,7 @@ import { SolutionsModule } from './solutions/solutions.module';
     ImapService,
     TicketService,
     SolutionsService,
+    ContactService
   ],
 })
 export class AppModule implements NestModule {

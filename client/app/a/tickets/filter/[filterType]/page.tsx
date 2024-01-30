@@ -22,8 +22,9 @@ const FilterTicketPage = ({ params }: { params: { filterType: string } }) => {
     isLoading: Loading,
     isSuccess,
     error,
-  } = useQuery({ queryKey: ["agentTickets"], queryFn: getTickets });
+  } = useQuery({ queryKey: ["agentTickets"], queryFn: ()=>getTickets() });
   const [checked, setChecked] = useState<any[]>([]);
+  console.log(AgentTickets)
   useEffect(() => {
     if (AgentTickets && isSuccess)
       dispatch(AgentfetchTicketSuccess(AgentTickets));
@@ -44,7 +45,7 @@ const FilterTicketPage = ({ params }: { params: { filterType: string } }) => {
       )}
 
       {Loading && <CircularProgress className="self-center" />}
-      {AgentTickets.length > 0 && <TicketCheckBoxOptions />}
+      {AgentTickets&&AgentTickets.length > 0 && <TicketCheckBoxOptions />}
     </div>
   );
 };

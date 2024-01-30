@@ -19,6 +19,7 @@ export function MyListbox({
   value,
   handleChange,
 }: MyListboxProps) {
+    console.log(value)
   return (
     <Listbox
       value={value}

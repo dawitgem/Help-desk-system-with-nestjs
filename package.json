@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "redis": "^4.6.12",
-    "tinymce": "^6.8.0"
-  }
-}

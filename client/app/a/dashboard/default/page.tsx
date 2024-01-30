@@ -48,7 +48,7 @@ const DefaultDashboardPage = () => {
   return (
     <div className="relative">
       <NavbarAgent currentPage="My dashboard" />
-      <div className="sticky z-[1] top-14 p-4 h-14 bg-slate-50 border flex justify-between">
+      <div className="sticky z-[1] top-14 p-4 h-14 bg-slate-50 border  border-gray-300 flex justify-between">
         <div className="flex gap-3">
           <IoCube className="self-center text-gray-500" />
           <div className="h-full relative" ref={SelectDeptRef}>
@@ -86,11 +86,11 @@ const DefaultDashboardPage = () => {
           <BsChevronRight className="self-center text-[10px] text-black" />
         </button>
       </div>
-      <div className="p-4 flex flex-col gap-4">
+      <div className="p-4 flex flex-col gap-4 bg-slate-100">
         <DashboardTicketReportCard />
         <DashboardChartReport />
         <div className="text-sm grid grid-cols-3 gap-4">
-          <div className="bg-white p-3 flex flex-col gap-10">
+          <div className="bg-white p-3 flex flex-col gap-10  border shadow-md rounded-md">
             <div className=" flex justify-between">
               <div>
                 <p className="text-xm text-gray-700 font-medium">
@@ -126,10 +126,10 @@ const DefaultDashboardPage = () => {
               </div>
             </div>
           </div>
-          <div className="bg-white p-2"></div>
-          <div className="bg-white"></div>
-          <div className="bg-white"></div>
-          <div className="bg-white"></div>
+          <div className="bg-white p-2 border shadow-md rounded-md"></div>
+          <div className="bg-white p-2 border shadow-md rounded-md"></div>
+          <div className="bg-white p-2 border shadow-md rounded-md"></div>
+          <div className="bg-white p-2 border shadow-md rounded-md"></div>
         </div>
       </div>
       {openRecent && (

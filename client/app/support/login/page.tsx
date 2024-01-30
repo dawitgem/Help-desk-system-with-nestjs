@@ -6,6 +6,7 @@ import google from "@/public/asset/google.svg";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  getProfile,
   selectUser,
   signInWithGoogleSucess,
   signinStart,
@@ -16,7 +17,8 @@ import { FaTimes } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { CircularProgress } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
-import { SigninApi, getProfileApi } from "@/utils/QueryActions";
+import { SigninApi, SigninWithGoogleApi, getProfileApi } from "@/utils/QueryActions";
+import { GoogleAuthWithFirebase } from "@/utils/Helperfunctions";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
@@ -28,6 +30,22 @@ const LoginPage = () => {
       console.log(data);
     },
   });
+  const googleMutation = useMutation({
+    mutationKey: ["google signin "],
+    mutationFn: ( data:any ) => 
+    
+       SigninWithGoogleApi(data),
+    onSuccess: async (data) => {  
+      const {User}=data    
+      if (!User) {
+        console.log(User);
+        const user =  await getProfileApi();
+         dispatch(getProfile(user));
+      } else {
+        console.log(User);
+         dispatch(signInWithGoogleSucess(User));
+    }
+  }});
   const [showError, setShowError] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [Error, setError] = useState({ email: false, password: false });
@@ -90,11 +108,22 @@ const LoginPage = () => {
   };
   const router = useRouter();
   useEffect(() => {
-    if (mutation.isSuccess && mutation.data) router.push("/support");
+    if (mutation.isSuccess && mutation.data) {
+      console.log(mutation.data)
+      router.push("/support")};
     if (mutation.isError) {
       setShowError(true);
     }
   }, [mutation.data, mutation.error]);
+
+  useEffect(() => {
+    if (googleMutation.isSuccess && googleMutation.data){ 
+       
+      router.push("/support")};
+    if (googleMutation.isError) {
+      setShowError(true);
+    }
+  }, [googleMutation.data, googleMutation.error]);
 
   return (
     <div className="py-10  w-full border-t flex flex-col gap-3 justify-center align-middle  ">
@@ -234,8 +263,14 @@ const LoginPage = () => {
               : "cursor-pointer opacity-100"
           }`}
           type="button"
-          onClick={() => {
-            dispatch(signinWithGoogleStart());
+          onClick={async() => {
+            const {
+              displayName: FullName,
+              phoneNumber: MobilePhone,
+              photoURL: Image,
+              email: Email,
+            } = await GoogleAuthWithFirebase()
+            googleMutation.mutate({FullName,MobilePhone,Image,Email})
           }}
         >
           <Image src={google} alt="google logo" className="w-[20px] h-[20px]" />

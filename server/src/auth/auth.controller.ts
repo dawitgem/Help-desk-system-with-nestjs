@@ -271,6 +271,7 @@ export class AuthController {
         throw new PasswordUpdateException(e.message);
       }
     } else {
+      console.log(AccessToken,RefreshToken)
       this.setAccessTokenCookie(res, AccessToken, RefreshToken);
       res.send({ status: 'ok' });
     }
@@ -344,8 +345,10 @@ export class AuthController {
     @Req() req: request,
     @Res({ passthrough: true }) res: Response,
   ) {
+    
     if (!req.cookies['refresh_token'])
-      throw new UnauthorizedException('User not authorized...');
+     {console.log("not valid refresh token")
+      throw new UnauthorizedException('User not authorized...')}
     try {
       const decodedToken = this.authService.validateToken(
         req.cookies['refresh_token'],

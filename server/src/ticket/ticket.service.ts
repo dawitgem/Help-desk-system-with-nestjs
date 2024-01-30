@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Attachement, Prisma, Tickets } from '@prisma/client';
+import { FormatDateOptions, format } from 'date-fns';
 import { off } from 'process';
 import { promises } from 'readline';
+import { start } from 'repl';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -104,4 +106,97 @@ export class TicketService {
     });
     return attachement;
   }
+  async countTicket():Promise<any>{
+    try {
+      const unresolvedtickets=await this.prisma.tickets.count({
+        where:{
+          Type:{not:"resolved"}
+      }})
+      const dueDatetickets=await this.prisma.tickets.count({
+        where:{
+          ResolutionDue:{
+            lt:new Date()
+          }
+        }
+      }) 
+      const overDuetickets=await this.prisma.tickets.count({
+        where:{
+          ResolutionDue:{
+            lt:new Date()
+          }
+        }
+      })
+      const opentickets=await this.prisma.tickets.count({
+        where:{
+          Status:"Open"
+        }
+      })
+      const onHoldtickets=await this.prisma.tickets.count({
+        where:{
+          Status:"on Hold"
+        }
+      })
+      const unAssignedtickets=await this.prisma.tickets.count()-await this.prisma.ticketAgent.count()
+      console.log(unAssignedtickets)
+      return {unresolved:unresolvedtickets,open:opentickets,onhold:onHoldtickets,overdue:overDuetickets,duedate:dueDatetickets,unassigned:unAssignedtickets}
+      
+    } catch (error) {
+      
+    }finally{
+      this.prisma.$disconnect()
+    }
+    
+  }
+  
+async countTicketbyday():Promise<any> {
+  try {
+    const currentDate = new Date();
+    const previousDate = new Date(currentDate);
+    previousDate.setDate(previousDate.getDate() - 1); 
+
+
+    const currentDayCounts = await this.countTicketsForDay(currentDate);
+      const previousDayCounts = await this.countTicketsForDay(previousDate);
+      console.log(currentDayCounts)
+
+      return { previousDay: previousDayCounts, currentDay: currentDayCounts };
+    }
+    catch (error) {
+      console.error('Error:', error);
+      return { previousDay: [], currentDay: [] };
+    }
+  }
+
+  private async countTicketsForDay(date: Date): Promise<number[]> {
+    console.log(date)
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const counts = [];
+
+    for (let hour = 0; hour < 24; hour++) {
+      const startHour = new Date(startOfDay);
+      startHour.setHours(hour);
+
+      const endHour = new Date(startOfDay);
+      endHour.setHours(hour + 1);
+
+      const count = await this.prisma.tickets.count({
+        where: {
+          CreatedAt: {
+            gte: startHour,
+            lt: endHour,
+          },
+        },
+      });
+
+      counts.push(count);
+    }
+
+    return counts;
+  }
+
 }

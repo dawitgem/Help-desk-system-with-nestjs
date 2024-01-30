@@ -38,6 +38,7 @@ const TicketDetailInfo = ({ ticket }: TicketDetailInfo) => {
   const [selectedStatus, setSelectedStatus] = useState<any>(
     Status.filter((status) => ticket?.Status.includes(status.name))
   );
+
   const PropertyRef = useRef<HTMLParagraphElement>(null);
   const divRef = useRef<HTMLDivElement>(null);
   const handleChange = () => {
@@ -52,6 +53,7 @@ const TicketDetailInfo = ({ ticket }: TicketDetailInfo) => {
     if (isAfter(date, Date.now())) return "green";
     if (isEqual(date, Date.now())) return "red";
   };
+  console.log(selectedStatus)
   return (
     <div
       className="px-2 border-2 shadow-inner w-[300px] h-[calc(100vh-56px-56px-5px)] overflow-auto sticky top-[112px] flex flex-col gap-4 "
@@ -128,14 +130,14 @@ const TicketDetailInfo = ({ ticket }: TicketDetailInfo) => {
           <label className="text-gray-700 text-sm "> Type</label>
 
           <div className="relative">
-            {selectedType && (
+            {/* {selectedType && (
               <MyListbox
                 Lists={Type}
                 value={selectedType[0]}
                 setValue={setSelectedType}
                 handleChange={handleChange}
               />
-            )}
+            )} */}
           </div>
         </div>
         <div className="px-5 flex flex-col gap-1">

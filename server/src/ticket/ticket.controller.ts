@@ -29,6 +29,13 @@ export class TicketController {
     });
     return await Promise.all(Ticket);
   }
+  @Get("/count")
+  async countTicketBystatus(){
+    const Tickets=await this.TicketService.countTicket()
+    console.log(Tickets);
+    return Tickets
+
+  }
   @Get('agent/:Id')
   async getTicket(@Param('Id') TicketId: string) {
     const Ticket = await this.TicketService.getTicket(TicketId);
@@ -263,6 +270,8 @@ export class TicketController {
       UpdatedAt,
     };
   }
+
+
   @Delete(':Id')
   async DeleteTicket(@Param('Id') TicketId: string) {
     const Ticket = await this.TicketService.deleteTicket(TicketId);

@@ -1,129 +1,75 @@
 "use client";
 import Image from "next/image";
 import React, { FormEvent, useEffect, useState } from "react";
-import FcGoogle from "react-icons/fc";
 import google from "@/public/asset/google.svg";
 import Link from "next/link";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  getProfile,
-  selectUser,
-  signInWithGoogleSucess,
-  signinStart,
-  signinSucess,
-  signinWithGoogleStart,
-} from "@/app/Redux/features/userSlice";
 import { FaTimes } from "react-icons/fa";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { CircularProgress } from "@mui/material";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { SigninApi, SigninWithGoogleApi, getProfileApi } from "@/utils/QueryActions";
 import { GoogleAuthWithFirebase } from "@/utils/Helperfunctions";
+import {z} from 'zod'
+import { FieldError, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { queryclient } from "@/utils/Provider";
+
+const LoginSchema=z.object({
+  email: z
+  .string()
+  .email('Invalid email format').min(1,"Email required"),
+password: z
+  .string().min(1,"Password required")
+})
+
+
 
 const LoginPage = () => {
-  const dispatch = useDispatch();
-  const mutation = useMutation({
+  const {data:user,isError}=useQuery({queryKey:["getUser"],queryFn:getProfileApi})
+  const { register, handleSubmit , formState: { errors } } = useForm({
+    resolver: zodResolver(LoginSchema),
+    mode:"onBlur"
+  });
+  const mutation  = useMutation({
     mutationKey: ["Signin user"],
-    mutationFn: ({ formData }: any) => SigninApi(formData),
+    mutationFn: async ({ data }: any) => await SigninApi(data),     
     onSuccess: async (data) => {
-      data = await getProfileApi();
-      console.log(data);
+        await queryclient.refetchQueries({
+          queryKey:["getUser"]
+        })
     },
   });
   const googleMutation = useMutation({
     mutationKey: ["google signin "],
-    mutationFn: ( data:any ) => 
-    
-       SigninWithGoogleApi(data),
-    onSuccess: async (data) => {  
-      const {User}=data    
-      if (!User) {
-        console.log(User);
-        const user =  await getProfileApi();
-         dispatch(getProfile(user));
-      } else {
-        console.log(User);
-         dispatch(signInWithGoogleSucess(User));
-    }
-  }});
+    mutationFn: async ( data:any ) =>await SigninWithGoogleApi(data),   
+      onSuccess: async () => {
+        await queryclient.refetchQueries({
+          queryKey:["getUser"]
+        })
+    },});
   const [showError, setShowError] = useState(false);
-  const [formData, setFormData] = useState({ email: "", password: "" });
-  const [Error, setError] = useState({ email: false, password: false });
-  const [ErrorMessage, setErrorMessage] = useState({ email: "", password: "" });
 
-  const validateForm = () => {
-    let valid = true;
-    if (!formData.email && !formData.password) {
-      setError((prevState) => ({ ...prevState, ["email"]: false }));
-      setErrorMessage({
-        email: "This field is required",
-        password: "This field is required",
-      });
-      valid = false;
-    }
-    if (!formData.email && formData.password) {
-      setError((prevState) => ({ ...prevState, ["email"]: false }));
-      setErrorMessage({
-        email: "This field is required",
-        password: "This field is required",
-      });
-      valid = false;
-    }
-    if (!formData.password) {
-      setError((prevState) => ({ ...prevState, ["password"]: true }));
-      setErrorMessage({
-        email: "This field is required",
-        password: "This field is required",
-      });
-      valid = false;
-    } else {
-      setError({ email: false, password: false });
-      setErrorMessage({
-        email: " ",
-        password: " ",
-      });
-    }
-    return valid;
+  
+  const onSubmit = (data:any) => {
+    mutation.mutate({data})
   };
-  const validateEmail = () => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email) && !formData.password) {
-      setError({ email: true, password: true });
-      setErrorMessage((prevState) => {
-        return { ...prevState, ["email"]: "Please enter valid email address" };
-      });
-      return false;
-    }
-    if (!emailRegex.test(formData.email) && formData.password) {
-      setError({ email: true, password: false });
-      setErrorMessage((prevState) => {
-        return { ...prevState, ["email"]: "Please enter valid email address" };
-      });
-      return false;
-    } else return true;
-  };
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (validateForm() && validateEmail()) mutation.mutate({ formData });
-  };
-  const router = useRouter();
+  if(user)
+     redirect("/support")
   useEffect(() => {
     if (mutation.isSuccess && mutation.data) {
-      console.log(mutation.data)
-      router.push("/support")};
+      redirect("/support")};
     if (mutation.isError) {
       setShowError(true);
     }
-  }, [mutation.data, mutation.error]);
+  }, [mutation]);
 
   useEffect(() => {
-    if (googleMutation.isSuccess && googleMutation.data){ 
-       
-      router.push("/support")};
+    if (googleMutation.isSuccess && googleMutation.data){        
+      redirect("/support")};
     if (googleMutation.isError) {
       setShowError(true);
     }
-  }, [googleMutation.data, googleMutation.error]);
+  }, [googleMutation, googleMutation]);
 
   return (
     <div className="py-10  w-full border-t flex flex-col gap-3 justify-center align-middle  ">
@@ -160,8 +106,9 @@ const LoginPage = () => {
         </div>
         <form
           action=""
+          method="POST"
           className="flex flex-col gap-3"
-          onSubmit={handleSubmit}
+          onSubmit={ handleSubmit(onSubmit)}
           id="loginForm"
         >
           <div className="flex flex-col gap-2">
@@ -177,9 +124,10 @@ const LoginPage = () => {
             <input
               type="text"
               id="Email"
+              {...register("email")}
               disabled={mutation.isPending}
               className={`p-3 text-gray-600 border w-full rounded-md ${
-                Error.email
+                errors.email
                   ? "border-red-500 outline-none"
                   : "outline-gray-200 "
               }  placeholder:text-sm   ${
@@ -188,20 +136,10 @@ const LoginPage = () => {
                   : "cursor-pointer opacity-100"
               }`}
               placeholder="Your Email Address"
-              onChange={(e) => {
-                setFormData((prevState) => {
-                  return { ...prevState, ["email"]: e.target.value };
-                });
-              }}
-              onFocus={() => {
-                if (!formData.password && Error.email)
-                  setError({ email: false, password: true });
-                else setError({ ...Error, email: false });
-              }}
             />
-            {Error.email && (
-              <p className="text-red-600 text-[12px]">{ErrorMessage.email}</p>
-            )}
+            {errors.email  && (
+  <p className="text-red-600 text-[12px]">{errors.email.message as string}</p>
+)}
           </div>
           <div className="flex flex-col gap-2">
             <label
@@ -216,38 +154,25 @@ const LoginPage = () => {
             <input
               type="password"
               id="signinPassword"
+              {...register("password")}
               disabled={mutation.isPending}
               className={`p-3 text-gray-600 border w-full rounded-md ${
-                Error.password
+                errors.password
                   ? "border-red-500 outline-none"
                   : "outline-gray-200 "
-              }  placeholder:text-sm     ${
-                mutation.isPending
-                  ? "cursor-not-allowed opacity-50"
-                  : "cursor-pointer opacity-100"
-              }`}
-              placeholder="password"
-              onChange={(e: any) => {
-                setFormData((prevState) => {
-                  return { ...prevState, ["password"]: e.target.value };
-                });
-              }}
-              onFocus={() => {
-                if (!formData.email && Error.password)
-                  setError({ email: true, password: false });
-                else setError({ ...Error, password: false });
-              }}
+              }  placeholder:text-sm  disabled:cursor-not-allowed opacity-50"
+                  
+              `}
+              placeholder="password"              
             />
-            {Error.password && (
+            {errors.password && (
               <p className="text-red-600 text-[12px]">This field is required</p>
             )}
           </div>
           <button
-            className={`bg-[#063750] text-white p-3 text-sm rounded-md ${
-              mutation.isPending
-                ? "cursor-not-allowed opacity-50"
-                : "cursor-pointer opacity-100"
-            }`}
+            className={`bg-[#063750] text-white p-3 text-sm rounded-md 
+                 disabled:cursor-not-allowed opacity-50"
+            `}
             disabled={mutation.isPending}
           >
             Log in
@@ -257,11 +182,9 @@ const LoginPage = () => {
           ... or login with
         </p>
         <button
-          className={` w-[75%] self-center bg-[#2260b7fa] p-3 px-5 flex gap-3 rounded-md ${
-            mutation.isPending
-              ? "cursor-not-allowed opacity-50"
-              : "cursor-pointer opacity-100"
-          }`}
+          className={` w-[75%] self-center bg-[#2260b7fa] p-3 px-5 flex gap-3 rounded-md 
+              disabled:cursor-not-allowed opacity-50"
+          `}
           type="button"
           onClick={async() => {
             const {

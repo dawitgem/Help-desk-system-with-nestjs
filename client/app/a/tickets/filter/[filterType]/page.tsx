@@ -15,7 +15,6 @@ import { getTickets } from "@/utils/QueryActions";
 import { MdBusAlert } from "react-icons/md";
 
 const FilterTicketPage = ({ params }: { params: { filterType: string } }) => {
-  const dispatch = useDispatch();
   const {
     data: AgentTickets,
     isError,
@@ -23,12 +22,6 @@ const FilterTicketPage = ({ params }: { params: { filterType: string } }) => {
     isSuccess,
     error,
   } = useQuery({ queryKey: ["agentTickets"], queryFn: ()=>getTickets() });
-  const [checked, setChecked] = useState<any[]>([]);
-  console.log(AgentTickets)
-  useEffect(() => {
-    if (AgentTickets && isSuccess)
-      dispatch(AgentfetchTicketSuccess(AgentTickets));
-  }, [AgentTickets, isSuccess]);
 
   return (
     <div className="flex flex-col ">

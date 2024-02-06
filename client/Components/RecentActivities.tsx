@@ -13,11 +13,12 @@ const RecentActivities = ({ open, setOpen }: RecentActivitiesProps) => {
     <div>
       <Backdrop
         sx={{
-          zIndex: (theme) => theme.zIndex.drawer + 1,
+          zIndex: (theme) => theme.zIndex.drawer + 10,
           width: "100%",
           height: "100vh",
           alignItems: "flex-end",
           justifyContent: "flex-end",
+          
         }}
         open={open}
       >

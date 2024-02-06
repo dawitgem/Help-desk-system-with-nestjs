@@ -140,6 +140,10 @@ export class AuthController {
     const { user, AccessToken, RefreshToken } = await this.authService.SignIn(
       req.body,
     );
+    if(!user ){
+    this.setAccessTokenCookie(res, AccessToken, RefreshToken);
+      res.status(200).send('successfully loggedin');
+    }
     if (user) {
       const EmailToken = await this.authService.generateEmailToken({
         sub: user.Id,
@@ -171,11 +175,8 @@ export class AuthController {
         };
         return { User, AccessToken, RefreshToken };
       } catch (e) {
-        throw new PasswordUpdateException(e.message);
+        throw new PasswordUpdateException("internal error");
       }
-    } else {
-      this.setAccessTokenCookie(res, AccessToken, RefreshToken);
-      res.send('successfully loggedin');
     }
   }
   @Post('agent/signin')
@@ -183,7 +184,6 @@ export class AuthController {
     @Req() req: request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    console.log(req.body);
     this.removeAccessToken(res);
     const { AccessToken, RefreshToken } = await this.authService.agentSignin(
       req.body,
@@ -271,7 +271,6 @@ export class AuthController {
         throw new PasswordUpdateException(e.message);
       }
     } else {
-      console.log(AccessToken,RefreshToken)
       this.setAccessTokenCookie(res, AccessToken, RefreshToken);
       res.send({ status: 'ok' });
     }
@@ -286,7 +285,7 @@ export class AuthController {
     const { AccessToken, RefreshToken } =
       await this.authService.signInWithGoogleAgent(req.body);
     this.setAccessTokenCookie(res, AccessToken, RefreshToken);
-    res.send({ status: 'ok' });
+    res.status(200).send("user logged in successfully");
   }
 
   @Get('signout')
@@ -294,8 +293,26 @@ export class AuthController {
     @Req() req: request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    this.removeAccessToken(res);
-    res.send('user logged out');
+    try {
+      res.clearCookie('access_token', {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        expires: new Date(0),
+        path: '/',
+      });
+      res.clearCookie('refresh_token',  {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        expires: new Date(0),
+        path: '/',
+      });
+      
+    } catch (error) {
+      console.log("error come on man")
+      
+    }
   }
 
   @UseGuards(JWTGuard)
@@ -330,26 +347,21 @@ export class AuthController {
     const now = Date.now() / 1000;
     return now >= expirationTimestamp;
   }
-  @Post('setCookie')
+  @Get('setCookie')
   async setCookie(
     @Req() req: request,
     @Res({ passthrough: true }) res: Response,
   ) {
     const { AccessToken, RefreshToken } = req.body;
-    console.log(req.body);
     this.setAccessTokenCookie(res, AccessToken, RefreshToken);
     res.status(200).send('email confirmed');
   }
-  @Post('refresh')
+  @Get('refresh')
   async refreshAccessToken(
-    @Req() req: request,
+    @Req() req,
     @Res({ passthrough: true }) res: Response,
   ) {
-    
-    if (!req.cookies['refresh_token'])
-     {console.log("not valid refresh token")
-      throw new UnauthorizedException('User not authorized...')}
-    try {
+          try {
       const decodedToken = this.authService.validateToken(
         req.cookies['refresh_token'],
       );
@@ -392,5 +404,10 @@ export class AuthController {
     } catch (e) {
       throw new UnauthorizedException('User is not authorized .....');
     }
+  }
+  @Get("resetpassword")
+  async resetPassword(){
+    
+  
   }
 }

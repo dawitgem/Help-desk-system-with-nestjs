@@ -17,10 +17,9 @@ export const getProfileApi = async () => {
     );
     return response.data;
   } catch (e: any) {
-    console.log(e);
     if (e.response.status === 401) {
       try {
-        const response = await axios.post(
+        const response = await axios.get(
           `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`,
           {
             headers: {
@@ -30,10 +29,9 @@ export const getProfileApi = async () => {
             withCredentials: true,
           }
         );
-        console.log(response);
         return response.data;
-      } catch (e) {
-        return null;
+      } catch (e:any) {
+        throw new Error(e.response.data.message)
       }
     }
   }
@@ -44,7 +42,6 @@ export const SigninApi = async (credentials: {
   password: string;
 }) => {
   try {
-    console.log(credentials)
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
       {
@@ -59,12 +56,63 @@ export const SigninApi = async (credentials: {
         withCredentials: true,
       }
     );
-    return response.data;
+     return response
   } catch (e: any) {
     throw new Error(`something went wrong!!! ${e.response.data.message}`);
   }
 };
 
+export const SignUpApi = async (credentials: {
+  fullname:string
+  email: string;
+  password: string;
+  image:string,
+  MobilePhone:string
+}) => {
+  try {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/signup`,
+      { Id: Nanoid(),
+        FullName: credentials.fullname,
+        Password: credentials.password,
+        UserName: credentials.fullname,
+        Email: credentials.email,
+        Image: credentials.image,
+        About: null,
+        UserType: "Customer",
+        WorkingPhone: null,
+        MobilePhone: credentials.MobilePhone,
+        CreatedDate: new Date(),
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (e: any) {
+    return new Error(`something went wrong!!! ${e.response.data.message}`);
+  }
+};
+export const signout =async()=>{
+  try {
+    const response=await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/signout`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      withCredentials: true,
+    }
+  );
+  return response.data;
+} catch (e: any) {
+  return new Error(`something went wrong!!! ${e.response.data.message}`);
+}
+
+}
 export const agentSigninApi = async (credentials: {
   email: string;
   password: string;
@@ -84,10 +132,9 @@ export const agentSigninApi = async (credentials: {
         withCredentials: true,
       }
     );
-    console.log(response);
     return response.data;
   } catch (e: any) {
-    throw new Error(`something went wrong!!! ${e.response.data.message}`);
+    return new Error(`something went wrong!!! ${e.response.data.message}`);
   }
 };
 
@@ -95,6 +142,16 @@ export const getTickets = async () => {
   try {
     const response = await axios.get(
       `${process.env.NEXT_PUBLIC_API_URL}/ticket`
+    );
+    return response.data;
+  } catch (e: any) {
+    throw new Error(`something went wrong!!! ${e.response.data.message}`);
+  }
+};
+export const getAgentTickets = async (userId:string,filtertype:string,offset:number) => {
+  try {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/ticket?userId=${userId}=filter=${filtertype}&offset=${offset}`
     );
     return response.data;
   } catch (e: any) {
@@ -109,7 +166,6 @@ export const SigninWithGoogleApi = async (User: {
   MobilePhone: string;
 }) => {
   try {
-    console.log(process.env.NEXT_PUBLIC_API_URL)
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/auth/googleAuth`,
       {
@@ -133,11 +189,9 @@ export const SigninWithGoogleApi = async (User: {
         withCredentials: true,
       }
     );
-    console.log(response)
     return response.data;
     
   } catch (e:any) {
-    console.log(e)
     throw new Error(`something went wrong!!! ${e.response.data.message}`);
     
   }
@@ -146,7 +200,6 @@ export const SigninWithGoogleApi = async (User: {
 
 export const countTickets=async()=>{
    try {
-    console.log(process.env.NEXT_PUBLIC_API_URL)
     const response = await axios.get(
       `${process.env.NEXT_PUBLIC_API_URL}/ticket/count`,
             {
@@ -157,7 +210,6 @@ export const countTickets=async()=>{
         withCredentials: true,
       }
     );
-    console.log(response)
     return response.data;
     
    } catch (error) {

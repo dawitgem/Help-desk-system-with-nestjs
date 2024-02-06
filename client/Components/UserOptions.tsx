@@ -1,17 +1,20 @@
 "use client";
 import { selectUser } from "@/app/Redux/features/userSlice";
 import { AppDispatch } from "@/app/Redux/store";
+import { getProfileApi } from "@/utils/QueryActions";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import React from "react";
 import { BsQuestionCircle } from "react-icons/bs";
 import { FaTicketAlt } from "react-icons/fa";
 import { HiOutlineLightBulb } from "react-icons/hi";
 import { MdPersonOutline } from "react-icons/md";
-import { useSelector, useDispatch } from "react-redux";
 
 const UserOptions = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const { user, isAuth, error } = useSelector(selectUser);
+  const {data:user,isError,isSuccess}=useQuery({
+    queryKey:["getUser"],
+    queryFn:getProfileApi
+  })
   return (
     <div className="md:px-[50px] px-4 md:mt-[-20px] mt-5 md:flex md:flex-row flex flex-col  align-middle justify-center gap-10 ">
       <Link
@@ -53,7 +56,7 @@ const UserOptions = () => {
           </p>
         </div>
       </Link>
-      {user && user?.Verified === true && isAuth && (
+      {user && user?.Verified === true &&  (
         <Link
           href="/support/tickets"
           className="md:w-[300px] w-[95%] p-5 bg-white rounded-md border md:flex gap-2 justify-center shadow-lg "

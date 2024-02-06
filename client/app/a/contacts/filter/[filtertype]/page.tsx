@@ -1,12 +1,13 @@
 "use client";
 import NavbarAgent from "@/Components/NavbarAgent";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Checkbox from "@mui/material/Checkbox";
 import { BsSearch, BsTrash } from "react-icons/bs";
 import { CircularProgress, FormControlLabel } from "@mui/material";
 import dynamic from "next/dynamic";
 import { getContacts } from "@/utils/QueryActions";
 import { useQuery } from "@tanstack/react-query";
+import { error } from "console";
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
@@ -19,10 +20,14 @@ const ContactsFilterPage = () => {
     () => dynamic(() => import("@/Components/FetchedContacts"), { ssr: false }),
     []
   );
-  const {data,isLoading,isError,isSuccess}=useQuery({
+  const {data,isLoading,isError,isSuccess,error}=useQuery({
     queryKey:["getcontacts"],queryFn:getContacts
   })
+useEffect(()=>{
+  if(data && isSuccess && data.length>0)
+   setChecked((prevState)=>data.map((check:any,i:number)=>prevState[i]))
 
+},[data])
   return (
     <div>
       <NavbarAgent currentPage="All contacts" />
@@ -30,7 +35,7 @@ const ContactsFilterPage = () => {
         < CircularProgress className="self-center" />
       </div> 
         }{isError &&  <div className="w-full flex flex-col justify-center">
-        < CircularProgress className="self-center" />
+        < div className="self-center text-red-500 p-2 bg-red-300 border border-red-500" >{error.message}</div>
       </div> 
         }
       {isSuccess&&data.length>0 &&

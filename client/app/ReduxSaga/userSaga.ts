@@ -31,7 +31,7 @@ import {
 import dotenv from "dotenv";
 
 const provider = new GoogleAuthProvider();
-dotenv.config();
+dotenv.config();                                  
 
 const api =
   process.env.NEXT_PUBLIC_REACT_ENV === "PRODUCTION"
@@ -275,7 +275,7 @@ function* handleSigninWithGoogle(
       yield put(getProfile(user));
     } else {
       console.log(User);
-      yield put(signInWithGoogleSucess(User));
+      yield put(signInWithGoogleSucess(User));                                
     }
   } catch (e: any) {
     console.log(e);
@@ -327,11 +327,5 @@ function* handleUpdateUserPassword(
   }
 }
 export function* userSaga() {
-  yield takeLatest(signinStart.type, handleSignin);
-  yield takeLatest(signupStart.type, handleSigUp);
-  yield takeLatest(signinWithGoogleStart.type, handleSigninWithGoogle);
-  yield takeLatest(getProfileStart.type, handleProfile);
   yield takeLatest(LogoutSucess.type, handleSignOut);
-  yield takeLatest(updateUserSuccess.type, handleUpdateUser);
-  yield takeLatest(updatePasswordRequest.type, handleUpdateUserPassword);
 }

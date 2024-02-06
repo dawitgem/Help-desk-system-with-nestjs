@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useDispatch } from "react-redux";
 import { getProfile } from "./Redux/features/userSlice";
 import { getProfileApi } from "@/utils/QueryActions";
+import { useEffect } from "react";
 
 
 
@@ -19,17 +20,18 @@ const Page = () => {
     isLoading,
     isSuccess,
     isError,
-  } = useQuery({ queryKey: ["getUser"], queryFn: ()=> {}});
+  } = useQuery({ queryKey: ["getUser"], queryFn: getProfileApi });
   const router = useRouter();
   const dispatch = useDispatch();
 
-  console.log("request from main");
-  if (user && isSuccess) dispatch(getProfile(user));
-  if (!user) router.push("/support");
-  if (user && isSuccess)
-    if (isSuccess && user.UserType === "Customer") router.push("/support");
-  if (isSuccess && (user.UserType === "Admin" || user.UserType === "Agent"))
-    router.push("/a/dashboard/default");
+  useEffect(()=>{ 
+    if (user && isSuccess) dispatch(getProfile(user));
+    if (!user) router.push("/support");
+    if (user && isSuccess)
+      if (isSuccess && user.UserType === "Customer") router.push("/support");
+    if (isSuccess && (user.UserType === "Admin" || user.UserType === "Agent"))
+      router.push("/a/dashboard/default");
+  },[])
 
   if (isError)
     return (

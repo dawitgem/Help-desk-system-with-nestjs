@@ -34,7 +34,6 @@ export default function MyEditor({ value, setValue }: MyEditorProps) {
       }}
       initialValue={initialValue}
       value={value}
-      onChange={handleChange}
       onEditorChange={handleChange}
     />
   );

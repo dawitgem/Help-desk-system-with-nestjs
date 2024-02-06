@@ -192,7 +192,7 @@ export const uploadEditorImageToFirebase = async (base64Data: any) => {
   });
 };
 
-const handleHtmlContent = async (Description: string) => {
+export const handleHtmlContent = async (Description: string) => {
   const { doc, imageInputs, imgElements } = HtmlParser(Description);
   const url = await imageInputs.map(async (byte: any) => {
     if (byte.includes("https://firebasestorage.googleapis.com/")) return byte;

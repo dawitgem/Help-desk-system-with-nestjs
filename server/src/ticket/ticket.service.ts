@@ -11,11 +11,21 @@ export class TicketService {
   constructor(private readonly prisma: PrismaService) {}
   async getAllTickets(): Promise<Tickets[] | null> {
     return await this.prisma.tickets.findMany({
+      
       orderBy: {
         CreatedAt: 'desc',
       },
     });
   }
+  async getAgentTickets(): Promise<Tickets[] | null> {
+    return await this.prisma.tickets.findMany({
+      
+      orderBy: {
+        CreatedAt: 'desc',
+      },
+    });
+  }
+  
   async getTicket(Id: string): Promise<Tickets | null> {
     return await this.prisma.tickets.findUnique({
       where: {
@@ -192,7 +202,7 @@ async countTicketbyday():Promise<any> {
           },
         },
       });
-
+         
       counts.push(count);
     }
 

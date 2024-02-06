@@ -9,7 +9,6 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { join } from 'path';
 import { ConfigService } from '@nestjs/config';
-console.log(process.env.NEST_ENV);
 
 @Module({
   imports: [
@@ -18,8 +17,8 @@ console.log(process.env.NEST_ENV);
         host: 'smtp.gmail.com',
         secure: false,
         auth: {
-          user: 'abebewondwosen3@gmail.com',
-          pass: 'lnfb bjxi eply knsi',
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
         },
       },
       defaults: {

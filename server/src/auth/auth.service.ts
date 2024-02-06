@@ -4,6 +4,8 @@ import { UserService } from 'src/user/user.service';
 import { SignInDto, SignUpDto } from 'src/user/user.dto';
 import { PasswordUpdateException } from 'src/exception/unauthorized.exception';
 import { Response } from 'express';
+import bycrpt from "bcrypt"
+import { hasSubscribers } from 'diagnostics_channel';
 
 @Injectable()
 export class AuthService {
@@ -59,11 +61,12 @@ export class AuthService {
       throw new UnauthorizedException(
         'Email not found.Please enter your valid email !!!',
       );
-    }
-    if (user.Verified === false) return { user, AccessToken, RefreshToken };
+    }    
+     
+        if (!this.validatePassword(Password, user.Password))
+          throw new UnauthorizedException('Invalid Password');
 
-    if (!this.validatePassword(Password, user.Password))
-      throw new UnauthorizedException('Invalid Password');
+    if (user.Verified === false) return { user, AccessToken, RefreshToken };
     const payload = { sub: user.Id, userName: user.UserName };
     AccessToken = await this.generateToken(payload);
     RefreshToken = await this.generateRefreshToken(payload);
@@ -79,7 +82,7 @@ export class AuthService {
         'Email not found.Please enter your valid email !!!',
       );
     }
-    if (!this.validatePassword(Password, user.Password))
+    if (! await this.validatePassword(Password, user.Password))
       throw new UnauthorizedException('Invalid Password');
     const payload = { sub: user.Id, userName: user.UserName };
     AccessToken = await this.generateToken(payload);
@@ -90,7 +93,7 @@ export class AuthService {
     Password: string,
     HashPassword: string,
   ): Promise<boolean> {
-    return Password.includes(HashPassword);
+    return await bycrpt.compare(Password,HashPassword);
   }
 
   async SignUp(signUpDto: SignUpDto) {

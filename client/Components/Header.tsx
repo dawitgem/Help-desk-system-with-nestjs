@@ -1,14 +1,7 @@
-"use client";
-import React from "react";
 import Navbar from "./Navbar";
 import Image from "next/image";
 import logo from "../public/logo.svg";
-import { useSelector } from "react-redux";
-import { selectUser } from "@/app/Redux/features/userSlice";
 const Header = () => {
-  const { user, isAuth, Loading } = useSelector(selectUser);
-  console.log(user);
-
   return (
     <>
       <header className="flex w-full sm:h-[80px] bg-slate-50 align-middle justify-between lg:px-[60px] md:px-[30px] px-[10px] sticky top-0 z-10 ">

@@ -34,10 +34,18 @@ export class TicketController {
     const Tickets=await this.TicketService.countTicket()
     console.log(Tickets);
     return Tickets
-
   }
+
+
   @Get('agent/:Id')
   async getTicket(@Param('Id') TicketId: string) {
+    const Ticket = await this.TicketService.getTicket(TicketId);
+    const Contact = await this.UserService.contact(Ticket.UserId);
+    console.log(Ticket);
+    return { Ticket, Contact };
+  }  
+  @Get('contact/:Id')
+  async getcontactTicket(@Param('Id') TicketId: string) {
     const Ticket = await this.TicketService.getTicket(TicketId);
     const Contact = await this.UserService.contact(Ticket.UserId);
     console.log(Ticket);

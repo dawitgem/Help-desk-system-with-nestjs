@@ -31,13 +31,13 @@ const TicketContactInfo = ({ contact }: TicketContactInfoProps) => {
           alt="profile pic"
           className="w-[40px] h-[40px] bg-slate-400 rounded-md "
         >
-          {contact?.FullName?.slice(0, 1)}
+          {contact?.UserName?.slice(0, 1)}
         </Avatar>
         <Link
           href={`/a/contacts/${contact?.Id}`}
           className="text-blue-600 text-sm font-medium"
         >
-          <p className="break-words">{contact?.FullName}</p>{" "}
+          <p className="break-words">{contact?.UserName}</p>{" "}
         </Link>
       </div>
       <div className="px-3 pb-3 w-[90%]">

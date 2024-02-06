@@ -9,19 +9,23 @@ import { IoFileTrayFullOutline } from "react-icons/io5";
 import Link from "next/link";
 import NoFolder from "@/public/asset/emptyFolder.svg";
 import Image from "next/image";
+import { MyDialog, SolutionsDropDown } from "@/Components/Listbox";
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
 const contacts = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 const SolutionPage = () => {
   const [checked, setChecked] = useState(contacts.map((contact) => false));
+  const [OpenFolderModal, setOpenFolder] = useState(false);
+  const [OpenCategoryModal, setOpenCategory] = useState(false);
 
   const FetchedContacts = useMemo(
     () => dynamic(() => import("@/Components/FetchedContacts"), { ssr: false }),
     []
   );
+  console.log(OpenFolderModal)
   return (
-    <div>
+    <div className="relative">
       <NavbarAgent currentPage="Knowledge base" />
       <div className="sticky z-[1] top-14 p-4 h-14 bg-slate-50  border flex justify-between shadow-sm">
         <div className="flex border h-8 bg-white  gap-1 :outline-blue-500 rounded-md hover:border-gray-900 relative">
@@ -32,14 +36,12 @@ const SolutionPage = () => {
             className="w-[450px]   placeholder:text-sm  p-2 pl-6 rounded-md outline-blue-600"
           />
         </div>
-        <div className="self-center flex shadow-sm   bg-[#184e6a] text-slate-50 h-8 rounded-[7px]">
-          <button className="self-center flex gap-1 bg-[#184e6a] hover:bg-[#194256]  p-1 rounded-l-[7px] text-sm">
+        <div className="self-center flex shadow-sm   bg-[#184e6a] text-slate-50 h-8 rounded-[7px] relative">
+          <Link  href={"/a/solutions/articles/new"}className="self-center flex gap-1 bg-[#184e6a] hover:bg-[#194256]  p-1 rounded-l-[7px] text-sm">
             <BsPlus className="text-lg" />
             New Article
-          </button>
-          <button className="border border-[#0e1c31]   p-1 bg-[#184e6a] hover:bg-[#194256] rounded-r-[7px] h-full text-sm">
-            <BsFillCaretDownFill />
-          </button>
+          </Link>         
+           <SolutionsDropDown setOpenCategory={setOpenCategory} setOpenFolder={setOpenFolder}/>
         </div>
       </div>
       <div className="p-3">
@@ -224,6 +226,7 @@ const SolutionPage = () => {
           </div>
         </div>
       </div>
+      {(OpenCategoryModal || OpenFolderModal) && <MyDialog setOpenCategory={setOpenCategory} setOpenFolder={setOpenFolder} OpenFolder={OpenFolderModal} OpenCategory={OpenCategoryModal}/>}
     </div>
   );
 };

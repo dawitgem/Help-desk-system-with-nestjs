@@ -39,7 +39,6 @@ export class UserService {
   }
 
   async Login({ Email }: Prisma.UsersWhereUniqueInput): Promise<Users | null> {
-    console.log(Email);
     const user = await this.Prisma.users.findUnique({
       where: {
         Email,
@@ -54,7 +53,9 @@ export class UserService {
     if (data.Password) {
       try {
         Password = await bcrypt.hash(data.Password, 10);
-      } catch (e) {}
+      } catch (e) {
+        console.log(e)
+      }
     } else Password = ' ';
     const user = await this.Prisma.users.create({
       data: {

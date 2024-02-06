@@ -1,17 +1,12 @@
 import { countTickets, getTickets } from "@/utils/QueryActions";
-import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import React from "react";
 
-const DashboardTicketReportCard = () => {
-  const {
-    data,
-    isError,
-    isLoading: Loading,
-    isSuccess,
-    error,
-  } = useQuery({ queryKey: ["count tickets"], queryFn: countTickets });
 
+
+const DashboardTicketReportCard =async () => {
+  const data=await countTickets()
+  
   const TicketStatus = [
     {
       status: "unresolved",

@@ -60,7 +60,7 @@ interface NewContactFormProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-function NewContactsForm({ open, setOpen }: NewContactFormProps) {
+export function NewContactsForm({ open, setOpen }: NewContactFormProps) {
   return (
     <div>
       <Backdrop

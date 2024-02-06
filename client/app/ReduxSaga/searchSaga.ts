@@ -44,6 +44,5 @@ function* handleSearchAll(action: SearchAllAction): Generator<any, void, any> {
 }
 function* handleClearSearch(): Generator<any, void, any> {}
 export function* searchSaga() {
-  yield takeLatest(searchStart.type, handleSearchAll);
   yield takeLatest(clearSearchStart.type, handleClearSearch);
 }

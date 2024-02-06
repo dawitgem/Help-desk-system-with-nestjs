@@ -249,13 +249,6 @@ function* handleSignOut() {
   }
 }
 
-export function* agentSaga() {
-  yield takeLatest(AgentsigninSucess.type, handleAgentSignin);
-  yield takeLatest(AgentsignupSucess.type, handleAgentSignUp);
-  yield takeLatest(
-    AgentsigninWithGoogleStart.type,
-    handleAgentSigninWithGoogle
-  );
-  yield takeLatest(AgentgetProfileStart.type, handleAgentProfile);
+export function* agentSaga() {  
   yield takeLatest(AgentLogoutSucess.type, handleSignOut);
 }

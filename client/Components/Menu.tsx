@@ -1,10 +1,6 @@
 "use client";
-import { Avatar, Backdrop } from "@mui/material";
+import {  Backdrop } from "@mui/material";
 import React, {
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useRef,
   useState,
 } from "react";
 import { FaTimes } from "react-icons/fa";
@@ -13,34 +9,26 @@ import { BsBook } from "react-icons/bs";
 import { RiTicket2Line } from "react-icons/ri";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useSelector } from "react-redux";
-import { selectUser } from "@/app/Redux/features/userSlice";
-import { UserProfileModal } from "./Navbar";
+import { CgMenuRight } from "react-icons/cg";
+import { UserProfilePopOver } from "./Listbox";
+import { user } from "@/app/Redux/features/userSlice";
 
 interface MenuProps {
-  open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  user: user;
 }
-const Menu = ({ open, setOpen }: MenuProps) => {
+const Menu = ({ user }: MenuProps) => {
   const pathname = usePathname();
-  const { user, isAuth, error } = useSelector(selectUser);
-  const [openProfileModal, setOpenProfileModal] = useState(false);
-  const ProfilemodalRef = useRef<HTMLDivElement>(null);
+  const [openMenu, setOpenMenu] = useState(false);
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (
-        ProfilemodalRef.current &&
-        !ProfilemodalRef.current.contains(e.target as Node)
-      )
-        setOpenProfileModal(false);
-    };
-    document.addEventListener("click", (e: MouseEvent) => {
-      handleClickOutside(e);
-    });
-    return document.removeEventListener("click", handleClickOutside);
-  }, []);
   return (
+    <>
+    <button
+          className="md:hidden   text-2xl mt-6   "
+          onClick={() => setOpenMenu(true)}
+        >
+          <CgMenuRight />
+        </button>
+
     <div className="md:hidden block">
       <Backdrop
         sx={{
@@ -50,61 +38,36 @@ const Menu = ({ open, setOpen }: MenuProps) => {
           alignItems: "flex-start",
           justifyContent: "flex-end",
         }}
-        open={open}
+        open={openMenu}
       >
         <div className="flex w-[230px] h-full  ">
           <button
             className="bg-slate-50 w-[40px] h-[40px] border border-gray-200 flex flex-col p-1 rounded-bl-md"
-            onClick={() => setOpen(false)}
+            onClick={() => setOpenMenu(false)}
           >
             <FaTimes className="text-gray-700 text-2xl self-center" />
           </button>
           <div className="w-full h-full flex flex-col gap-4 bg-white ">
-            {user && isAuth ? (
-              <div className="bg-slate-100 p-2 h-14" ref={ProfilemodalRef}>
-                <div className="flex gap-10">
-                  <button
-                    className="w-[40px] h-[40px] rounded-full bg-slate-800"
-                    onClick={() => {
-                      setOpenProfileModal((prevState) => !prevState);
-                    }}
-                  >
-                    <Avatar
-                      src={user?.Image || ""}
-                      alt="profile pic"
-                      className="w-full h-full bg-slate-400 rounded-full shadow-md"
-                    >
-                      {user.FullName?.slice(0, 1)}
-                    </Avatar>
-                  </button>
-                  <p className="text-md text-gray-700 font-semibold self-center">
-                    {user.UserName}
-                  </p>
-                </div>
-                {openProfileModal && (
-                  <UserProfileModal
-                    setOpen={setOpenProfileModal}
+            {user  && user.Verified ? (              
+                  <UserProfilePopOver
                     top={40}
                     right={195}
                     width={120}
                     avatar={false}
-                    setOpenMenu={setOpen}
                   />
-                )}
-              </div>
             ) : (
               <div className="flex text-gray-700 text-sm font-medium gap-2 bg-slate-50 p-4 h-14">
                 <Link
                   href={"/support/login"}
                   className=""
-                  onClick={() => setOpen(false)}
+                  onClick={() => setOpenMenu(false)}
                 >
                   Login
                 </Link>
                 <Link
                   href={"/support/signup"}
                   className="border-l border-gray-300 px-2"
-                  onClick={() => setOpen(false)}
+                  onClick={() => setOpenMenu(false)}
                 >
                   signup
                 </Link>
@@ -118,7 +81,7 @@ const Menu = ({ open, setOpen }: MenuProps) => {
                     ? "bg-[#186085] text-white "
                     : " text-gray-700 "
                 }`}
-                onClick={() => setOpen(false)}
+                onClick={() => setOpenMenu(false)}
               >
                 <LiaHomeSolid className="self-center text-2xl " />
                 <p className="self-center text-md font-medium">Home</p>
@@ -130,7 +93,7 @@ const Menu = ({ open, setOpen }: MenuProps) => {
                     ? "bg-[#186085] text-white "
                     : " text-gray-700 "
                 }`}
-                onClick={() => setOpen(false)}
+                onClick={() => setOpenMenu(false)}
               >
                 <BsBook className="self-center text-2xl " />
                 <p className=" self-center text-md ">Knowledgebase</p>
@@ -143,7 +106,7 @@ const Menu = ({ open, setOpen }: MenuProps) => {
                       ? "bg-[#186085] text-white "
                       : " text-gray-700 "
                   }`}
-                  onClick={() => setOpen(false)}
+                  onClick={() => setOpenMenu(false)}
                 >
                   <RiTicket2Line className="self-center text-2xl " />
                   <p className=" self-center text-md ">Tickets</p>
@@ -153,7 +116,7 @@ const Menu = ({ open, setOpen }: MenuProps) => {
               <Link
                 href="/support/tickets/new"
                 className=" w-full border border-gray-300 rounded-md p-3 bg-slate-50   text-gray-700  text-md-[17px]  font-medium text-center "
-                onClick={() => setOpen(false)}
+                onClick={() => setOpenMenu(false)}
               >
                 Submit a ticket
               </Link>
@@ -162,7 +125,11 @@ const Menu = ({ open, setOpen }: MenuProps) => {
         </div>
       </Backdrop>
     </div>
+    </>
   );
 };
 
 export default Menu;
+
+
+

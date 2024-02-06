@@ -8,9 +8,18 @@ import AgentPageFetchedTickets from "@/Components/AgentPageFetchedTickets";
 import { FormControlLabel } from "@mui/material";
 import { useSelector } from "react-redux";
 import { selectAgentTicket } from "@/app/Redux/features/agentTicketSlice";
+import { useQuery } from "@tanstack/react-query";
+import { getTickets } from "@/utils/QueryActions";
 
 const TicketCheckBoxOptions = () => {
-  const { AgentTickets, Loading, error } = useSelector(selectAgentTicket);
+  const {
+    data: AgentTickets,
+    isError,
+    isLoading: Loading,
+    isSuccess,
+    error,
+  } = useQuery({ queryKey: ["agentTickets"], queryFn: ()=>getTickets() });
+  console.log(AgentTickets)
   const [checked, setChecked] = useState<any[]>(AgentTickets.map(() => false));
   const handleCheckboxChange = (
     index: number,
@@ -33,7 +42,7 @@ const TicketCheckBoxOptions = () => {
                   checked={!checked.includes(false)}
                   onChange={(event) => {
                     setChecked(
-                      AgentTickets.map((ticket) => event.target.checked)
+                      AgentTickets.map(() => event.target.checked)
                     );
                   }}
                   className=" text-gray-200"

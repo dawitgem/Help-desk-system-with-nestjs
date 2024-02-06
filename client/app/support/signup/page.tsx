@@ -15,6 +15,8 @@ import { FaTimes } from "react-icons/fa";
 import { redirect, useRouter } from "next/navigation";
 import { Checkbox, CircularProgress } from "@mui/material";
 import { validatePassword } from "firebase/auth";
+import { useMutation } from "@tanstack/react-query";
+import { SignUpApi } from "@/utils/QueryActions";
 
 const SignUpPage = () => {
   const dispatch = useDispatch();
@@ -40,6 +42,12 @@ const SignUpPage = () => {
     confirmPassword: "",
   });
   const router = useRouter();
+  const mutation=useMutation({
+    mutationKey:["SignupUser"],mutationFn:(data:any)=>SignUpApi(data),
+    onSuccess:(data)=>{
+      console.log(data)
+    }
+  })
 
   const validateForm = () => {
     let valid = true;
@@ -142,26 +150,26 @@ const SignUpPage = () => {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (validateForm() && validateEmail() && validatePassword())
-      dispatch(signupStart(formData));
+      mutation.mutate(formData)
   };
   useEffect(() => {
     const CheckUser = () => {
-      if (error) {
+      if (mutation.isError) {
         setShowError(true);
       }
-      if (isAuth && user && user.Verified === false)
+      if (mutation.isSuccess&&mutation.data)
         router.push("/verifyEmail");
 
       if (isAuth && user && user.Verified === true) router.push("/support");
     };
     CheckUser();
-  }, [user, error]);
+  }, [mutation.data, mutation.error]);
   console.log(user);
   return (
     <div className="py-10 w-full border-t flex flex-col gap-2 justify-center align-middle  ">
-      {error && showError && (
+      {mutation.isError && showError && (
         <div className="px-2 py-3 flex justify-between bg-red-100 border border-red-400 self-center rounded-md md:w-1/3">
-          <p className="text-red-600 text-sm font-medium">{error}</p>
+          <p className="text-red-600 text-sm font-medium">{mutation.error.message}</p>
           <button onClick={() => setShowError(false)}>
             <FaTimes className="text-xl self-center text-gray-500" />
           </button>
@@ -173,7 +181,7 @@ const SignUpPage = () => {
             <h1 className="text-gray-700 text-2xl font-black">
               Sign up for Kns support portal
             </h1>
-            {Loading && (
+            {mutation.isPending && (
               <CircularProgress size={20} thickness={4} color="secondary" />
             )}
           </div>
@@ -208,13 +216,13 @@ const SignUpPage = () => {
             <input
               type="text"
               id="fullname"
-              disabled={Loading}
+              disabled={mutation.isPending}
               className={`p-3 text-gray-600 border w-full rounded-md ${
                 Error.fullname
                   ? "border-red-500 outline-none"
                   : "outline-blue-500 hover:border-black "
               }  placeholder:text-sm   ${
-                Loading
+                mutation.isPending
                   ? "cursor-not-allowed opacity-50"
                   : "cursor-pointer opacity-100"
               } `}
@@ -249,13 +257,13 @@ const SignUpPage = () => {
             <input
               type="text"
               id="signUpEmail"
-              disabled={Loading}
+              disabled={mutation.isPending}
               className={`p-3 text-gray-600 border w-full rounded-md ${
                 Error.email
                   ? "border-red-500 outline-none"
                   : "outline-blue-500 hover:border-black "
               }  placeholder:text-sm ${
-                Loading
+                mutation.isPending
                   ? "cursor-not-allowed opacity-50"
                   : "cursor-pointer opacity-100"
               }`}
@@ -288,13 +296,13 @@ const SignUpPage = () => {
             <input
               type={`${showPassword ? "text" : "password"}`}
               id="signupPassword"
-              disabled={Loading}
+              disabled={mutation.isPending}
               className={`p-3 text-gray-600 border w-full rounded-md ${
                 Error.password
                   ? "border-red-500 outline-none"
                   : "outline-blue-500 hover:border-black "
               }  placeholder:text-sm  ${
-                Loading
+                mutation.isPending
                   ? "cursor-not-allowed opacity-50"
                   : "cursor-pointer opacity-100"
               }`}
@@ -329,13 +337,13 @@ const SignUpPage = () => {
             <input
               type={`${showPassword ? "text" : "password"}`}
               id="confirmpassword"
-              disabled={Loading}
+              disabled={mutation.isPending}
               className={`p-3 text-gray-600 border w-full rounded-md ${
                 Error.confirmPassword
                   ? "border-red-500 outline-none"
                   : "outline-blue-500 hover:border-black "
               }  placeholder:text-sm  ${
-                Loading
+                mutation.isPending
                   ? "cursor-not-allowed opacity-50"
                   : "cursor-pointer opacity-100"
               }`}
@@ -366,7 +374,7 @@ const SignUpPage = () => {
           </li>
           <button
             className={`bg-[#063750] text-white p-3 text-sm rounded-md ${
-              Loading
+              mutation.isPending
                 ? "cursor-not-allowed opacity-50"
                 : "cursor-pointer opacity-100"
             }`}

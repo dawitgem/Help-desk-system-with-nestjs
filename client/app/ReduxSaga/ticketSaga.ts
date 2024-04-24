@@ -524,11 +524,7 @@ function* handleDeleteAttachment(
   }
 }
 export function* TicketSaga() {
-  yield takeLatest(fetchTicketStart.type, handleFetchTicket);
-  yield takeLatest(addTicketStart.type, handleAddTicket);
-  yield takeEvery(addAttachementStart.type, handleAddAttachement);
-  yield takeEvery(updateAttachmentStart.type, handleUpdateAttachment);
+  
   yield takeLatest(fetchAttachmentStart.type, handleFetchAttachments);
-  yield takeLatest(deleteTicketStart.type, handleDeleteTicket);
-  yield takeEvery(deleteAttachmentStart.type, handleDeleteAttachment);
+ 
 }

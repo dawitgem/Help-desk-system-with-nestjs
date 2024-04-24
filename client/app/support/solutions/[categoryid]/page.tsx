@@ -4,7 +4,6 @@ import Searchbox from "@/Components/Searchbox";
 import React from "react";
 
 import { PiStackBold } from "react-icons/pi";
-import { folders } from "@/app/sample";
 import PageHero from "@/Components/PageHero";
 
 const CategoryPage = ({ params }: { params: { categoryid: string } }) => {
@@ -19,7 +18,6 @@ const CategoryPage = ({ params }: { params: { categoryid: string } }) => {
         ]}
         Icon={<PiStackBold className="md:text-5xl text-2xl text-slate-50" />}
       />
-      <FetchedFolder Folders={folders} />
     </>
   );
 };

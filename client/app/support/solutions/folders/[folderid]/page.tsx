@@ -3,7 +3,6 @@ import FetchedFolder from "@/Components/FetchedFolder";
 import LinkTrack from "@/Components/LinkTrack";
 import PageHero from "@/Components/PageHero";
 import Searchbox from "@/Components/Searchbox";
-import { articles, folders } from "@/app/sample";
 import React from "react";
 import { BsFolder2Open } from "react-icons/bs";
 import { PiStackBold } from "react-icons/pi";
@@ -21,7 +20,6 @@ const FolderPageId = () => {
         ]}
         Icon={<BsFolder2Open className="md:text-5xl text-2xl text-slate-50" />}
       />
-      <FetchedArticles Articles={articles} />
     </>
   );
 };

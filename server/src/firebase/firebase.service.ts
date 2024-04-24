@@ -8,9 +8,7 @@ import {
 } from 'firebase/storage';
 import { getAuth } from 'firebase/auth';
 import dotenv from 'dotenv';
-import { resolve } from 'path';
-import { rejects } from 'assert';
-import { url } from 'inspector';
+
 dotenv.config();
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,

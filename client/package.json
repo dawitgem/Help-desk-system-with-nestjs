@@ -21,7 +21,7 @@
     "@tinymce/tinymce-react": "^4.3.2",
     "@types/dompurify": "^3.0.4",
     "@types/js-cookie": "^3.0.4",
-    "@types/node": "20.5.0",
+    "@types/node": "20.12.7",
     "@types/react": "18.2.20",
     "@types/react-dom": "18.2.7",
     "autoprefixer": "10.4.15",

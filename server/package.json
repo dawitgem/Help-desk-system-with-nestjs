@@ -29,7 +29,7 @@
     "@nestjs/jwt": "^10.1.1",
     "@nestjs/passport": "^10.0.2",
     "@nestjs/platform-express": "^10.2.7",
-    "@nestjs/platform-socket.io": "^10.2.7",
+    "@nestjs/platform-socket.io": "^10.4.6",
     "@nestjs/websockets": "^10.2.7",
     "cookie-parse": "^0.4.0",
     "cookie-parser": "^1.4.6",

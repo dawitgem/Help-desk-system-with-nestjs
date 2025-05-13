@@ -21,7 +21,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@nestjs-modules/mailer": "^1.7.1",
+    "@nestjs-modules/mailer": "^2.0.0",
     "@nestjs/cli": "^10.0.0",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.1.1",

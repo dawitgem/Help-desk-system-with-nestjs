@@ -21,7 +21,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@nestjs-modules/mailer": "^1.7.1",
+    "@nestjs-modules/mailer": "^2.0.0",
     "@nestjs/cli": "^10.0.0",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.1.1",
@@ -40,7 +40,7 @@
     "firebase": "^10.1.0",
     "firebase-admin": "^11.11.0",
     "handlebars": "^4.7.8",
-    "mailparser": "^3.6.5",
+    "mailparser": "^3.9.1",
     "node-imap": "^0.9.6",
     "nodemailer": "^6.9.7",
     "nodemailer-smtp-transport": "^2.4.2",
